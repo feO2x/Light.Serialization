@@ -41,13 +41,24 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FrameworkExtensions\StringExtensions.cs" />
     <Compile Include="IJsonWriter.cs" />
     <Compile Include="IJsonWriterFactory.cs" />
     <Compile Include="IJsonWriterInstructor.cs" />
     <Compile Include="JsonSerializationContext.cs" />
     <Compile Include="JsonSerializer.cs" />
+    <Compile Include="JsonSymbols.cs" />
+    <Compile Include="LowLevelWriting\FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer.cs" />
+    <Compile Include="LowLevelWriting\IJsonKeyNormalizer.cs" />
+    <Compile Include="LowLevelWriting\IJsonWhitespaceFormatter.cs" />
+    <Compile Include="LowLevelWriting\IndentingWhitespaceFormatter.cs" />
+    <Compile Include="LowLevelWriting\JsonWriter.cs" />
+    <Compile Include="LowLevelWriting\JsonWriterFactory.cs" />
+    <Compile Include="LowLevelWriting\KeyNormalizerNullObject.cs" />
+    <Compile Include="LowLevelWriting\WhitespaceFormatterNullObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerializeChild.cs" />
+    <Compile Include="SingleEscapedCharacter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Light.GuardClauses, Version=0.2.0.0, Culture=neutral, PublicKeyToken=573727035c45e5b3, processorArchitecture=MSIL">
