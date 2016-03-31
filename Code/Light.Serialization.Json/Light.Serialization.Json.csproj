@@ -41,6 +41,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComplexTypeDecomposition\IReadableValuesTypeAnalyzer.cs" />
+    <Compile Include="ComplexTypeDecomposition\IValueProvider.cs" />
+    <Compile Include="ComplexTypeDecomposition\IValueProviderFactory.cs" />
+    <Compile Include="ComplexTypeDecomposition\PublicPropertiesAndFieldsAnalyzer.cs" />
+    <Compile Include="ComplexTypeDecomposition\ValueProviderFactoryUsingLambdas.cs" />
+    <Compile Include="ComplexTypeDecomposition\ValueProviderUsingLambda.cs" />
     <Compile Include="FrameworkExtensions\StringExtensions.cs" />
     <Compile Include="IJsonWriter.cs" />
     <Compile Include="IJsonWriterFactory.cs" />
