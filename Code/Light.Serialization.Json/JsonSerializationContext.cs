@@ -5,33 +5,45 @@ using Light.Serialization.Json.LowLevelWriting;
 namespace Light.Serialization.Json
 {
     /// <summary>
-    /// Represents all information necessary to serialize a single object of a graph.
+    ///     Represents all information necessary to serialize a single object of a graph.
     /// </summary>
     public struct JsonSerializationContext
     {
         /// <summary>
-        /// Gets the object that should be serialized. This value is never null.
+        ///     Represents a delegate that should be called to serialize a child object in the graph.
+        /// </summary>
+        /// <param name="child">The child object to be serialized.</param>
+        /// <param name="actualType">The actual type of the child object.</param>
+        /// <param name="referencedType">The type that is used to reference the child object.</param>
+        public delegate void SerializeChildMethod(object child, Type actualType, Type referencedType);
+
+        /// <summary>
+        ///     Gets the object that should be serialized. This value is never null.
         /// </summary>
         public readonly object ObjectToBeSerialized;
+
         /// <summary>
-        /// Gets the actual type of the object (similar to <c>ObjectToBeSerialized.GetType()</c>).
+        ///     Gets the actual type of the object (similar to <c>ObjectToBeSerialized.GetType()</c>).
         /// </summary>
         public readonly Type ActualType;
+
         /// <summary>
-        /// Gets the type that was used to reference the object (this might be a base class / an interface that the ActualType implements).
+        ///     Gets the type that was used to reference the object (this might be a base class / an interface that the ActualType implements).
         /// </summary>
         public readonly Type ReferencedType;
+
         /// <summary>
-        /// Gets the delegate you can use to serialize a child object
+        ///     Gets the delegate you can use to serialize a child object
         /// </summary>
         public readonly SerializeChildMethod SerializeChild;
+
         /// <summary>
-        /// Gets the writer that creates the actual JSON document.
+        ///     Gets the writer that creates the actual JSON document.
         /// </summary>
         public readonly IJsonWriter Writer;
 
         /// <summary>
-        /// Creates a new instance of <see cref="JsonSerializationContext"/>.
+        ///     Creates a new instance of <see cref="JsonSerializationContext" />.
         /// </summary>
         /// <param name="objectToBeSerialized">The object to be serialized.</param>
         /// <param name="actualType">The actual type of the object to be serialized.</param>
@@ -50,7 +62,7 @@ namespace Light.Serialization.Json
             referencedType.MustNotBeNull(nameof(referencedType));
             serializeChild.MustNotBeNull(nameof(serializeChild));
             writer.MustNotBeNull(nameof(writer));
-            
+
             ObjectToBeSerialized = objectToBeSerialized;
             ActualType = actualType;
             ReferencedType = referencedType;
