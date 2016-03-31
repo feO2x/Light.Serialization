@@ -49,8 +49,8 @@
     <Compile Include="ComplexTypeDecomposition\ValueProviderUsingLambda.cs" />
     <Compile Include="FrameworkExtensions\StringBuilderExtensions.cs" />
     <Compile Include="FrameworkExtensions\StringExtensions.cs" />
-    <Compile Include="IJsonWriter.cs" />
-    <Compile Include="IJsonWriterFactory.cs" />
+    <Compile Include="LowLevelWriting\IJsonWriter.cs" />
+    <Compile Include="LowLevelWriting\IJsonWriterFactory.cs" />
     <Compile Include="IJsonWriterInstructor.cs" />
     <Compile Include="JsonSerializationContext.cs" />
     <Compile Include="JsonSerializer.cs" />

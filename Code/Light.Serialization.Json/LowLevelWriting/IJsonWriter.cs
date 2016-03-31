@@ -1,4 +1,4 @@
-﻿namespace Light.Serialization.Json
+﻿namespace Light.Serialization.Json.LowLevelWriting
 {
     /// <summary>
     ///     Represents the abstraction of an object that provides a low level API for writing a JSON document.
@@ -36,18 +36,18 @@
         void WriteKey(string key, bool shouldNormalizeKey = true);
 
         /// <summary>
-        /// Writers a delimiter after a value in currently open JSON object or JSON array.
+        ///     Writers a delimiter after a value in currently open JSON object or JSON array.
         /// </summary>
         void WriteDelimiter();
 
         /// <summary>
-        /// Writes the specified string as a raw value.
+        ///     Writes the specified string as a raw value.
         /// </summary>
         /// <param name="string">The string to be written to the JSON document.</param>
         void WritePrimitiveValue(string @string);
 
         /// <summary>
-        /// Writes null as a value to the JSON document.
+        ///     Writes null as a value to the JSON document.
         /// </summary>
         void WriteNull();
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Light.GuardClauses;
 using Light.GuardClauses.Exceptions;
 using Light.Serialization.Abstractions;
+using Light.Serialization.Json.LowLevelWriting;
 
 namespace Light.Serialization.Json
 {
