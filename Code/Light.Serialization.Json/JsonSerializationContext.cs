@@ -10,7 +10,7 @@ namespace Light.Serialization.Json
     public struct JsonSerializationContext
     {
         /// <summary>
-        /// Gets the object that should be serialized.
+        /// Gets the object that should be serialized. This value is never null.
         /// </summary>
         public readonly object ObjectToBeSerialized;
         /// <summary>

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Light.Serialization.Json
+namespace Light.Serialization.Json.WriterInstructors
 {
     /// <summary>
     ///     Represents the abstraction of an object that is able to instruct the JSON writer how a certain type should be serialized.

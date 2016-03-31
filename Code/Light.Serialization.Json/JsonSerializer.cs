@@ -4,6 +4,7 @@ using Light.GuardClauses;
 using Light.GuardClauses.Exceptions;
 using Light.Serialization.Abstractions;
 using Light.Serialization.Json.LowLevelWriting;
+using Light.Serialization.Json.WriterInstructors;
 
 namespace Light.Serialization.Json
 {

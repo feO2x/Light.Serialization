@@ -51,7 +51,7 @@
     <Compile Include="FrameworkExtensions\StringExtensions.cs" />
     <Compile Include="LowLevelWriting\IJsonWriter.cs" />
     <Compile Include="LowLevelWriting\IJsonWriterFactory.cs" />
-    <Compile Include="IJsonWriterInstructor.cs" />
+    <Compile Include="WriterInstructors\IJsonWriterInstructor.cs" />
     <Compile Include="JsonSerializationContext.cs" />
     <Compile Include="JsonSerializer.cs" />
     <Compile Include="JsonSymbols.cs" />
@@ -81,6 +81,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerializeChild.cs" />
     <Compile Include="SingleEscapedCharacter.cs" />
+    <Compile Include="WriterInstructors\CollectionInstructor.cs" />
+    <Compile Include="WriterInstructors\ComplexObjectInstructor.cs" />
+    <Compile Include="WriterInstructors\ComplexObjectWriting.cs" />
+    <Compile Include="WriterInstructors\CustomRuleInstructor.cs" />
+    <Compile Include="WriterInstructors\DictionaryInstructor.cs" />
+    <Compile Include="WriterInstructors\EnumerationToStringInstructor.cs" />
+    <Compile Include="WriterInstructors\PrimitiveTypeInstructor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Light.GuardClauses, Version=0.2.0.0, Culture=neutral, PublicKeyToken=573727035c45e5b3, processorArchitecture=MSIL">
