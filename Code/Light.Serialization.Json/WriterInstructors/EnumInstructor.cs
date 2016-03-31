@@ -7,7 +7,7 @@ namespace Light.Serialization.Json.WriterInstructors
     /// <summary>
     ///     Represents an <see cref="IJsonWriterInstructor" /> that serializes .NET enum values to JSON strings.
     /// </summary>
-    public sealed class EnumerationToStringInstructor : IJsonWriterInstructor
+    public sealed class EnumInstructor : IJsonWriterInstructor
     {
         /// <summary>
         ///     Checks if the actual type is an enum.

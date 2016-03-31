@@ -9,16 +9,16 @@ namespace Light.Serialization.Json.WriterInstructors
     ///     Represents an <see cref="IJsonWriterInstructor" /> that serializes primitive types (such as int, double, bool, string) to
     ///     corresponding JSON values by using primitive type formatters.
     /// </summary>
-    public sealed class PrimitiveTypeInstructor : IJsonWriterInstructor
+    public sealed class PrimitiveValueInstructor : IJsonWriterInstructor
     {
         private readonly IDictionary<Type, IPrimitiveTypeFormatter> _primitiveTypeToFormattersMapping;
 
         /// <summary>
-        ///     Creates a new instance of <see cref="PrimitiveTypeInstructor" />.
+        ///     Creates a new instance of <see cref="PrimitiveValueInstructor" />.
         /// </summary>
         /// <param name="primitiveTypeToFormattersMapping">The dictionary containing mappings from type to primitive type formatters which are used to .NET primitives.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="primitiveTypeToFormattersMapping" /> is null.</exception>
-        public PrimitiveTypeInstructor(IDictionary<Type, IPrimitiveTypeFormatter> primitiveTypeToFormattersMapping)
+        public PrimitiveValueInstructor(IDictionary<Type, IPrimitiveTypeFormatter> primitiveTypeToFormattersMapping)
         {
             primitiveTypeToFormattersMapping.MustNotBeNull(nameof(primitiveTypeToFormattersMapping));
 

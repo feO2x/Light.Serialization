@@ -84,8 +84,8 @@
     <Compile Include="WriterInstructors\ComplexObjectWriting.cs" />
     <Compile Include="WriterInstructors\CustomRuleInstructor.cs" />
     <Compile Include="WriterInstructors\DictionaryInstructor.cs" />
-    <Compile Include="WriterInstructors\EnumerationToStringInstructor.cs" />
-    <Compile Include="WriterInstructors\PrimitiveTypeInstructor.cs" />
+    <Compile Include="WriterInstructors\EnumInstructor.cs" />
+    <Compile Include="WriterInstructors\PrimitiveValueInstructor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Light.GuardClauses, Version=0.2.0.0, Culture=neutral, PublicKeyToken=573727035c45e5b3, processorArchitecture=MSIL">
