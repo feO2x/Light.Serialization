@@ -41,6 +41,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Caching\ValueProvidersCacheDecorator.cs" />
     <Compile Include="ComplexTypeDecomposition\IReadableValuesTypeAnalyzer.cs" />
     <Compile Include="ComplexTypeDecomposition\IValueProvider.cs" />
     <Compile Include="ComplexTypeDecomposition\IValueProviderFactory.cs" />
@@ -51,6 +52,8 @@
     <Compile Include="FrameworkExtensions\ReflectionExtensions.cs" />
     <Compile Include="FrameworkExtensions\StringBuilderExtensions.cs" />
     <Compile Include="FrameworkExtensions\StringExtensions.cs" />
+    <Compile Include="JsonSerializerBuilder.cs" />
+    <Compile Include="JsonSerializerBuildExtensions.cs" />
     <Compile Include="LowLevelWriting\IJsonWriter.cs" />
     <Compile Include="LowLevelWriting\IJsonWriterFactory.cs" />
     <Compile Include="SerializationRules\IAndBlackListRule.cs" />

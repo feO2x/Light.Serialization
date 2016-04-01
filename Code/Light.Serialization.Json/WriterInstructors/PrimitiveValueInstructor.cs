@@ -11,7 +11,10 @@ namespace Light.Serialization.Json.WriterInstructors
     /// </summary>
     public sealed class PrimitiveValueInstructor : IJsonWriterInstructor
     {
-        private readonly IDictionary<Type, IPrimitiveTypeFormatter> _primitiveTypeToFormattersMapping;
+        /// <summary>
+        /// Gets the dictionary containing the mapping from type to primitive type formatter.
+        /// </summary>
+        public readonly IDictionary<Type, IPrimitiveTypeFormatter> PrimitiveTypeToFormattersMapping;
 
         /// <summary>
         ///     Creates a new instance of <see cref="PrimitiveValueInstructor" />.
@@ -22,7 +25,7 @@ namespace Light.Serialization.Json.WriterInstructors
         {
             primitiveTypeToFormattersMapping.MustNotBeNull(nameof(primitiveTypeToFormattersMapping));
 
-            _primitiveTypeToFormattersMapping = primitiveTypeToFormattersMapping;
+            PrimitiveTypeToFormattersMapping = primitiveTypeToFormattersMapping;
         }
 
         /// <summary>
@@ -30,7 +33,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// </summary>
         public bool AppliesToObject(object @object, Type actualType, Type referencedType)
         {
-            return _primitiveTypeToFormattersMapping.ContainsKey(actualType);
+            return PrimitiveTypeToFormattersMapping.ContainsKey(actualType);
         }
 
         /// <summary>
@@ -40,7 +43,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// <exception cref="KeyNotFoundException">Thrown when no primitive type formatter could be found in the internal dictionary using the actual type as key.</exception>
         public void Serialize(JsonSerializationContext serializationContext)
         {
-            var typeFormatter = _primitiveTypeToFormattersMapping[serializationContext.ActualType];
+            var typeFormatter = PrimitiveTypeToFormattersMapping[serializationContext.ActualType];
             var stringRepresentation = typeFormatter.FormatPrimitiveType(serializationContext.ObjectToBeSerialized);
             serializationContext.Writer.WritePrimitiveValue(stringRepresentation);
         }
