@@ -47,10 +47,16 @@
     <Compile Include="ComplexTypeDecomposition\PublicPropertiesAndFieldsAnalyzer.cs" />
     <Compile Include="ComplexTypeDecomposition\ValueProviderFactoryUsingLambdas.cs" />
     <Compile Include="ComplexTypeDecomposition\ValueProviderUsingLambda.cs" />
+    <Compile Include="FrameworkExtensions\ExpressionExtensions.cs" />
+    <Compile Include="FrameworkExtensions\ReflectionExtensions.cs" />
     <Compile Include="FrameworkExtensions\StringBuilderExtensions.cs" />
     <Compile Include="FrameworkExtensions\StringExtensions.cs" />
     <Compile Include="LowLevelWriting\IJsonWriter.cs" />
     <Compile Include="LowLevelWriting\IJsonWriterFactory.cs" />
+    <Compile Include="SerializationRules\IAndBlackListRule.cs" />
+    <Compile Include="SerializationRules\IAndWhiteListRule.cs" />
+    <Compile Include="SerializationRules\IButWhiteListRule.cs" />
+    <Compile Include="SerializationRules\Rule.cs" />
     <Compile Include="WriterInstructors\IJsonWriterInstructor.cs" />
     <Compile Include="JsonSerializationContext.cs" />
     <Compile Include="JsonSerializer.cs" />
