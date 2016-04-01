@@ -9,6 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Light.Serialization.Json", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Light.Serialization.Json.Tests", "Light.Serialization.Json.Tests\Light.Serialization.Json.Tests.csproj", "{C29D35AA-FDCE-495C-AD38-D4319F8964D3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DI Container Integration", "DI Container Integration", "{C55FE50A-0E27-4894-BD36-B3BB72ED9956}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unity Container", "Unity Container", "{FE9634D6-162C-4BBC-AE5F-319EA12DCC11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Light.Serialization.Json.Unity", "Light.Serialization.Json.Unity\Light.Serialization.Json.Unity.csproj", "{BA87F1D0-DA0C-4822-B4E2-635B405D8097}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,8 +33,16 @@ Global
 		{C29D35AA-FDCE-495C-AD38-D4319F8964D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C29D35AA-FDCE-495C-AD38-D4319F8964D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C29D35AA-FDCE-495C-AD38-D4319F8964D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA87F1D0-DA0C-4822-B4E2-635B405D8097}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA87F1D0-DA0C-4822-B4E2-635B405D8097}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA87F1D0-DA0C-4822-B4E2-635B405D8097}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA87F1D0-DA0C-4822-B4E2-635B405D8097}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FE9634D6-162C-4BBC-AE5F-319EA12DCC11} = {C55FE50A-0E27-4894-BD36-B3BB72ED9956}
+		{BA87F1D0-DA0C-4822-B4E2-635B405D8097} = {FE9634D6-162C-4BBC-AE5F-319EA12DCC11}
 	EndGlobalSection
 EndGlobal
