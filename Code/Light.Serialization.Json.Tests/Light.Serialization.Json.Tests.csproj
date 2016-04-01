@@ -69,6 +69,7 @@
   <ItemGroup>
     <Compile Include="BaseJsonSerializerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SerializationTests\DateTimeOffsetTests.cs" />
     <Compile Include="SerializationTests\PrimitiveValuesTests.cs" />
   </ItemGroup>
   <ItemGroup>
