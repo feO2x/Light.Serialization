@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Light.Serialization.Abstrac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Light.Serialization.Json", "Light.Serialization.Json\Light.Serialization.Json.csproj", "{9953C89B-EF35-455E-A07B-B440F787DEA2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Light.Serialization.Json.Tests", "Light.Serialization.Json.Tests\Light.Serialization.Json.Tests.csproj", "{C29D35AA-FDCE-495C-AD38-D4319F8964D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{9953C89B-EF35-455E-A07B-B440F787DEA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9953C89B-EF35-455E-A07B-B440F787DEA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9953C89B-EF35-455E-A07B-B440F787DEA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C29D35AA-FDCE-495C-AD38-D4319F8964D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C29D35AA-FDCE-495C-AD38-D4319F8964D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C29D35AA-FDCE-495C-AD38-D4319F8964D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C29D35AA-FDCE-495C-AD38-D4319F8964D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
