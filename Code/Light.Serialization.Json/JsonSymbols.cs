@@ -128,6 +128,16 @@ namespace Light.Serialization.Json
         public const string DefaultTypeNameSymbol = "name";
 
         /// <summary>
+        /// Gets the "$id" symbol that marks the JSON document id of a complex JSON object.
+        /// </summary>
+        public const string DefaultIdSymbol = "$id";
+
+        /// <summary>
+        /// Gets the "$ref" symbol that marks a reference to another complex JSON object in the document.
+        /// </summary>
+        public const string DefaultReferenceSymbol = "$ref";
+
+        /// <summary>
         ///     Gets the collection containing all single-escaped characters that are used in JSON strings.
         ///     These are: \", \\, \/, \b, \f, \n, \r, and \t.
         /// </summary>
