@@ -20,6 +20,16 @@ namespace Light.Serialization.Json.ObjectMetadata
         private string _idSymbol = JsonSymbols.DefaultIdSymbol;
 
         /// <summary>
+        ///     Gets or sets the value indicating whether object ids and references to objects are serialized in the metadata section of a complex JSON object.
+        /// </summary>
+        public bool IsSerializingObjectId = true;
+
+        /// <summary>
+        ///     Gets or sets the value indicating wheter type information is serialized in the metadata section of a complex JSON object.
+        /// </summary>
+        public bool IsSerializingTypeInfo = true;
+
+        /// <summary>
         ///     Creates a new instance of <see cref="TypeAndReferenceMetadataInstructor" />.
         /// </summary>
         /// <param name="typeToNameMapping">The object that is used to map from .NET types to JSON type names.</param>
@@ -122,24 +132,30 @@ namespace Light.Serialization.Json.ObjectMetadata
         public bool SerializeMetadata(JsonSerializationContext serializationContext)
         {
             var writer = serializationContext.Writer;
-            var indexOfObject = _serializedObjects.IndexOf(serializationContext.ObjectToBeSerialized);
 
-            if (indexOfObject != -1)
+            if (IsSerializingObjectId)
             {
-                writer.WriteKey(_referenceSymbol);
-                writer.WritePrimitiveValue(indexOfObject.ToString());
-                return false;
+                var indexOfObject = _serializedObjects.IndexOf(serializationContext.ObjectToBeSerialized);
+
+                if (indexOfObject != -1)
+                {
+                    writer.WriteKey(_referenceSymbol);
+                    writer.WritePrimitiveValue(indexOfObject.ToString());
+                    return false;
+                }
+
+                _serializedObjects.Add(serializationContext.ObjectToBeSerialized);
+                writer.WriteKey(_idSymbol);
+                writer.WritePrimitiveValue((_serializedObjects.Count - 1).ToString());
+                writer.WriteDelimiter();
             }
 
-            _serializedObjects.Add(serializationContext.ObjectToBeSerialized);
-            writer.WriteKey(_idSymbol);
-            writer.WritePrimitiveValue((_serializedObjects.Count - 1).ToString());
-            writer.WriteDelimiter();
-
-            writer.WriteKey(_concreteTypeSymbol);
-            SerializeTypeInfo(serializationContext.ActualType, writer);
-            writer.WriteDelimiter();
-
+            if (IsSerializingTypeInfo)
+            {
+                writer.WriteKey(_concreteTypeSymbol);
+                SerializeTypeInfo(serializationContext.ActualType, writer);
+                writer.WriteDelimiter();
+            }
             return true;
         }
 
@@ -173,6 +189,14 @@ namespace Light.Serialization.Json.ObjectMetadata
             }
 
             writer.EndObject();
+        }
+
+        /// <summary>
+        ///     Clears the list of serialized objects - this should be done when a new object graph is serialized.
+        /// </summary>
+        public void ClearSerializedObjects()
+        {
+            _serializedObjects.Clear();
         }
     }
 }

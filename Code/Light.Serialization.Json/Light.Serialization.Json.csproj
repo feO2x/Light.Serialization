@@ -59,7 +59,6 @@
     <Compile Include="ObjectMetadata\INameToTypeMapping.cs" />
     <Compile Include="ObjectMetadata\IObjectMetadataInstructor.cs" />
     <Compile Include="ObjectMetadata\ITypeToNameMapping.cs" />
-    <Compile Include="ObjectMetadata\MetadataInstructorNullObject.cs" />
     <Compile Include="ObjectMetadata\SimpleNameToTypeMapping.cs" />
     <Compile Include="ObjectMetadata\TypeAndReferenceMetadataInstructor.cs" />
     <Compile Include="SerializationRules\IAndBlackListRule.cs" />
