@@ -56,8 +56,11 @@
     <Compile Include="JsonSerializerBuildExtensions.cs" />
     <Compile Include="LowLevelWriting\IJsonWriter.cs" />
     <Compile Include="LowLevelWriting\IJsonWriterFactory.cs" />
+    <Compile Include="ObjectMetadata\IClearSerializedObjectsCache.cs" />
     <Compile Include="ObjectMetadata\INameToTypeMapping.cs" />
     <Compile Include="ObjectMetadata\IObjectMetadataInstructor.cs" />
+    <Compile Include="ObjectMetadata\ISetObjectReferencePreservationStatus.cs" />
+    <Compile Include="ObjectMetadata\ISetTypeInfoSerializationStatus.cs" />
     <Compile Include="ObjectMetadata\ITypeToNameMapping.cs" />
     <Compile Include="ObjectMetadata\SimpleNameToTypeMapping.cs" />
     <Compile Include="ObjectMetadata\TypeAndReferenceMetadataInstructor.cs" />

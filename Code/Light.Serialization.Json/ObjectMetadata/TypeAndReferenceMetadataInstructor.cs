@@ -9,25 +9,15 @@ namespace Light.Serialization.Json.ObjectMetadata
     /// <summary>
     ///     Represents an IObjectMetadataInstructor that adds the type
     /// </summary>
-    public sealed class TypeAndReferenceMetadataInstructor : IObjectMetadataInstructor
+    public sealed class TypeAndReferenceMetadataInstructor : IObjectMetadataInstructor, ISetObjectReferencePreservationStatus, ISetTypeInfoSerializationStatus, IClearSerializedObjectsCache
     {
-        private readonly string _referenceSymbol = JsonSymbols.DefaultReferenceSymbol;
         private readonly List<object> _serializedObjects = new List<object>();
         private readonly ITypeToNameMapping _typeToNameMapping;
         private string _concreteTypeSymbol = JsonSymbols.DefaultConcreteTypeSymbol;
         private string _genericTypeArgumentsSymbol = JsonSymbols.DefaultGenericTypeArgumentsSymbol;
         private string _genericTypeNameSymbol = JsonSymbols.DefaultGenericTypeNameSymbol;
         private string _idSymbol = JsonSymbols.DefaultIdSymbol;
-
-        /// <summary>
-        ///     Gets or sets the value indicating whether object ids and references to objects are serialized in the metadata section of a complex JSON object.
-        /// </summary>
-        public bool IsSerializingObjectId = true;
-
-        /// <summary>
-        ///     Gets or sets the value indicating wheter type information is serialized in the metadata section of a complex JSON object.
-        /// </summary>
-        public bool IsSerializingTypeInfo = true;
+        private string _referenceSymbol = JsonSymbols.DefaultReferenceSymbol;
 
         /// <summary>
         ///     Creates a new instance of <see cref="TypeAndReferenceMetadataInstructor" />.
@@ -71,7 +61,7 @@ namespace Light.Serialization.Json.ObjectMetadata
             set
             {
                 value.MustNotBeNullOrWhiteSpace(nameof(value));
-                _idSymbol = value;
+                _referenceSymbol = value;
             }
         }
 
@@ -125,6 +115,14 @@ namespace Light.Serialization.Json.ObjectMetadata
         }
 
         /// <summary>
+        ///     Clears the list of serialized objects - this should be done when a new object graph is serialized.
+        /// </summary>
+        public void ClearSerializedObjects()
+        {
+            _serializedObjects.Clear();
+        }
+
+        /// <summary>
         ///     Serializes the JSON document ID and the type name of the specified object.
         /// </summary>
         /// <param name="serializationContext">The serialization context for the object to be serialized.</param>
@@ -133,7 +131,7 @@ namespace Light.Serialization.Json.ObjectMetadata
         {
             var writer = serializationContext.Writer;
 
-            if (IsSerializingObjectId)
+            if (IsSerializingObjectIds)
             {
                 var indexOfObject = _serializedObjects.IndexOf(serializationContext.ObjectToBeSerialized);
 
@@ -158,6 +156,16 @@ namespace Light.Serialization.Json.ObjectMetadata
             }
             return true;
         }
+
+        /// <summary>
+        ///     Gets or sets the value indicating wheter object ids and references to objects are serialized in the metadata section of a complex JSON object.
+        /// </summary>
+        public bool IsSerializingObjectIds { get; set; } = true;
+
+        /// <summary>
+        ///     Gets or sets the value indicating type information is serialized in the metadata section of a complex JSON object.
+        /// </summary>
+        public bool IsSerializingTypeInfo { get; set; } = true;
 
         private void SerializeTypeInfo(Type currentType, IJsonWriter writer)
         {
@@ -189,14 +197,6 @@ namespace Light.Serialization.Json.ObjectMetadata
             }
 
             writer.EndObject();
-        }
-
-        /// <summary>
-        ///     Clears the list of serialized objects - this should be done when a new object graph is serialized.
-        /// </summary>
-        public void ClearSerializedObjects()
-        {
-            _serializedObjects.Clear();
         }
     }
 }
