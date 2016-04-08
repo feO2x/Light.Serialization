@@ -7,7 +7,7 @@ using Light.Serialization.Json.LowLevelWriting;
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents an IObjectMetadataInstructor that adds the type
+    ///     Represents an IObjectMetadataInstructor that serializes ids and type information in the metadata section of a complex JSON object.
     /// </summary>
     public sealed class TypeAndReferenceMetadataInstructor : IObjectMetadataInstructor, ISetObjectReferencePreservationStatus, ISetTypeInfoSerializationStatus, IClearSerializedObjectsCache
     {
