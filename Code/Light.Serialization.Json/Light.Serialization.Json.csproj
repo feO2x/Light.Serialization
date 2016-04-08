@@ -56,6 +56,12 @@
     <Compile Include="JsonSerializerBuildExtensions.cs" />
     <Compile Include="LowLevelWriting\IJsonWriter.cs" />
     <Compile Include="LowLevelWriting\IJsonWriterFactory.cs" />
+    <Compile Include="ObjectMetadata\INameToTypeMapping.cs" />
+    <Compile Include="ObjectMetadata\IObjectMetadataInstructor.cs" />
+    <Compile Include="ObjectMetadata\ITypeToNameMapping.cs" />
+    <Compile Include="ObjectMetadata\MetadataInstructorNullObject.cs" />
+    <Compile Include="ObjectMetadata\SimpleNameToTypeMapping.cs" />
+    <Compile Include="ObjectMetadata\TypeAndReferenceMetadataInstructor.cs" />
     <Compile Include="SerializationRules\IAndBlackListRule.cs" />
     <Compile Include="SerializationRules\IAndWhiteListRule.cs" />
     <Compile Include="SerializationRules\IButWhiteListRule.cs" />
@@ -105,6 +111,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
