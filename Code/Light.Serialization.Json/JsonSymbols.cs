@@ -138,6 +138,17 @@ namespace Light.Serialization.Json
         public const string DefaultReferenceSymbol = "$ref";
 
         /// <summary>
+        /// Gets the "name" symbol that marks the type name of a generic type serialized in the metadata section of a complex JSON object.
+        /// </summary>
+        public const string DefaultGenericTypeNameSymbol = "name";
+
+        /// <summary>
+        /// Gets the "typeArguments" symbol that marks the JSON array of arguments for generic types.
+        /// </summary>
+        public const string DefaultGenericTypeArgumentsSymbol = "typeArguments";
+
+
+        /// <summary>
         ///     Gets the collection containing all single-escaped characters that are used in JSON strings.
         ///     These are: \", \\, \/, \b, \f, \n, \r, and \t.
         /// </summary>
