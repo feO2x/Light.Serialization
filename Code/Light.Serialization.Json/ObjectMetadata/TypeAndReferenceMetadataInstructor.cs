@@ -133,7 +133,7 @@ namespace Light.Serialization.Json.ObjectMetadata
 
             if (IsSerializingObjectIds)
             {
-                var indexOfObject = _serializedObjects.IndexOf(serializationContext.ObjectToBeSerialized);
+                var indexOfObject = GetIndexOfAlreadySerializedObject(serializationContext.ObjectToBeSerialized);
 
                 if (indexOfObject != -1)
                 {
@@ -197,6 +197,16 @@ namespace Light.Serialization.Json.ObjectMetadata
             }
 
             writer.EndObject();
+        }
+
+        private int GetIndexOfAlreadySerializedObject(object @object)
+        {
+            for (var i = 0; i < _serializedObjects.Count; i++)
+            {
+                if (ReferenceEquals(_serializedObjects[i], @object))
+                    return i;
+            }
+            return -1;
         }
     }
 }
