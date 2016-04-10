@@ -1,6 +1,7 @@
 ﻿using System;
 using Light.GuardClauses;
 using Light.Serialization.Json.ComplexTypeDecomposition;
+using Light.Serialization.Json.ObjectMetadata;
 
 namespace Light.Serialization.Json.WriterInstructors
 {
@@ -9,21 +10,25 @@ namespace Light.Serialization.Json.WriterInstructors
     /// </summary>
     public sealed class ComplexObjectInstructor : IJsonWriterInstructor
     {
+        private IObjectMetadataInstructor _metadataInstructor;
         private IReadableValuesTypeAnalyzer _typeAnalyzer;
 
         /// <summary>
         ///     Creates a new instance of <see cref="ComplexObjectInstructor" />.
         /// </summary>
         /// <param name="typeAnalyzer">The object that is used to analyze types for readable members (usually properties and fields).</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeAnalyzer" /> is null.</exception>
-        public ComplexObjectInstructor(IReadableValuesTypeAnalyzer typeAnalyzer)
+        /// <param name="metadataInstructor">The object that serializes the metadata section of the complex object.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeAnalyzer" /> or <paramref name="metadataInstructor" /> is null.</exception>
+        public ComplexObjectInstructor(IReadableValuesTypeAnalyzer typeAnalyzer, IObjectMetadataInstructor metadataInstructor)
         {
             TypeAnalyzer = typeAnalyzer;
+            MetadataInstructor = metadataInstructor;
         }
 
         /// <summary>
         ///     Gets or sets the object that is used to analyze types for readable members (usually properties and fields).
         /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
         public IReadableValuesTypeAnalyzer TypeAnalyzer
         {
             get { return _typeAnalyzer; }
@@ -31,6 +36,20 @@ namespace Light.Serialization.Json.WriterInstructors
             {
                 value.MustNotBeNull(nameof(value));
                 _typeAnalyzer = value;
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets the metadata instructor used to serialize the metadata section of the complex object.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
+        public IObjectMetadataInstructor MetadataInstructor
+        {
+            get { return _metadataInstructor; }
+            set
+            {
+                value.MustNotBeNull(nameof(value));
+                _metadataInstructor = value;
             }
         }
 
@@ -51,7 +70,7 @@ namespace Light.Serialization.Json.WriterInstructors
         public void Serialize(JsonSerializationContext serializationContext)
         {
             var valueProviders = _typeAnalyzer.AnalyzeType(serializationContext.ActualType);
-            ComplexObjectWriting.WriteValues(serializationContext, valueProviders);
+            ComplexObjectHelper.SerializeComplexObject(serializationContext, valueProviders, _metadataInstructor);
         }
     }
 }

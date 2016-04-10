@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Light.GuardClauses;
+using Light.Serialization.Json.ObjectMetadata;
 using Light.Serialization.Json.PrimitiveTypeFormatters;
 
 namespace Light.Serialization.Json.WriterInstructors
@@ -11,18 +12,22 @@ namespace Light.Serialization.Json.WriterInstructors
     /// </summary>
     public sealed class DictionaryInstructor : IJsonWriterInstructor
     {
+        private readonly IObjectMetadataInstructor _metadataInstructor;
         private readonly IDictionary<Type, IPrimitiveTypeFormatter> _primitiveTypeToFormattersMapping;
 
         /// <summary>
         ///     Creates a new instance of <see cref="DictionaryInstructor" />.
         /// </summary>
         /// <param name="primitiveTypeToFormattersMapping">The dictionary containing mappings from type to primitive type formatters which are used to serialize keys.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="primitiveTypeToFormattersMapping" /> is null.</exception>
-        public DictionaryInstructor(IDictionary<Type, IPrimitiveTypeFormatter> primitiveTypeToFormattersMapping)
+        /// <param name="metadataInstructor">The object that is used to serialize the metadata section of the complex object.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="primitiveTypeToFormattersMapping" /> or <paramref name="metadataInstructor" /> is null.</exception>
+        public DictionaryInstructor(IDictionary<Type, IPrimitiveTypeFormatter> primitiveTypeToFormattersMapping, IObjectMetadataInstructor metadataInstructor)
         {
             primitiveTypeToFormattersMapping.MustNotBeNull(nameof(primitiveTypeToFormattersMapping));
+            metadataInstructor.MustNotBeNull(nameof(metadataInstructor));
 
             _primitiveTypeToFormattersMapping = primitiveTypeToFormattersMapping;
+            _metadataInstructor = metadataInstructor;
         }
 
         /// <summary>
@@ -45,7 +50,9 @@ namespace Light.Serialization.Json.WriterInstructors
             var writer = serializationContext.Writer;
             writer.BeginObject();
 
-            if (dictionary.Count == 0)
+            var shouldSerializeData = _metadataInstructor.SerializeMetadata(serializationContext);
+
+            if (shouldSerializeData == false || dictionary.Count == 0)
             {
                 writer.EndObject();
                 return;
@@ -77,7 +84,6 @@ namespace Light.Serialization.Json.WriterInstructors
                 else
                 {
                     var valueType = value.GetType();
-                    // TODO: here an endless loop can be created too, if the value of a dictionary is the dictionary itself
                     serializationContext.SerializeChild(value, valueType, valueType);
                 }
 

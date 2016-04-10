@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Light.GuardClauses;
 using Light.Serialization.Json.ComplexTypeDecomposition;
+using Light.Serialization.Json.ObjectMetadata;
 using Light.Serialization.Json.PrimitiveTypeFormatters;
 using Light.Serialization.Json.WriterInstructors;
 
@@ -52,20 +53,22 @@ namespace Light.Serialization.Json
         /// <param name="targetList">The collection that will be populated.</param>
         /// <param name="primitiveTypeToFormattersMapping">The dictionary containing the mapping from type to primitive type formatter, which will be injected into the <see cref="PrimitiveValueInstructor" /> and <see cref="DictionaryInstructor" />.</param>
         /// <param name="readableValuesTypeAnalyzer">The type analyzer that will be injected into the <see cref="ComplexObjectInstructor" />.</param>
+        /// <param name="metadataInstructor">The instructor used to serialize the metadata section of complex JSON objects.</param>
         /// <returns>The collection for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when any parameter is null.</exception>
         public static TCollection AddDefaultWriterInstructors<TCollection>(this TCollection targetList,
                                                                            IDictionary<Type, IPrimitiveTypeFormatter> primitiveTypeToFormattersMapping,
-                                                                           IReadableValuesTypeAnalyzer readableValuesTypeAnalyzer)
+                                                                           IReadableValuesTypeAnalyzer readableValuesTypeAnalyzer,
+                                                                           IObjectMetadataInstructor metadataInstructor)
             where TCollection : class, IList<IJsonWriterInstructor>
         {
             targetList.MustNotBeNull(nameof(targetList));
 
             targetList.Add(new PrimitiveValueInstructor(primitiveTypeToFormattersMapping));
             targetList.Add(new EnumInstructor());
-            targetList.Add(new DictionaryInstructor(primitiveTypeToFormattersMapping));
+            targetList.Add(new DictionaryInstructor(primitiveTypeToFormattersMapping, metadataInstructor));
             targetList.Add(new CollectionInstructor());
-            targetList.Add(new ComplexObjectInstructor(readableValuesTypeAnalyzer));
+            targetList.Add(new ComplexObjectInstructor(readableValuesTypeAnalyzer, metadataInstructor));
 
             return targetList;
         }

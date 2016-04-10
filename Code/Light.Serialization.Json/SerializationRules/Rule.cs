@@ -5,7 +5,6 @@ using System.Reflection;
 using Light.GuardClauses;
 using Light.Serialization.Json.ComplexTypeDecomposition;
 using Light.Serialization.Json.FrameworkExtensions;
-using Light.Serialization.Json.WriterInstructors;
 
 namespace Light.Serialization.Json.SerializationRules
 {
@@ -63,15 +62,15 @@ namespace Light.Serialization.Json.SerializationRules
         }
 
         /// <summary>
-        ///     Creates an <see cref="IJsonWriterInstructor" /> that implements the rules stored in this instance.
+        ///     Creates the value providers that are able to read all values specified in this rule.
         /// </summary>
-        public abstract IJsonWriterInstructor CreateInstructor();
+        public abstract IList<IValueProvider> CreateValueProviders();
     }
 
     /// <summary>
     ///     Represents a serialization rule for the specified type.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type that should be customized for serialization.</typeparam>
     public sealed class Rule<T> : Rule, IButWhiteListRule<T>, IAndWhiteListRule<T>, IAndBlackListRule<T>
     {
         private readonly List<string> _targetMembersToSerialize = new List<string>();
@@ -80,7 +79,7 @@ namespace Light.Serialization.Json.SerializationRules
         /// <summary>
         ///     Creates a new instance of <see cref="Rule{T}" />.
         /// </summary>
-        /// <param name="typeAnalyzer">The type analyzer used to create the <see cref="CustomRuleInstructor" /> when calling <see cref="CreateInstructor" />.</param>
+        /// <param name="typeAnalyzer">The type analyzer used to create the value providers when calling <see cref="CreateValueProviders" />.</param>
         public Rule(IReadableValuesTypeAnalyzer typeAnalyzer) : base(typeof (T))
         {
             typeAnalyzer.MustNotBeNull(nameof(typeAnalyzer));
@@ -222,9 +221,9 @@ namespace Light.Serialization.Json.SerializationRules
         }
 
         /// <summary>
-        ///     Creates a <see cref="CustomRuleInstructor" /> instance with value providers derived from this rule.
+        ///     Creates and filters the value providers according to this serialization rule.
         /// </summary>
-        public override IJsonWriterInstructor CreateInstructor()
+        public override IList<IValueProvider> CreateValueProviders()
         {
             var valueProviders = _typeAnalyzer.AnalyzeType(TargetType);
 
@@ -239,7 +238,7 @@ namespace Light.Serialization.Json.SerializationRules
                 i++;
             }
 
-            return new CustomRuleInstructor(TargetType, valueProviders);
+            return valueProviders;
         }
     }
 }

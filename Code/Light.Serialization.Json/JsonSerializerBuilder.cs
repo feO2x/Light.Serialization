@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Light.GuardClauses;
-using Light.Serialization.Abstractions;
 using Light.Serialization.Json.Caching;
 using Light.Serialization.Json.ComplexTypeDecomposition;
 using Light.Serialization.Json.LowLevelWriting;
+using Light.Serialization.Json.ObjectMetadata;
 using Light.Serialization.Json.PrimitiveTypeFormatters;
 using Light.Serialization.Json.SerializationRules;
 using Light.Serialization.Json.WriterInstructors;
@@ -17,6 +17,7 @@ namespace Light.Serialization.Json
     /// </summary>
     public class JsonSerializerBuilder
     {
+        private readonly IObjectMetadataInstructor _metadataInstructor = new TypeAndReferenceMetadataInstructor(new SimpleNameToTypeMapping());
         private readonly List<Rule> _rules = new List<Rule>();
 
         /// <summary>
@@ -41,7 +42,8 @@ namespace Light.Serialization.Json
             BasicWriterInstructors = new List<IJsonWriterInstructor>()
                 .AddDefaultWriterInstructors(new List<IPrimitiveTypeFormatter>().AddDefaultPrimitiveTypeFormatters(_characterEscaper)
                                                                                 .ToDictionary(f => f.TargetType),
-                                             _typeAnalyzer);
+                                             _typeAnalyzer,
+                                             _metadataInstructor);
         }
 
         private static IList<IJsonWriterInstructor> CreateDefaultList()
@@ -210,7 +212,8 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Creates a serialization rule for the given type that is configured with the specified delegate.
+        ///     Creates a new serialization rule for the given type that is configured with the specified delegate.
+        ///     An existing rule for the specified type will be replaced.
         /// </summary>
         /// <typeparam name="T">The type that should be configured for serialization.</typeparam>
         /// <param name="configureRule">The delegate that configures the serialization rule.</param>
@@ -218,26 +221,28 @@ namespace Light.Serialization.Json
         public JsonSerializerBuilder WithRuleFor<T>(Action<Rule<T>> configureRule)
         {
             var targetType = typeof (T);
-            var targetRule = (Rule<T>) _rules.FirstOrDefault(r => r.TargetType == targetType);
-            if (targetRule == null)
-            {
-                targetRule = new Rule<T>(_typeAnalyzer);
-                _rules.Add(targetRule);
-            }
 
-            configureRule(targetRule);
+            var newRule = new Rule<T>(_typeAnalyzer);
+            configureRule(newRule);
+
+            var existingRuleIndex = _rules.FindIndex(r => r.TargetType == targetType);
+            if (existingRuleIndex != -1)
+                _rules.RemoveAt(existingRuleIndex);
+
+            _rules.Add(newRule);
+
             return this;
         }
 
         /// <summary>
         ///     Creates a new instance of <see cref="JsonSerializer" /> using the specified builder settings.
         /// </summary>
-        public ISerializer Build()
+        public JsonSerializer Build()
         {
             var writerInstructors = _createList();
             foreach (var rule in _rules)
             {
-                writerInstructors.Add(rule.CreateInstructor());
+                writerInstructors.Add(new CustomRuleInstructor(rule.TargetType, rule.CreateValueProviders(), _metadataInstructor));
             }
             foreach (var instructor in BasicWriterInstructors)
             {

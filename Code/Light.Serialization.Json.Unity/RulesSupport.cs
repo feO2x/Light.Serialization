@@ -1,12 +1,14 @@
 ﻿using System;
 using Light.GuardClauses;
+using Light.Serialization.Json.ObjectMetadata;
 using Light.Serialization.Json.SerializationRules;
+using Light.Serialization.Json.WriterInstructors;
 using Microsoft.Practices.Unity;
 
 namespace Light.Serialization.Json.Unity
 {
     /// <summary>
-    /// Provides custom serialization rule support for the Unity container.
+    ///     Provides custom serialization rule support for the Unity container.
     /// </summary>
     public static class RulesSupport
     {
@@ -25,7 +27,7 @@ namespace Light.Serialization.Json.Unity
 
             var newRule = container.Resolve<Rule<T>>();
             configureRule(newRule);
-            var customInstructor = newRule.CreateInstructor();
+            var customInstructor = new CustomRuleInstructor(newRule.TargetType, newRule.CreateValueProviders(), container.Resolve<IObjectMetadataInstructor>());
             container.RegisterInstance(typeof (T).FullName, customInstructor);
             return container;
         }
@@ -43,7 +45,7 @@ namespace Light.Serialization.Json.Unity
             container.MustNotBeNull(nameof(container));
             rule.MustNotBeNull(nameof(rule));
 
-            var customInstructor = rule.CreateInstructor();
+            var customInstructor = new CustomRuleInstructor(rule.TargetType, rule.CreateValueProviders(), container.Resolve<IObjectMetadataInstructor>());
             container.RegisterInstance(typeof (T).FullName, customInstructor);
             return container;
         }

@@ -12,12 +12,14 @@ namespace Light.Serialization.Json.ObjectMetadata
     public sealed class TypeAndReferenceMetadataInstructor : IObjectMetadataInstructor, ISetObjectReferencePreservationStatus, ISetTypeInfoSerializationStatus, IClearSerializedObjectsCache
     {
         private readonly List<object> _serializedObjects = new List<object>();
-        private readonly ITypeToNameMapping _typeToNameMapping;
         private string _concreteTypeSymbol = JsonSymbols.DefaultConcreteTypeSymbol;
         private string _genericTypeArgumentsSymbol = JsonSymbols.DefaultGenericTypeArgumentsSymbol;
         private string _genericTypeNameSymbol = JsonSymbols.DefaultGenericTypeNameSymbol;
         private string _idSymbol = JsonSymbols.DefaultIdSymbol;
+        private bool _isSerializingObjectIds = true;
+        private bool _isSerializingTypeInfo = true;
         private string _referenceSymbol = JsonSymbols.DefaultReferenceSymbol;
+        private ITypeToNameMapping _typeToNameMapping;
 
         /// <summary>
         ///     Creates a new instance of <see cref="TypeAndReferenceMetadataInstructor" />.
@@ -115,6 +117,20 @@ namespace Light.Serialization.Json.ObjectMetadata
         }
 
         /// <summary>
+        ///     Gets or sets the object used to map from .NET types to JSON names.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
+        public ITypeToNameMapping TypeToNameMapping
+        {
+            get { return _typeToNameMapping; }
+            set
+            {
+                value.MustNotBeNull(nameof(value));
+                _typeToNameMapping = value;
+            }
+        }
+
+        /// <summary>
         ///     Clears the list of serialized objects - this should be done when a new object graph is serialized.
         /// </summary>
         public void ClearSerializedObjects()
@@ -131,7 +147,7 @@ namespace Light.Serialization.Json.ObjectMetadata
         {
             var writer = serializationContext.Writer;
 
-            if (IsSerializingObjectIds)
+            if (_isSerializingObjectIds)
             {
                 var indexOfObject = GetIndexOfAlreadySerializedObject(serializationContext.ObjectToBeSerialized);
 
@@ -148,7 +164,7 @@ namespace Light.Serialization.Json.ObjectMetadata
                 writer.WriteDelimiter();
             }
 
-            if (IsSerializingTypeInfo)
+            if (_isSerializingTypeInfo)
             {
                 writer.WriteKey(_concreteTypeSymbol);
                 SerializeTypeInfo(serializationContext.ActualType, writer);
@@ -160,12 +176,20 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// <summary>
         ///     Gets or sets the value indicating wheter object ids and references to objects are serialized in the metadata section of a complex JSON object.
         /// </summary>
-        public bool IsSerializingObjectIds { get; set; } = true;
+        public bool IsSerializingObjectIds
+        {
+            get { return _isSerializingObjectIds; }
+            set { _isSerializingObjectIds = value; }
+        }
 
         /// <summary>
         ///     Gets or sets the value indicating type information is serialized in the metadata section of a complex JSON object.
         /// </summary>
-        public bool IsSerializingTypeInfo { get; set; } = true;
+        public bool IsSerializingTypeInfo
+        {
+            get { return _isSerializingTypeInfo; }
+            set { _isSerializingTypeInfo = value; }
+        }
 
         private void SerializeTypeInfo(Type currentType, IJsonWriter writer)
         {
