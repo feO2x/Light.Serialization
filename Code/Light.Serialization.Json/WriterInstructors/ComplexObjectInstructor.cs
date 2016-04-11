@@ -1,5 +1,6 @@
 ﻿using System;
 using Light.GuardClauses;
+using Light.Serialization.Json.BuilderInjection;
 using Light.Serialization.Json.ComplexTypeDecomposition;
 using Light.Serialization.Json.ObjectMetadata;
 
@@ -8,7 +9,7 @@ namespace Light.Serialization.Json.WriterInstructors
     /// <summary>
     ///     Represents a JSON Writer Instructor that serializes non-primitive .NET objects (no collections, no dictionaries) to complex JSON objects.
     /// </summary>
-    public sealed class ComplexObjectInstructor : IJsonWriterInstructor
+    public sealed class ComplexObjectInstructor : IJsonWriterInstructor, ISetObjectMetadataInstructor
     {
         private IObjectMetadataInstructor _metadataInstructor;
         private IReadableValuesTypeAnalyzer _typeAnalyzer;

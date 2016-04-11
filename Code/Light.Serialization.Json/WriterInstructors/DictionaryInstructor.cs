@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Light.GuardClauses;
+using Light.Serialization.Json.BuilderInjection;
 using Light.Serialization.Json.ObjectMetadata;
 using Light.Serialization.Json.PrimitiveTypeFormatters;
 
@@ -10,10 +11,10 @@ namespace Light.Serialization.Json.WriterInstructors
     /// <summary>
     ///     Represents a JSON Writer Instructor that serializes .NET dictionaries to complex JSON objects.
     /// </summary>
-    public sealed class DictionaryInstructor : IJsonWriterInstructor
+    public sealed class DictionaryInstructor : IJsonWriterInstructor, ISetObjectMetadataInstructor
     {
-        private readonly IObjectMetadataInstructor _metadataInstructor;
         private readonly IDictionary<Type, IPrimitiveTypeFormatter> _primitiveTypeToFormattersMapping;
+        private IObjectMetadataInstructor _metadataInstructor;
 
         /// <summary>
         ///     Creates a new instance of <see cref="DictionaryInstructor" />.
@@ -93,6 +94,19 @@ namespace Light.Serialization.Json.WriterInstructors
                     break;
             }
             writer.EndObject();
+        }
+
+        /// <summary>
+        ///     Gets or sets the object used to serialize the metadata section of the dictionary.
+        /// </summary>
+        public IObjectMetadataInstructor MetadataInstructor
+        {
+            get { return _metadataInstructor; }
+            set
+            {
+                value.MustNotBeNull(nameof(value));
+                _metadataInstructor = value;
+            }
         }
     }
 }

@@ -52,6 +52,7 @@
     <Compile Include="FrameworkExtensions\ReflectionExtensions.cs" />
     <Compile Include="FrameworkExtensions\StringBuilderExtensions.cs" />
     <Compile Include="FrameworkExtensions\StringExtensions.cs" />
+    <Compile Include="BuilderInjection\ISetObjectMetadataInstructor.cs" />
     <Compile Include="JsonSerializerBuilder.cs" />
     <Compile Include="JsonSerializerBuilderExtensions.cs" />
     <Compile Include="LowLevelWriting\IJsonWriter.cs" />

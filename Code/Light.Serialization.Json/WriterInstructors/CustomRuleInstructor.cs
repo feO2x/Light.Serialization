@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Light.GuardClauses;
+using Light.Serialization.Json.BuilderInjection;
 using Light.Serialization.Json.ComplexTypeDecomposition;
 using Light.Serialization.Json.ObjectMetadata;
 
@@ -10,11 +11,16 @@ namespace Light.Serialization.Json.WriterInstructors
     ///     Represents a JSON Writer Instructor that has a fixed set of value providers for a certain complex type.
     ///     Instances of this class are created i.a. when defining custom serialization rules for certain types.
     /// </summary>
-    public sealed class CustomRuleInstructor : IJsonWriterInstructor
+    public sealed class CustomRuleInstructor : IJsonWriterInstructor, ISetObjectMetadataInstructor
     {
-        private readonly IObjectMetadataInstructor _metadataInstructor;
-        private readonly Type _targetType;
         private readonly IList<IValueProvider> _valueProviders;
+
+        /// <summary>
+        ///     Gets the type that this instructor is customized for.
+        /// </summary>
+        public readonly Type TargetType;
+
+        private IObjectMetadataInstructor _metadataInstructor;
 
         /// <summary>
         ///     Creates a new instance of <see cref="CustomRuleInstructor" />.
@@ -29,7 +35,7 @@ namespace Light.Serialization.Json.WriterInstructors
             targetType.MustNotBeNull(nameof(targetType));
             metadataInstructor.MustNotBeNull(nameof(metadataInstructor));
 
-            _targetType = targetType;
+            TargetType = targetType;
             _valueProviders = valueProviders;
             _metadataInstructor = metadataInstructor;
         }
@@ -39,7 +45,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// </summary>
         public bool IsSuitableFor(object @object, Type actualType, Type referencedType)
         {
-            return actualType == _targetType;
+            return actualType == TargetType;
         }
 
         /// <summary>
@@ -49,6 +55,19 @@ namespace Light.Serialization.Json.WriterInstructors
         public void Serialize(JsonSerializationContext serializationContext)
         {
             ComplexObjectHelper.SerializeComplexObject(serializationContext, _valueProviders, _metadataInstructor);
+        }
+
+        /// <summary>
+        ///     Gets or sets the object used to serialize the metadata section of the complex object.
+        /// </summary>
+        public IObjectMetadataInstructor MetadataInstructor
+        {
+            get { return _metadataInstructor; }
+            set
+            {
+                value.MustNotBeNull(nameof(value));
+                _metadataInstructor = value;
+            }
         }
     }
 }
