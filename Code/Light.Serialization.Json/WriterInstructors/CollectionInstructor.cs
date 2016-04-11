@@ -4,7 +4,7 @@ using System.Collections;
 namespace Light.Serialization.Json.WriterInstructors
 {
     /// <summary>
-    ///     Represents an <see cref="IJsonWriterInstructor" /> that serializes .NET collections to JSON arrays.
+    ///     Represents a JSON Writer Instructor that serializes .NET collections to JSON arrays.
     /// </summary>
     public sealed class CollectionInstructor : IJsonWriterInstructor
     {
@@ -12,7 +12,7 @@ namespace Light.Serialization.Json.WriterInstructors
         ///     Checks if the specified object implements the IEnumerable interface.
         /// </summary>
         /// <returns>True if the specified object is an <see cref="IEnumerable" />, else false.</returns>
-        public bool AppliesToObject(object @object, Type actualType, Type referencedType)
+        public bool IsSuitableFor(object @object, Type actualType, Type referencedType)
         {
             return @object is IEnumerable;
         }

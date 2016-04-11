@@ -5,13 +5,13 @@ using Light.Serialization.Json.FrameworkExtensions;
 namespace Light.Serialization.Json.PrimitiveTypeFormatters
 {
     /// <summary>
-    ///     Represents an <see cref="IPrimitiveTypeFormatter" /> that serializes a <see cref="TimeSpan" /> instance to a JSON string.
+    ///     Represents a Primitive Type Formatter that serializes a <see cref="TimeSpan" /> instance to a JSON string.
     ///     The format of the duration corresponds to ISO 8601 (https://en.wikipedia.org/wiki/ISO_8601).
     /// </summary>
     public sealed class TimeSpanFormatter : BasePrimitiveTypeFormatter<TimeSpan>, IPrimitiveTypeFormatter
     {
         /// <summary>
-        ///     Creates a new instance of <see cref="TimeSpanFormatter" />.
+        ///     Creates a new instance of TimeSpanFormatter.
         /// </summary>
         public TimeSpanFormatter() : base(false) { }
 

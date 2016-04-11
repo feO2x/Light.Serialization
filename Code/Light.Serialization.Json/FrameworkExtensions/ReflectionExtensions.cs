@@ -8,7 +8,7 @@ using Light.GuardClauses.FrameworkExtensions;
 namespace Light.Serialization.Json.FrameworkExtensions
 {
     /// <summary>
-    ///     Provides extension methods for <see cref="TypeInfo" /> instances.
+    ///     Provides extension methods for TypeInfo instances.
     /// </summary>
     public static class ReflectionExtensions
     {

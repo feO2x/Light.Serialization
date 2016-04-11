@@ -6,7 +6,7 @@ using Light.GuardClauses;
 namespace Light.Serialization.Json.FrameworkExtensions
 {
     /// <summary>
-    ///     Provides extension methods for <see cref="Expression" /> instances.
+    ///     Provides extension methods for Expression instances.
     /// </summary>
     public static class ExpressionExtensions
     {

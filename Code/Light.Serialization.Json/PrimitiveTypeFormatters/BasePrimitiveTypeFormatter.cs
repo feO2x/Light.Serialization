@@ -3,7 +3,7 @@
 namespace Light.Serialization.Json.PrimitiveTypeFormatters
 {
     /// <summary>
-    ///     Provides <see cref="TargetType" /> and <see cref="ShouldBeNormalizedKey" /> members for classes that want to implement the <see cref="IPrimitiveTypeFormatter" /> interface.
+    ///     Provides <see cref="TargetType" /> and <see cref="ShouldBeNormalizedKey" /> members for classes that want to implement the IPrimitiveTypeFormatter interface.
     /// </summary>
     /// <typeparam name="T">The primitive type that the formatter serializes.</typeparam>
     public abstract class BasePrimitiveTypeFormatter<T>

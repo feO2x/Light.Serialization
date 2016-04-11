@@ -1,4 +1,7 @@
-﻿namespace Light.Serialization.Json.LowLevelWriting
+﻿using System;
+using Light.GuardClauses.Exceptions;
+
+namespace Light.Serialization.Json.LowLevelWriting
 {
     /// <summary>
     ///     Represents the abstraction of an object that provides a low level API for writing a JSON document.
@@ -30,13 +33,16 @@
         /// </summary>
         /// <param name="key">The key to be written.</param>
         /// <param name="shouldNormalizeKey">
-        ///     The boolean indicating whether the specified key should be normalized to the default JSON naming style (Lower-Camel-Case).
+        ///     The boolean indicating whether the specified key should be normalized to the default JSON naming style (lowerCamelCase).
         ///     This option is true by default. Don't use it for key types like GUIDs where normalization would change the value.
         /// </param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="key"/> is null.</exception>
+        /// <exception cref="EmptyStringException">Thrown when <paramref name="key"/> is an empty string.</exception>
+        /// <exception cref="StringIsOnlyWhiteSpaceException">Thrown when <paramref name="key"/> contains only whitespace.</exception>
         void WriteKey(string key, bool shouldNormalizeKey = true);
 
         /// <summary>
-        ///     Writers a delimiter after a value in currently open JSON object or JSON array.
+        ///     Writers a delimiter after a value in a currently open JSON object or JSON array.
         /// </summary>
         void WriteDelimiter();
 

@@ -42,7 +42,7 @@ namespace Light.Serialization.Json.Tests
 
         protected string GetSerializedHumanReadableJson<T>(T value)
         {
-            Container.RegisterIndentingWhitespaceformatter();
+            Container.UserIndentingWhitespaceFormatterForSerialization();
             var jsonSerializer = Container.Resolve<ISerializer>();
 
             return jsonSerializer.Serialize(value);

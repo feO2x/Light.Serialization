@@ -3,12 +3,12 @@
 namespace Light.Serialization.Json.PrimitiveTypeFormatters
 {
     /// <summary>
-    ///     Represents an <see cref="IPrimitiveTypeFormatter" /> that serializes .NET boolean values to JSON boolean values.
+    ///     Represents a Primitive Type Formatter that serializes .NET boolean values to JSON boolean values.
     /// </summary>
     public sealed class BooleanFormatter : BasePrimitiveTypeFormatter<bool>, IPrimitiveTypeFormatter
     {
         /// <summary>
-        ///     Creates a new instance of <see cref="BooleanFormatter" />.
+        ///     Creates a new instance of BooleanFormatter.
         /// </summary>
         public BooleanFormatter() : base(false) { }
 

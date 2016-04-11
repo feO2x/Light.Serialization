@@ -5,14 +5,14 @@ using Light.Serialization.Json.FrameworkExtensions;
 namespace Light.Serialization.Json.WriterInstructors
 {
     /// <summary>
-    ///     Represents an <see cref="IJsonWriterInstructor" /> that serializes .NET enum values to JSON strings.
+    ///     Represents a JSON Writer Instructor that serializes .NET enum values to JSON strings.
     /// </summary>
     public sealed class EnumInstructor : IJsonWriterInstructor
     {
         /// <summary>
         ///     Checks if the actual type is an enum.
         /// </summary>
-        public bool AppliesToObject(object @object, Type actualType, Type referencedType)
+        public bool IsSuitableFor(object @object, Type actualType, Type referencedType)
         {
             return actualType.GetTypeInfo().IsEnum;
         }

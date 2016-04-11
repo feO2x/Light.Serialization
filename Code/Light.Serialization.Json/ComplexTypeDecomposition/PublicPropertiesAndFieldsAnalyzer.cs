@@ -13,7 +13,7 @@ namespace Light.Serialization.Json.ComplexTypeDecomposition
         private IValueProviderFactory _valueProviderFactory = new ValueProviderFactoryUsingLambdas();
 
         /// <summary>
-        ///     Gets or sets the factory that is used to create <see cref="IValueProvider" /> instances. This value defaults to <see cref="ValueProviderFactoryUsingLambdas" />.
+        ///     Gets or sets the factory that is used to create IValueProvider instances. This value defaults to ValueProviderFactoryUsingLambdas.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
         public IValueProviderFactory ValueProviderFactory

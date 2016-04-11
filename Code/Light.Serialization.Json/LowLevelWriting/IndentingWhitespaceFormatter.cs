@@ -39,7 +39,7 @@ namespace Light.Serialization.Json.LowLevelWriting
         {
             writer.MustNotBeNull(nameof(writer));
 
-            NewlineWithoutIndentation(writer);
+            writer.WritePrimitiveValue(Environment.NewLine);
             _currentIndentationLevel++;
             WriteIndent(writer);
         }
@@ -53,7 +53,7 @@ namespace Light.Serialization.Json.LowLevelWriting
         {
             writer.MustNotBeNull(nameof(writer));
 
-            NewlineWithoutIndentation(writer);
+            writer.WritePrimitiveValue(Environment.NewLine);
             WriteIndent(writer);
         }
 
@@ -66,7 +66,7 @@ namespace Light.Serialization.Json.LowLevelWriting
         {
             writer.MustNotBeNull(nameof(writer));
 
-            NewlineWithoutIndentation(writer);
+            writer.WritePrimitiveValue(Environment.NewLine);
             _currentIndentationLevel--;
             WriteIndent(writer);
         }
@@ -97,11 +97,6 @@ namespace Light.Serialization.Json.LowLevelWriting
             {
                 writer.WritePrimitiveValue(IdentCharacters);
             }
-        }
-
-        private static void NewlineWithoutIndentation(IJsonWriter writer)
-        {
-            writer.WritePrimitiveValue(Environment.NewLine);
         }
     }
 }

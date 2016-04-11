@@ -22,9 +22,9 @@ namespace Light.Serialization.Json.LowLevelWriting
         {
             key.MustNotBeNullOrEmpty(nameof(key));
 
-            int i;
+            var i = 0;
             char character;
-            for (i = 0; i < key.Length; i++)
+            for (; i < key.Length; i++)
             {
                 character = key[i];
                 if (char.IsLetterOrDigit(character) == false)

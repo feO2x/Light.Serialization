@@ -20,7 +20,7 @@ namespace Light.Serialization.Json.SerializationRules
 
 
         /// <summary>
-        ///     Creates a new instance of <see cref="Rule" />
+        ///     Creates a new instance of Rule.
         /// </summary>
         /// <param name="targetType">The type this rule is created for.</param>
         protected Rule(Type targetType)
@@ -77,7 +77,7 @@ namespace Light.Serialization.Json.SerializationRules
         private readonly IReadableValuesTypeAnalyzer _typeAnalyzer;
 
         /// <summary>
-        ///     Creates a new instance of <see cref="Rule{T}" />.
+        ///     Creates a new instance of Rule of T.
         /// </summary>
         /// <param name="typeAnalyzer">The type analyzer used to create the value providers when calling <see cref="CreateValueProviders" />.</param>
         public Rule(IReadableValuesTypeAnalyzer typeAnalyzer) : base(typeof (T))

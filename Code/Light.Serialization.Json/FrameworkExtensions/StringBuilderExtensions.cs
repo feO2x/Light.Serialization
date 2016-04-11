@@ -5,7 +5,7 @@ using Light.GuardClauses;
 namespace Light.Serialization.Json.FrameworkExtensions
 {
     /// <summary>
-    ///     Provides extension methods for the <see cref="StringBuilder" /> class.
+    ///     Provides extension methods for the StringBuilder class.
     /// </summary>
     public static class StringBuilderExtensions
     {

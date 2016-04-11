@@ -8,7 +8,7 @@ using Light.Serialization.Json.PrimitiveTypeFormatters;
 namespace Light.Serialization.Json.WriterInstructors
 {
     /// <summary>
-    ///     Represents an <see cref="IJsonWriterInstructor" /> that serializes .NET dictionaries to complex JSON objects.
+    ///     Represents a JSON Writer Instructor that serializes .NET dictionaries to complex JSON objects.
     /// </summary>
     public sealed class DictionaryInstructor : IJsonWriterInstructor
     {
@@ -33,7 +33,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// <summary>
         ///     Checks if the specified object is an <see cref="IDictionary" /> instance.
         /// </summary>
-        public bool AppliesToObject(object @object, Type actualType, Type referencedType)
+        public bool IsSuitableFor(object @object, Type actualType, Type referencedType)
         {
             return @object is IDictionary;
         }

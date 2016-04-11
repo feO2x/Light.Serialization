@@ -11,13 +11,13 @@ namespace Light.Serialization.Json
     /// <summary>
     ///     Provides extension methods to populate collections with the default instances of JSON writer instructors and primitive type formatters.
     /// </summary>
-    public static class JsonSerializerBuildExtensions
+    public static class JsonSerializerBuilderExtensions
     {
         /// <summary>
         ///     Populates the specified list with the default primitive type formatters.
         /// </summary>
         /// <param name="targetList">The collection that will be populated.</param>
-        /// <param name="characterEscaper">The character escaper that will be injected into the <see cref="CharFormatter" /> and <see cref="StringFormatter" />.</param>
+        /// <param name="characterEscaper">The character escaper that will be injected into the CharFormatter and StringFormatter.</param>
         /// <returns>The list for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when any parameter is null.</exception>
         public static IList<IPrimitiveTypeFormatter> AddDefaultPrimitiveTypeFormatters(this IList<IPrimitiveTypeFormatter> targetList, ICharacterEscaper characterEscaper)
@@ -51,8 +51,8 @@ namespace Light.Serialization.Json
         /// </summary>
         /// <typeparam name="TCollection">The type of the collection that will be populated.</typeparam>
         /// <param name="targetList">The collection that will be populated.</param>
-        /// <param name="primitiveTypeToFormattersMapping">The dictionary containing the mapping from type to primitive type formatter, which will be injected into the <see cref="PrimitiveValueInstructor" /> and <see cref="DictionaryInstructor" />.</param>
-        /// <param name="readableValuesTypeAnalyzer">The type analyzer that will be injected into the <see cref="ComplexObjectInstructor" />.</param>
+        /// <param name="primitiveTypeToFormattersMapping">The dictionary containing the mapping from type to primitive type formatter, which will be injected into the PrimitiveValueInstructor and DictionaryInstructor.</param>
+        /// <param name="readableValuesTypeAnalyzer">The type analyzer that will be injected into the ComplexObjectInstructor.</param>
         /// <param name="metadataInstructor">The instructor used to serialize the metadata section of complex JSON objects.</param>
         /// <returns>The collection for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when any parameter is null.</exception>

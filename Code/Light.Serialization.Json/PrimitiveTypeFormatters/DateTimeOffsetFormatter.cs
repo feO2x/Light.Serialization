@@ -5,13 +5,13 @@ using Light.Serialization.Json.FrameworkExtensions;
 namespace Light.Serialization.Json.PrimitiveTypeFormatters
 {
     /// <summary>
-    ///     Represents an <see cref="IPrimitiveTypeFormatter" /> that serializes <see cref="DateTimeOffset" /> instances to JSON strings.
+    ///     Represents a Primitive Type Formatter that serializes DateTimeOffset instances to JSON strings.
     ///     The format of the date time corresponds to ISO 8601 (https://en.wikipedia.org/wiki/ISO_8601).
     /// </summary>
     public sealed class DateTimeOffsetFormatter : BasePrimitiveTypeFormatter<DateTimeOffset>, IPrimitiveTypeFormatter
     {
         /// <summary>
-        ///     Creates a new intance of <see cref="DateTimeOffsetFormatter" />.
+        ///     Creates a new intance of DateTimeOffsetFormatter.
         /// </summary>
         public DateTimeOffsetFormatter() : base(false) { }
 
@@ -20,7 +20,7 @@ namespace Light.Serialization.Json.PrimitiveTypeFormatters
         /// </summary>
         /// <param name="primitiveValue">The date time offset that will be serialized.</param>
         /// <returns>The JSON string conforming to ISO 8601.</returns>
-        /// <exception cref="InvalidCastException">Thrown when the specified <paramref name="primitiveValue" /> is not of type <see cref="DateTimeOffset" />.</exception>
+        /// <exception cref="InvalidCastException">Thrown when the specified <paramref name="primitiveValue" /> is not of type DateTimeOffset.</exception>
         public string FormatPrimitiveType(object primitiveValue)
         {
             var dateTimeOffset = (DateTimeOffset) primitiveValue;

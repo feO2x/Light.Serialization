@@ -4,12 +4,12 @@ using System.Reflection;
 namespace Light.Serialization.Json.ComplexTypeDecomposition
 {
     /// <summary>
-    ///     Represents a factory that creates <see cref="IValueProvider" /> instances out of property infos or field infos.
+    ///     Represents a factory that creates IValueProvider instances out of property infos or field infos.
     /// </summary>
     public interface IValueProviderFactory
     {
         /// <summary>
-        ///     Creates a <see cref="IValueProvider" /> instance for the specified property info.
+        ///     Creates a IValueProvider instance for the specified property info.
         /// </summary>
         /// <param name="targetType">The type that the property belongs to.</param>
         /// <param name="propertyInfo">The info describing the property.</param>
@@ -18,7 +18,7 @@ namespace Light.Serialization.Json.ComplexTypeDecomposition
         IValueProvider Create(Type targetType, PropertyInfo propertyInfo);
 
         /// <summary>
-        ///     Creates a <see cref="IValueProvider" /> instance for the specified field info.
+        ///     Creates a IValueProvider instance for the specified field info.
         /// </summary>
         /// <param name="targetType">The type that the field belongs to.</param>
         /// <param name="fieldInfo">The info describing the field.</param>

@@ -13,7 +13,7 @@ using Light.Serialization.Json.WriterInstructors;
 namespace Light.Serialization.Json
 {
     /// <summary>
-    ///     Represents a builder for <see cref="JsonSerializer" /> instances.
+    ///     Represents a builder for JSON Serializer instances.
     /// </summary>
     public class JsonSerializerBuilder
     {

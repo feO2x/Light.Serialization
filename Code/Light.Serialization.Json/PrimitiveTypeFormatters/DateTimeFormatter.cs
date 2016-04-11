@@ -5,7 +5,7 @@ using Light.Serialization.Json.FrameworkExtensions;
 namespace Light.Serialization.Json.PrimitiveTypeFormatters
 {
     /// <summary>
-    ///     Represents a <see cref="IPrimitiveTypeFormatter" /> that serializes .NET <see cref="DateTime" /> instances to JSON string.
+    ///     Represents a Primitive Type Formatter that serializes .NET DateTime instances to JSON string.
     ///     The format of the date time corresponds to ISO 8601 (https://en.wikipedia.org/wiki/ISO_8601).
     /// </summary>
     public sealed class DateTimeFormatter : BasePrimitiveTypeFormatter<DateTime>, IPrimitiveTypeFormatter
@@ -36,7 +36,7 @@ namespace Light.Serialization.Json.PrimitiveTypeFormatters
         /// </summary>
         /// <param name="primitiveValue">The date time to be serialized.</param>
         /// <returns>The JSON string conforming to ISO 8601.</returns>
-        /// <exception cref="InvalidCastException">Thrown when the specified <paramref name="primitiveValue" /> is not of type <see cref="DateTime" />.</exception>
+        /// <exception cref="InvalidCastException">Thrown when the specified <paramref name="primitiveValue" /> is not of type DateTime.</exception>
         public string FormatPrimitiveType(object primitiveValue)
         {
             var dateTime = (DateTime) primitiveValue;

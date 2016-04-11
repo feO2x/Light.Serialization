@@ -6,7 +6,7 @@ using Light.Serialization.Json.ObjectMetadata;
 namespace Light.Serialization.Json.WriterInstructors
 {
     /// <summary>
-    ///     Represents an <see cref="IJsonWriterInstructor" /> that serializes non-primitive .NET objects (no collections, no dictionaries) to complex JSON objects.
+    ///     Represents a JSON Writer Instructor that serializes non-primitive .NET objects (no collections, no dictionaries) to complex JSON objects.
     /// </summary>
     public sealed class ComplexObjectInstructor : IJsonWriterInstructor
     {
@@ -55,10 +55,10 @@ namespace Light.Serialization.Json.WriterInstructors
 
         /// <summary>
         ///     Checks if the specified object is no delegate. Important: the complex object instructor should be the last one in the collection of writer instructors
-        ///     so that it is ruled out that this instructor serializes a dictionary.
+        ///     so that it is ruled out that this instructor serializes a dictionary (or other complex .NET types that should not be treated by it).
         /// </summary>
         /// <returns>True if the specified object is no delegate, else false.</returns>
-        public bool AppliesToObject(object @object, Type actualType, Type referencedType)
+        public bool IsSuitableFor(object @object, Type actualType, Type referencedType)
         {
             return @object is Delegate == false;
         }

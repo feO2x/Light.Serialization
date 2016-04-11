@@ -17,7 +17,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// <param name="context">The serialization context for the current value to be serialized.</param>
         /// <param name="valueProvidersForComplexObject">The value providers that can be used to read all values from the object to be serialized.</param>
         /// <param name="metadataInstructor">The object that serializes the metadata section of the complex object.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="valueProvidersForComplexObject" /> or <paramref name="metadataInstructor"/> are null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="valueProvidersForComplexObject" /> or <paramref name="metadataInstructor"/> is null.</exception>
         public static void SerializeComplexObject(JsonSerializationContext context, IList<IValueProvider> valueProvidersForComplexObject, IObjectMetadataInstructor metadataInstructor)
         {
             valueProvidersForComplexObject.MustNotBeNull(nameof(valueProvidersForComplexObject));

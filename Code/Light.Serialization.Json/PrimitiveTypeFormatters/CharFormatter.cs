@@ -5,7 +5,7 @@ using Light.Serialization.Json.FrameworkExtensions;
 namespace Light.Serialization.Json.PrimitiveTypeFormatters
 {
     /// <summary>
-    ///     Represents an <see cref="IPrimitiveTypeFormatter" /> that serializes .NET characters to JSON strings.
+    ///     Represents a Primitive Type Formatter that serializes .NET characters to JSON strings.
     /// </summary>
     public sealed class CharFormatter : BasePrimitiveTypeFormatter<char>, IPrimitiveTypeFormatter
     {

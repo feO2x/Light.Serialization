@@ -12,7 +12,7 @@ namespace Light.Serialization.Json.ComplexTypeDecomposition
         private readonly Func<object, object> _lambda;
 
         /// <summary>
-        ///     Creates a new instance of <see cref="ValueProviderUsingLambda" />.
+        ///     Creates a new instance of ValueProviderUsingLambda.
         /// </summary>
         /// <param name="name">The name of the member that is read from.</param>
         /// <param name="lambda">The delegate that reads the actual value from the target object.</param>
@@ -51,7 +51,7 @@ namespace Light.Serialization.Json.ComplexTypeDecomposition
         }
 
         /// <summary>
-        ///     Returns the string representation of this <see cref="ValueProviderUsingLambda" /> instance.
+        ///     Returns the string representation of this ValueProviderUsingLambda instance.
         /// </summary>
         public override string ToString()
         {

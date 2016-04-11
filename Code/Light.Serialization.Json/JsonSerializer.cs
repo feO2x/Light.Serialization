@@ -91,7 +91,7 @@ namespace Light.Serialization.Json
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (var writerInstructor in _writerInstructors)
             {
-                if (writerInstructor.AppliesToObject(@object, objectType, referencedType))
+                if (writerInstructor.IsSuitableFor(@object, objectType, referencedType))
                     return writerInstructor;
             }
             return null;

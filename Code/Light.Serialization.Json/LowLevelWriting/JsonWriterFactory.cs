@@ -7,7 +7,7 @@ using Light.GuardClauses;
 namespace Light.Serialization.Json.LowLevelWriting
 {
     /// <summary>
-    ///     Represents the factory that creates the default <see cref="JsonWriter" /> and manages all corresponding disposables.
+    ///     Represents the factory that creates the default JSON Writer and manages all corresponding disposables.
     /// </summary>
     public sealed class JsonWriterFactory : IJsonWriterFactory
     {
@@ -18,7 +18,7 @@ namespace Light.Serialization.Json.LowLevelWriting
         private StringWriter _stringWriter;
 
         /// <summary>
-        ///     Gets or sets the Whitespace Formatter used to format the document. This value defaults to a <see cref="WhitespaceFormatterNullObject" /> instance.
+        ///     Gets or sets the Whitespace Formatter used to format the document. This value defaults to a WhitespaceFormatterNullObject instance.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
         public IJsonWhitespaceFormatter JsonWhitespaceFormatter
@@ -32,7 +32,7 @@ namespace Light.Serialization.Json.LowLevelWriting
         }
 
         /// <summary>
-        ///     Gets or sets the normalizer that is used to format keys in complex JSON objects. This values defaults to a <see cref="FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer" /> instance.
+        ///     Gets or sets the normalizer that is used to format keys in complex JSON objects. This values defaults to a FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer instance.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
         public IJsonKeyNormalizer KeyNormalizer
@@ -46,11 +46,14 @@ namespace Light.Serialization.Json.LowLevelWriting
         }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="JsonWriter" /> using a <see cref="StringBuilder" /> and <see cref="StringWriter" />.
+        ///     Creates a new instance of JsonWriter using a StringBuilder and StringWriter.
         /// </summary>
-        /// <returns>The initialized <see cref="JsonWriter" />.</returns>
+        /// <returns>The initialized JsonWriter.</returns>
         public IJsonWriter Create()
         {
+            Check.That(_stringBuilder == null,
+                       () => new InvalidOperationException("You cannot call Create before releasing the objects of a previous Create call."));
+
             _stringBuilder = new StringBuilder();
             _stringWriter = new StringWriter(_stringBuilder);
             IJsonWriter returnValue = new JsonWriter(_stringWriter, _jsonWhitespaceFormatter, _keyNormalizer);
@@ -63,11 +66,15 @@ namespace Light.Serialization.Json.LowLevelWriting
         }
 
         /// <summary>
-        ///     Releases the <see cref="StringBuilder" /> and <see cref="StringWriter" /> that were created for the <see cref="JsonWriter" /> and returns the resulting JSON document.
+        ///     Releases the StringBuilder and the StringWriter that were created for the JsonWriter and returns the resulting JSON document.
         /// </summary>
         /// <returns>The JSON document as a string.</returns>
         public string FinishWriteProcessAndReleaseResources()
         {
+            Check.Against(_stringBuilder == null,
+                          () => new InvalidOperationException("FinishWriteProcessAndReleaseResources must be called after Create."));
+
+            // ReSharper disable once PossibleNullReferenceException
             var returnValue = _stringBuilder.ToString();
             _stringWriter = null;
             _stringBuilder = null;
@@ -75,9 +82,9 @@ namespace Light.Serialization.Json.LowLevelWriting
         }
 
         /// <summary>
-        ///     Registers the specified delegate with this factory that is called during <see cref="Create" />. The delegate should then decorate the <see cref="JsonWriter" />.
+        ///     Registers the specified delegate with this factory that is called during <see cref="Create" />. The delegate should then decorate the JsonWriter.
         /// </summary>
-        /// <param name="decoratorFunction">The delegate that decorates the <see cref="JsonWriter" /> with another object.</param>
+        /// <param name="decoratorFunction">The delegate that decorates the JsonWriter with another object.</param>
         /// <returns>The factory for method-chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="decoratorFunction" /> is null.</exception>
         public JsonWriterFactory DecorateCreationWith(Func<IJsonWriter, IJsonWriter> decoratorFunction)

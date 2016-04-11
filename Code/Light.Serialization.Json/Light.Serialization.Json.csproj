@@ -53,7 +53,7 @@
     <Compile Include="FrameworkExtensions\StringBuilderExtensions.cs" />
     <Compile Include="FrameworkExtensions\StringExtensions.cs" />
     <Compile Include="JsonSerializerBuilder.cs" />
-    <Compile Include="JsonSerializerBuildExtensions.cs" />
+    <Compile Include="JsonSerializerBuilderExtensions.cs" />
     <Compile Include="LowLevelWriting\IJsonWriter.cs" />
     <Compile Include="LowLevelWriting\IJsonWriterFactory.cs" />
     <Compile Include="ObjectMetadata\IClearSerializedObjectsCache.cs" />

@@ -6,12 +6,12 @@ using Light.GuardClauses;
 namespace Light.Serialization.Json.ComplexTypeDecomposition
 {
     /// <summary>
-    ///     Represents a value provider factory that dynamically creates <see cref="Expression" /> trees and compiles them for <see cref="ValueProviderUsingLambda" /> instances to read values from properties or fields.
+    ///     Represents a value provider factory that dynamically creates Expression trees and compiles them for ValueProviderUsingLambda instances to read values from properties or fields.
     /// </summary>
     public sealed class ValueProviderFactoryUsingLambdas : IValueProviderFactory
     {
         /// <summary>
-        ///     Creates a <see cref="ValueProviderUsingLambda" /> for the specified property info.
+        ///     Creates a ValueProviderUsingLambda for the specified property info.
         /// </summary>
         /// <param name="targetType">The type that has the specified property as a member.</param>
         /// <param name="propertyInfo">The info describing the property.</param>
@@ -34,7 +34,7 @@ namespace Light.Serialization.Json.ComplexTypeDecomposition
         }
 
         /// <summary>
-        ///     Creates a <see cref="ValueProviderUsingLambda" /> for the specified property info.
+        ///     Creates a ValueProviderUsingLambda for the specified property info.
         /// </summary>
         /// <param name="targetType">The type that has the specified field as a member.</param>
         /// <param name="fieldInfo">The info describing the field.</param>

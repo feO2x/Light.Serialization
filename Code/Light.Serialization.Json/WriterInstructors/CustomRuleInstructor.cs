@@ -7,8 +7,8 @@ using Light.Serialization.Json.ObjectMetadata;
 namespace Light.Serialization.Json.WriterInstructors
 {
     /// <summary>
-    ///     Represents an <see cref="IJsonWriterInstructor" /> that has a fixed set of value providers for a certain complex type.
-    ///     Instances of this class are created i.a. when defining custom rules for certain types.
+    ///     Represents a JSON Writer Instructor that has a fixed set of value providers for a certain complex type.
+    ///     Instances of this class are created i.a. when defining custom serialization rules for certain types.
     /// </summary>
     public sealed class CustomRuleInstructor : IJsonWriterInstructor
     {
@@ -37,7 +37,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// <summary>
         ///     Checks if the actual type is equal to the target type registered with this instructor.
         /// </summary>
-        public bool AppliesToObject(object @object, Type actualType, Type referencedType)
+        public bool IsSuitableFor(object @object, Type actualType, Type referencedType)
         {
             return actualType == _targetType;
         }

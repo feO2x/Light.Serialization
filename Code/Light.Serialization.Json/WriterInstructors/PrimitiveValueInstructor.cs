@@ -31,7 +31,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// <summary>
         ///     Checks if there is a primitive type mapper for the specified actual type.
         /// </summary>
-        public bool AppliesToObject(object @object, Type actualType, Type referencedType)
+        public bool IsSuitableFor(object @object, Type actualType, Type referencedType)
         {
             return PrimitiveTypeToFormattersMapping.ContainsKey(actualType);
         }
