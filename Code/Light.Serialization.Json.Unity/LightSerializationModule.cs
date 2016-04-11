@@ -6,6 +6,7 @@ using Light.Serialization.Abstractions;
 using Light.Serialization.Json.Caching;
 using Light.Serialization.Json.ComplexTypeDecomposition;
 using Light.Serialization.Json.LowLevelWriting;
+using Light.Serialization.Json.ObjectMetadata;
 using Light.Serialization.Json.PrimitiveTypeFormatters;
 using Light.Serialization.Json.WriterInstructors;
 using Microsoft.Practices.Unity;
@@ -39,7 +40,8 @@ namespace Light.Serialization.Json.Unity
                             .RegisterTypeWithTypeName<IJsonWriterInstructor, ComplexObjectInstructor>(new ContainerControlledLifetimeManager())
                             .RegisterType<IDictionary<Type, IPrimitiveTypeFormatter>>(new ContainerControlledLifetimeManager(),
                                                                                       new InjectionFactory(c => c.ResolveAll<IPrimitiveTypeFormatter>().ToDictionary(f => f.TargetType)))
-                            .RegisterType<IPrimitiveTypeFormatter>(KnownNames.IntFormatter, new ContainerControlledLifetimeManager(),
+                            .RegisterType<IPrimitiveTypeFormatter>(KnownNames.IntFormatter,
+                                                                   new ContainerControlledLifetimeManager(),
                                                                    new InjectionFactory(c => new ToStringFormatter<int>(false)))
                             .RegisterTypeWithTypeName<IPrimitiveTypeFormatter, StringFormatter>(new ContainerControlledLifetimeManager())
                             .RegisterTypeWithTypeName<IPrimitiveTypeFormatter, DoubleFormatter>(new ContainerControlledLifetimeManager())
@@ -79,7 +81,9 @@ namespace Light.Serialization.Json.Unity
                             .RegisterType<IReadableValuesTypeAnalyzer>(new ContainerControlledLifetimeManager(),
                                                                        new InjectionFactory(c => new ValueProvidersCacheDecorator(new PublicPropertiesAndFieldsAnalyzer(),
                                                                                                                                   new Dictionary<Type, IList<IValueProvider>>())))
-                            .RegisterType<IJsonWriterFactory, JsonWriterFactory>();
+                            .RegisterType<IJsonWriterFactory, JsonWriterFactory>()
+                            .RegisterType<IObjectMetadataInstructor, TypeAndReferenceMetadataInstructor>(new PerResolveLifetimeManager())
+                            .RegisterType<ITypeToNameMapping, SimpleNameToTypeMapping>(new ContainerControlledLifetimeManager());
         }
 
         /// <summary>
