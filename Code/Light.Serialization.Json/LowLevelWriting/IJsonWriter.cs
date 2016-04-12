@@ -36,9 +36,9 @@ namespace Light.Serialization.Json.LowLevelWriting
         ///     The boolean indicating whether the specified key should be normalized to the default JSON naming style (lowerCamelCase).
         ///     This option is true by default. Don't use it for key types like GUIDs where normalization would change the value.
         /// </param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="key"/> is null.</exception>
-        /// <exception cref="EmptyStringException">Thrown when <paramref name="key"/> is an empty string.</exception>
-        /// <exception cref="StringIsOnlyWhiteSpaceException">Thrown when <paramref name="key"/> contains only whitespace.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="key" /> is null.</exception>
+        /// <exception cref="EmptyStringException">Thrown when <paramref name="key" /> is an empty string.</exception>
+        /// <exception cref="StringIsOnlyWhiteSpaceException">Thrown when <paramref name="key" /> contains only whitespace.</exception>
         void WriteKey(string key, bool shouldNormalizeKey = true);
 
         /// <summary>

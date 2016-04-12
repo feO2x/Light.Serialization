@@ -131,7 +131,7 @@ namespace Light.Serialization.Json.ObjectMetadata
         }
 
         /// <summary>
-        ///     Serializes the JSON document ID and the type name of the specified object.
+        ///     Serializes the JSON object ID and the type name of the specified object.
         /// </summary>
         /// <param name="serializationContext">The serialization context for the object to be serialized.</param>
         /// <returns>True if the object was not serialized before, else false.</returns>
@@ -141,7 +141,7 @@ namespace Light.Serialization.Json.ObjectMetadata
 
             if (_isSerializingObjectIds)
             {
-                var indexOfObject = GetIndexOfAlreadySerializedObject(serializationContext.ObjectToBeSerialized, serializationContext.SerializedObjects);
+                var indexOfObject = serializationContext.SerializedObjects.GetIndexOfSame(serializationContext.ObjectToBeSerialized);
 
                 if (indexOfObject != -1)
                 {
@@ -213,16 +213,6 @@ namespace Light.Serialization.Json.ObjectMetadata
             }
 
             writer.EndObject();
-        }
-
-        private static int GetIndexOfAlreadySerializedObject(object @object, List<object> serializedObjects)
-        {
-            for (var i = 0; i < serializedObjects.Count; i++)
-            {
-                if (ReferenceEquals(serializedObjects[i], @object))
-                    return i;
-            }
-            return -1;
         }
     }
 }

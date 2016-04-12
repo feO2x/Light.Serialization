@@ -6,7 +6,7 @@ namespace Light.Serialization.Json.BuilderInterfaces
     public interface ISetObjectReferencePreservationStatus
     {
         /// <summary>
-        ///     Sets the value indicating whether object ids and references to objects are serialized in the metadata section of a complex JSON object.
+        ///     Sets the value indicating whether object ids and references to objects are serialized in the metadata section.
         /// </summary>
         bool IsSerializingObjectIds { set; }
     }

@@ -1,7 +1,7 @@
 ﻿namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents the abstraction of an object that serializes the metadata section ($key, $id, $ref) at the beginning of a complex JSON object.
+    ///     Represents the abstraction of an object that serializes the metadata section (e.g. $key, $id, $ref) at the beginning of a complex JSON object.
     /// </summary>
     public interface IObjectMetadataInstructor
     {
