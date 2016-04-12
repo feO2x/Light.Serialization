@@ -11,23 +11,23 @@ namespace Light.Serialization.Json.WriterInstructors
     /// <summary>
     ///     Represents a JSON Writer Instructor that serializes .NET dictionaries to complex JSON objects.
     /// </summary>
-    public sealed class DictionaryInstructor : IJsonWriterInstructor, ISetObjectMetadataInstructor
+    public sealed class DictionaryInstructor : IJsonWriterInstructor, ISetObjectMetadataInstructor, ISetPrimitiveTypeFormatters
     {
-        private readonly IDictionary<Type, IPrimitiveTypeFormatter> _primitiveTypeToFormattersMapping;
         private IObjectMetadataInstructor _metadataInstructor;
+        private IDictionary<Type, IPrimitiveTypeFormatter> _primitiveTypeFormattersMapping;
 
         /// <summary>
         ///     Creates a new instance of <see cref="DictionaryInstructor" />.
         /// </summary>
-        /// <param name="primitiveTypeToFormattersMapping">The dictionary containing mappings from type to primitive type formatters which are used to serialize keys.</param>
+        /// <param name="primitiveTypeFormattersMapping">The dictionary containing mappings from type to primitive type formatters which are used to serialize keys.</param>
         /// <param name="metadataInstructor">The object that is used to serialize the metadata section of the complex object.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="primitiveTypeToFormattersMapping" /> or <paramref name="metadataInstructor" /> is null.</exception>
-        public DictionaryInstructor(IDictionary<Type, IPrimitiveTypeFormatter> primitiveTypeToFormattersMapping, IObjectMetadataInstructor metadataInstructor)
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="primitiveTypeFormattersMapping" /> or <paramref name="metadataInstructor" /> is null.</exception>
+        public DictionaryInstructor(IDictionary<Type, IPrimitiveTypeFormatter> primitiveTypeFormattersMapping, IObjectMetadataInstructor metadataInstructor)
         {
-            primitiveTypeToFormattersMapping.MustNotBeNull(nameof(primitiveTypeToFormattersMapping));
+            primitiveTypeFormattersMapping.MustNotBeNull(nameof(primitiveTypeFormattersMapping));
             metadataInstructor.MustNotBeNull(nameof(metadataInstructor));
 
-            _primitiveTypeToFormattersMapping = primitiveTypeToFormattersMapping;
+            _primitiveTypeFormattersMapping = primitiveTypeFormattersMapping;
             _metadataInstructor = metadataInstructor;
         }
 
@@ -70,9 +70,9 @@ namespace Light.Serialization.Json.WriterInstructors
                 {
                     var keyType = key.GetType();
                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                    if (_primitiveTypeToFormattersMapping.ContainsKey(keyType))
+                    if (_primitiveTypeFormattersMapping.ContainsKey(keyType))
                     {
-                        var typeFormatter = _primitiveTypeToFormattersMapping[keyType];
+                        var typeFormatter = _primitiveTypeFormattersMapping[keyType];
                         writer.WriteKey(typeFormatter.FormatPrimitiveType(key), typeFormatter.ShouldBeNormalizedKey);
                     }
                     else
@@ -106,6 +106,20 @@ namespace Light.Serialization.Json.WriterInstructors
             {
                 value.MustNotBeNull(nameof(value));
                 _metadataInstructor = value;
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets the dictionary containing the mappings from types to primitive formattters.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
+        public IDictionary<Type, IPrimitiveTypeFormatter> PrimitiveTypeFormattersMapping
+        {
+            get { return _primitiveTypeFormattersMapping; }
+            set
+            {
+                value.MustNotBeNull(nameof(value));
+                _primitiveTypeFormattersMapping = value;
             }
         }
     }

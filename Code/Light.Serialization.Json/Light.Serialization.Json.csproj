@@ -41,6 +41,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuilderInjection\ISetPrimitiveTypeFormatters.cs" />
+    <Compile Include="BuilderInjection\ISetTypeAnalyzer.cs" />
     <Compile Include="Caching\ValueProvidersCacheDecorator.cs" />
     <Compile Include="ComplexTypeDecomposition\IReadableValuesTypeAnalyzer.cs" />
     <Compile Include="ComplexTypeDecomposition\IValueProvider.cs" />

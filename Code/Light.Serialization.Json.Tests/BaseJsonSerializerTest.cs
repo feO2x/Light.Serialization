@@ -51,7 +51,7 @@ namespace Light.Serialization.Json.Tests
 
         protected void ReplaceTimeZoneInfoInDateTimeFormatter(TimeZoneInfo timeZoneInfo)
         {
-            JsonSerializerBuilder.ConfigureFormatterOfPrimitiveValueInstructor<DateTimeFormatter>(f => f.TimeZoneInfo = timeZoneInfo);
+            JsonSerializerBuilder.ConfigurePrimitiveTypeFormatter<DateTimeFormatter>(f => f.TimeZoneInfo = timeZoneInfo);
         }
     }
 }

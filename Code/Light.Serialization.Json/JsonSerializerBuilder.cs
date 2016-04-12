@@ -24,10 +24,11 @@ namespace Light.Serialization.Json
         public readonly List<IJsonWriterInstructor> WriterInstructors;
 
         private ICharacterEscaper _characterEscaper = new DefaultCharacterEscaper();
+        private Func<IJsonWriterFactory> _createWriterFactory;
         private IDictionary<Type, IJsonWriterInstructor> _instructorCache;
         private IObjectMetadataInstructor _metadataInstructor = new TypeAndReferenceMetadataInstructor(new SimpleNameToTypeMapping());
+        private IDictionary<Type, IPrimitiveTypeFormatter> _primitiveTypeFormattersMapping;
         private IReadableValuesTypeAnalyzer _typeAnalyzer = new ValueProvidersCacheDecorator(new PublicPropertiesAndFieldsAnalyzer(), new Dictionary<Type, IList<IValueProvider>>());
-        private Func<IJsonWriterFactory> _createWriterFactory;
 
         /// <summary>
         ///     Initializes a new instance of <see cref="JsonSerializerBuilder" />.
@@ -37,11 +38,12 @@ namespace Light.Serialization.Json
             UseDefaultWriterFactory();
             _instructorCache = new Dictionary<Type, IJsonWriterInstructor>();
 
-            WriterInstructors = new List<IJsonWriterInstructor>()
-                .AddDefaultWriterInstructors(new List<IPrimitiveTypeFormatter>().AddDefaultPrimitiveTypeFormatters(_characterEscaper)
-                                                                                .ToDictionary(f => f.TargetType),
-                                             _typeAnalyzer,
-                                             _metadataInstructor);
+            _primitiveTypeFormattersMapping = new List<IPrimitiveTypeFormatter>().AddDefaultPrimitiveTypeFormatters(_characterEscaper)
+                                                                          .ToDictionary(f => f.TargetType);
+
+            WriterInstructors = new List<IJsonWriterInstructor>().AddDefaultWriterInstructors(_primitiveTypeFormattersMapping,
+                                                                                              _typeAnalyzer,
+                                                                                              _metadataInstructor);
         }
 
         /// <summary>
@@ -64,8 +66,8 @@ namespace Light.Serialization.Json
         {
             _characterEscaper = characterEscaper;
 
-            ConfigureFormatterOfPrimitiveValueInstructor<CharFormatter>(f => f.CharacterEscaper = characterEscaper);
-            ConfigureFormatterOfPrimitiveValueInstructor<StringFormatter>(f => f.CharacterEscaper = characterEscaper);
+            ConfigurePrimitiveTypeFormatter<CharFormatter>(f => f.CharacterEscaper = characterEscaper);
+            ConfigurePrimitiveTypeFormatter<StringFormatter>(f => f.CharacterEscaper = characterEscaper);
 
             return this;
         }
@@ -79,9 +81,65 @@ namespace Light.Serialization.Json
         {
             _typeAnalyzer = typeAnalyzer;
 
-            var complexObjectInstructor = WriterInstructors.OfType<ComplexObjectInstructor>().FirstOrDefault();
-            if (complexObjectInstructor != null)
-                complexObjectInstructor.TypeAnalyzer = _typeAnalyzer;
+            foreach (var instructor in WriterInstructors.OfType<ISetTypeAnalyzer>())
+            {
+                instructor.TypeAnalyzer = typeAnalyzer;
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        ///     Configures the builder to use the specified formatters instead of the default ones.
+        /// </summary>
+        /// <param name="formatters">The list containing all formatters to be used.</param>
+        /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="formatters" /> is null.</exception>
+        public JsonSerializerBuilder WithPrimitiveTypeFormatters(IList<IPrimitiveTypeFormatter> formatters)
+        {
+            formatters.MustNotBeNull(nameof(formatters));
+
+            _primitiveTypeFormattersMapping = formatters.ToDictionary(f => f.TargetType);
+
+            foreach (var instructor in WriterInstructors.OfType<ISetPrimitiveTypeFormatters>())
+            {
+                instructor.PrimitiveTypeFormattersMapping = _primitiveTypeFormattersMapping;
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Adds the specified formatter to the mapping of all primitive type formatters.
+        /// </summary>
+        /// <param name="formatter">The primitive type formatter to be added.</param>
+        /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="formatter"/> is null.</exception>
+        public JsonSerializerBuilder AddPrimitiveTypeFormatter(IPrimitiveTypeFormatter formatter)
+        {
+            formatter.MustNotBeNull(nameof(formatter));
+
+            _primitiveTypeFormattersMapping.Add(formatter.TargetType, formatter);
+
+            return this;
+        }
+
+        /// <summary>
+        ///     Configures the builder to use the specified formatters instead of the default ones.
+        /// </summary>
+        /// <param name="formattersMapping">The dictionary containing all formatters to be used.</param>
+        /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="formattersMapping" /> is null.</exception>
+        public JsonSerializerBuilder WithPrimitiveTypeFormatters(IDictionary<Type, IPrimitiveTypeFormatter> formattersMapping)
+        {
+            formattersMapping.MustNotBeNull(nameof(formattersMapping));
+
+            _primitiveTypeFormattersMapping = formattersMapping;
+
+            foreach (var instructor in WriterInstructors.OfType<ISetPrimitiveTypeFormatters>())
+            {
+                instructor.PrimitiveTypeFormattersMapping = _primitiveTypeFormattersMapping;
+            }
 
             return this;
         }
@@ -170,21 +228,20 @@ namespace Light.Serialization.Json
         /// <typeparam name="T">The type of the formatter that should be configured.</typeparam>
         /// <param name="configureFormatter">The delegate that configures the actual formatter instance.</param>
         /// <returns>The builder for method chaining.</returns>
-        public JsonSerializerBuilder ConfigureFormatterOfPrimitiveValueInstructor<T>(Action<T> configureFormatter)
+        public JsonSerializerBuilder ConfigurePrimitiveTypeFormatter<T>(Action<T> configureFormatter)
             where T : IPrimitiveTypeFormatter
         {
-            configureFormatter(WriterInstructors.OfType<PrimitiveValueInstructor>()
-                                                .First()
-                                                .PrimitiveTypeToFormattersMapping
-                                                .Values
-                                                .OfType<T>()
-                                                .First());
+            configureFormatter(_primitiveTypeFormattersMapping.OfType<T>()
+                                                       .First());
+
             return this;
         }
 
         /// <summary>
         ///     Creates a new serialization rule for the given type that is configured with the specified delegate.
         ///     An existing rule for the specified type will be replaced.
+        ///     Please note that every rule uses the IReadableValuesTypeAnalyzer instance that is registered with the builder.
+        ///     If you do not want to use the default instance, you should exchange it first.
         /// </summary>
         /// <typeparam name="T">The type that should be configured for serialization.</typeparam>
         /// <param name="configureRule">The delegate that configures the serialization rule.</param>

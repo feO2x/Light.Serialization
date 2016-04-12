@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Light.GuardClauses;
+using Light.Serialization.Json.BuilderInjection;
 using Light.Serialization.Json.PrimitiveTypeFormatters;
 
 namespace Light.Serialization.Json.WriterInstructors
@@ -9,23 +10,20 @@ namespace Light.Serialization.Json.WriterInstructors
     ///     Represents an <see cref="IJsonWriterInstructor" /> that serializes primitive types (such as int, double, bool, string) to
     ///     corresponding JSON values by using primitive type formatters.
     /// </summary>
-    public sealed class PrimitiveValueInstructor : IJsonWriterInstructor
+    public sealed class PrimitiveValueInstructor : IJsonWriterInstructor, ISetPrimitiveTypeFormatters
     {
-        /// <summary>
-        /// Gets the dictionary containing the mapping from type to primitive type formatter.
-        /// </summary>
-        public readonly IDictionary<Type, IPrimitiveTypeFormatter> PrimitiveTypeToFormattersMapping;
+        private IDictionary<Type, IPrimitiveTypeFormatter> _primitiveTypeFormattersMapping;
 
         /// <summary>
         ///     Creates a new instance of <see cref="PrimitiveValueInstructor" />.
         /// </summary>
-        /// <param name="primitiveTypeToFormattersMapping">The dictionary containing mappings from type to primitive type formatters which are used to .NET primitives.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="primitiveTypeToFormattersMapping" /> is null.</exception>
-        public PrimitiveValueInstructor(IDictionary<Type, IPrimitiveTypeFormatter> primitiveTypeToFormattersMapping)
+        /// <param name="primitiveTypeFormattersMapping">The dictionary containing mappings from type to primitive type formatters which are used to .NET primitives.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="primitiveTypeFormattersMapping" /> is null.</exception>
+        public PrimitiveValueInstructor(IDictionary<Type, IPrimitiveTypeFormatter> primitiveTypeFormattersMapping)
         {
-            primitiveTypeToFormattersMapping.MustNotBeNull(nameof(primitiveTypeToFormattersMapping));
+            primitiveTypeFormattersMapping.MustNotBeNull(nameof(primitiveTypeFormattersMapping));
 
-            PrimitiveTypeToFormattersMapping = primitiveTypeToFormattersMapping;
+            _primitiveTypeFormattersMapping = primitiveTypeFormattersMapping;
         }
 
         /// <summary>
@@ -33,7 +31,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// </summary>
         public bool IsSuitableFor(object @object, Type actualType, Type referencedType)
         {
-            return PrimitiveTypeToFormattersMapping.ContainsKey(actualType);
+            return _primitiveTypeFormattersMapping.ContainsKey(actualType);
         }
 
         /// <summary>
@@ -43,9 +41,23 @@ namespace Light.Serialization.Json.WriterInstructors
         /// <exception cref="KeyNotFoundException">Thrown when no primitive type formatter could be found in the internal dictionary using the actual type as key.</exception>
         public void Serialize(JsonSerializationContext serializationContext)
         {
-            var typeFormatter = PrimitiveTypeToFormattersMapping[serializationContext.ActualType];
+            var typeFormatter = _primitiveTypeFormattersMapping[serializationContext.ActualType];
             var stringRepresentation = typeFormatter.FormatPrimitiveType(serializationContext.ObjectToBeSerialized);
             serializationContext.Writer.WritePrimitiveValue(stringRepresentation);
+        }
+
+        /// <summary>
+        ///     Gets or sets the dictionary containing mappings from types to primitive formatters.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
+        public IDictionary<Type, IPrimitiveTypeFormatter> PrimitiveTypeFormattersMapping
+        {
+            get { return _primitiveTypeFormattersMapping; }
+            set
+            {
+                value.MustNotBeNull(nameof(value));
+                _primitiveTypeFormattersMapping = value;
+            }
         }
     }
 }

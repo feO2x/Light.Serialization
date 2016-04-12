@@ -9,7 +9,7 @@ namespace Light.Serialization.Json.WriterInstructors
     /// <summary>
     ///     Represents a JSON Writer Instructor that serializes non-primitive .NET objects (no collections, no dictionaries) to complex JSON objects.
     /// </summary>
-    public sealed class ComplexObjectInstructor : IJsonWriterInstructor, ISetObjectMetadataInstructor
+    public sealed class ComplexObjectInstructor : IJsonWriterInstructor, ISetObjectMetadataInstructor, ISetTypeAnalyzer
     {
         private IObjectMetadataInstructor _metadataInstructor;
         private IReadableValuesTypeAnalyzer _typeAnalyzer;
