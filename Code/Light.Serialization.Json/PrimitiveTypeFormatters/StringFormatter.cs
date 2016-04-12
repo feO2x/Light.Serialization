@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using Light.GuardClauses;
+using Light.Serialization.Json.BuilderInjection;
 using Light.Serialization.Json.FrameworkExtensions;
 
 namespace Light.Serialization.Json.PrimitiveTypeFormatters
@@ -8,7 +9,7 @@ namespace Light.Serialization.Json.PrimitiveTypeFormatters
     /// <summary>
     ///     Represents a Primitive Type Formatter that serializes .NET strings to JSON strings.
     /// </summary>
-    public sealed class StringFormatter : BasePrimitiveTypeFormatter<string>, IPrimitiveTypeFormatter
+    public sealed class StringFormatter : BasePrimitiveTypeFormatter<string>, IPrimitiveTypeFormatter, ISetCharacterEscaper
     {
         private static double _stringBuilderCapacityCoefficient = 2.0;
         private ICharacterEscaper _characterEscaper;

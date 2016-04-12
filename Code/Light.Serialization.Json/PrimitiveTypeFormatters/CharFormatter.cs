@@ -1,5 +1,6 @@
 ﻿using System;
 using Light.GuardClauses;
+using Light.Serialization.Json.BuilderInjection;
 using Light.Serialization.Json.FrameworkExtensions;
 
 namespace Light.Serialization.Json.PrimitiveTypeFormatters
@@ -7,7 +8,7 @@ namespace Light.Serialization.Json.PrimitiveTypeFormatters
     /// <summary>
     ///     Represents a Primitive Type Formatter that serializes .NET characters to JSON strings.
     /// </summary>
-    public sealed class CharFormatter : BasePrimitiveTypeFormatter<char>, IPrimitiveTypeFormatter
+    public sealed class CharFormatter : BasePrimitiveTypeFormatter<char>, IPrimitiveTypeFormatter, ISetCharacterEscaper
     {
         private ICharacterEscaper _characterEscaper;
 

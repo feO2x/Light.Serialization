@@ -39,7 +39,7 @@ namespace Light.Serialization.Json
             _instructorCache = new Dictionary<Type, IJsonWriterInstructor>();
 
             _primitiveTypeFormattersMapping = new List<IPrimitiveTypeFormatter>().AddDefaultPrimitiveTypeFormatters(_characterEscaper)
-                                                                          .ToDictionary(f => f.TargetType);
+                                                                                 .ToDictionary(f => f.TargetType);
 
             WriterInstructors = new List<IJsonWriterInstructor>().AddDefaultWriterInstructors(_primitiveTypeFormattersMapping,
                                                                                               _typeAnalyzer,
@@ -66,8 +66,10 @@ namespace Light.Serialization.Json
         {
             _characterEscaper = characterEscaper;
 
-            ConfigurePrimitiveTypeFormatter<CharFormatter>(f => f.CharacterEscaper = characterEscaper);
-            ConfigurePrimitiveTypeFormatter<StringFormatter>(f => f.CharacterEscaper = characterEscaper);
+            foreach (var primitiveTypeFormatter in _primitiveTypeFormattersMapping.Values.OfType<ISetCharacterEscaper>())
+            {
+                primitiveTypeFormatter.CharacterEscaper = _characterEscaper;
+            }
 
             return this;
         }
@@ -110,11 +112,11 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        /// Adds the specified formatter to the mapping of all primitive type formatters.
+        ///     Adds the specified formatter to the mapping of all primitive type formatters.
         /// </summary>
         /// <param name="formatter">The primitive type formatter to be added.</param>
         /// <returns>The builder for method chaining.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="formatter"/> is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="formatter" /> is null.</exception>
         public JsonSerializerBuilder AddPrimitiveTypeFormatter(IPrimitiveTypeFormatter formatter)
         {
             formatter.MustNotBeNull(nameof(formatter));
@@ -231,8 +233,9 @@ namespace Light.Serialization.Json
         public JsonSerializerBuilder ConfigurePrimitiveTypeFormatter<T>(Action<T> configureFormatter)
             where T : IPrimitiveTypeFormatter
         {
-            configureFormatter(_primitiveTypeFormattersMapping.OfType<T>()
-                                                       .First());
+            configureFormatter(_primitiveTypeFormattersMapping.Values
+                                                              .OfType<T>()
+                                                              .First());
 
             return this;
         }
@@ -280,7 +283,7 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Configures the metadata instructor with the specified delegate.
+        ///     Configures the metadata instructor with the specified delegate. The default metadata instructor is of type TypeAndReferenceMetadataInstructor.
         /// </summary>
         /// <typeparam name="T">The actual type of the metadata instructor. This type must derive from IObjectMetadataInstructor.</typeparam>
         /// <param name="configureInstructor">The delegate that configures the instructor.</param>
