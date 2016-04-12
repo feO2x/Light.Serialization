@@ -18,7 +18,6 @@ namespace Light.Serialization.Json.Unity
     /// </summary>
     public static class LightSerializationModule
     {
-        // TODO: we should provide a document where one can get an overview of the default object graph that we are registering
         /// <summary>
         ///     Registers the default serialization types of Light.Serialization.Json with the Unity container.
         /// </summary>
@@ -39,11 +38,7 @@ namespace Light.Serialization.Json.Unity
                                                                         new InjectionFactory(c => new Dictionary<Type, IJsonWriterInstructor>()))
 
                 // JSON Writer Factory
-                .RegisterType<IJsonWriterFactory, JsonWriterFactory>(new InjectionFactory(c => new JsonWriterFactory
-                                                                                               {
-                                                                                                   JsonWhitespaceFormatter = c.Resolve<IJsonWhitespaceFormatter>(),
-                                                                                                   KeyNormalizer = c.Resolve<IJsonKeyNormalizer>()
-                                                                                               }))
+                .RegisterType<IJsonWriterFactory, JsonWriterFactory>()
                 .RegisterType<IJsonWhitespaceFormatter, WhitespaceFormatterNullObject>()
                 .RegisterType<IJsonKeyNormalizer, FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer>(new ContainerControlledLifetimeManager())
 

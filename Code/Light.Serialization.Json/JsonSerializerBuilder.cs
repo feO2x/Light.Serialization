@@ -27,7 +27,7 @@ namespace Light.Serialization.Json
         private IDictionary<Type, IJsonWriterInstructor> _instructorCache;
         private IObjectMetadataInstructor _metadataInstructor = new TypeAndReferenceMetadataInstructor(new SimpleNameToTypeMapping());
         private IReadableValuesTypeAnalyzer _typeAnalyzer = new ValueProvidersCacheDecorator(new PublicPropertiesAndFieldsAnalyzer(), new Dictionary<Type, IList<IValueProvider>>());
-        private IJsonWriterFactory _writerFactory;
+        private Func<IJsonWriterFactory> _createWriterFactory;
 
         /// <summary>
         ///     Initializes a new instance of <see cref="JsonSerializerBuilder" />.
@@ -47,11 +47,11 @@ namespace Light.Serialization.Json
         /// <summary>
         ///     Configures to builder to use the specified JSON writer factory for the serializer.
         /// </summary>
-        /// <param name="writerFactory">The writer factory to be injected into the serializer.</param>
+        /// <param name="createWriterFactory">The delegate that creates the writer factory being injected into the serializer.</param>
         /// <returns>The builder for method chaining.</returns>
-        public JsonSerializerBuilder WithWriterFactory(IJsonWriterFactory writerFactory)
+        public JsonSerializerBuilder WithWriterFactory(Func<IJsonWriterFactory> createWriterFactory)
         {
-            _writerFactory = writerFactory;
+            _createWriterFactory = createWriterFactory;
             return this;
         }
 
@@ -136,18 +136,7 @@ namespace Light.Serialization.Json
         /// <returns>The builder for method chaining.</returns>
         public JsonSerializerBuilder UseDefaultWriterFactory()
         {
-            _writerFactory = new JsonWriterFactory();
-            return this;
-        }
-
-        /// <summary>
-        ///     Configures the default JsonWriterFactory instance using the specified delegate.
-        /// </summary>
-        /// <param name="configureFactory">The delegate that configures the JSON writer factory.</param>
-        /// <returns>The builder for method chaining.</returns>
-        public JsonSerializerBuilder ConfigureDefaultWriterFactory(Action<JsonWriterFactory> configureFactory)
-        {
-            configureFactory((JsonWriterFactory) _writerFactory);
+            _createWriterFactory = JsonWriterFactory.CreateDefault;
             return this;
         }
 
@@ -255,7 +244,7 @@ namespace Light.Serialization.Json
         /// </summary>
         public JsonSerializer Build()
         {
-            return new JsonSerializer(WriterInstructors, _writerFactory, _instructorCache);
+            return new JsonSerializer(WriterInstructors, _createWriterFactory(), _instructorCache);
         }
     }
 }

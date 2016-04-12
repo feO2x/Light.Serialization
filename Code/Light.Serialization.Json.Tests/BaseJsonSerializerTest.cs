@@ -38,8 +38,8 @@ namespace Light.Serialization.Json.Tests
 
         protected string GetSerializedHumanReadableJson<T>(T value)
         {
-            var writerFactory = new JsonWriterFactory { JsonWhitespaceFormatter = new IndentingWhitespaceFormatter() };
-            var jsonSerializer = JsonSerializerBuilder.WithWriterFactory(writerFactory).Build();
+            var jsonSerializer = JsonSerializerBuilder.WithWriterFactory(JsonWriterFactory.CreateDefaultWithIndentingWhitespaceFormatter)
+                                                      .Build();
 
             return jsonSerializer.Serialize(value);
         }

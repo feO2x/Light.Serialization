@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Light.GuardClauses;
@@ -11,44 +10,31 @@ namespace Light.Serialization.Json.LowLevelWriting
     /// </summary>
     public sealed class JsonWriterFactory : IJsonWriterFactory
     {
-        private readonly List<Func<IJsonWriter, IJsonWriter>> _decorateFunctions = new List<Func<IJsonWriter, IJsonWriter>>();
-        private IJsonWhitespaceFormatter _jsonWhitespaceFormatter = new WhitespaceFormatterNullObject();
-        private IJsonKeyNormalizer _keyNormalizer = new FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer();
+        private readonly IJsonKeyNormalizer _keyNormalizer;
+        private readonly IJsonWhitespaceFormatter _whitespaceFormatter;
         private StringBuilder _stringBuilder;
         private StringWriter _stringWriter;
 
         /// <summary>
-        ///     Gets or sets the Whitespace Formatter used to format the document. This value defaults to a WhitespaceFormatterNullObject instance.
+        ///     Creates a new instance of JsonWriterFactory.
         /// </summary>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
-        public IJsonWhitespaceFormatter JsonWhitespaceFormatter
+        /// <param name="keyNormalizer">The key normalizer that will be injected into the JsonWriter.</param>
+        /// <param name="whitespaceFormatter">The whitespace formatter that will be injected into the JsonWriter.</param>
+        /// <exception cref="ArgumentNullException">Thrown when any parameter is null.</exception>
+        public JsonWriterFactory(IJsonKeyNormalizer keyNormalizer, IJsonWhitespaceFormatter whitespaceFormatter)
         {
-            get { return _jsonWhitespaceFormatter; }
-            set
-            {
-                value.MustNotBeNull(nameof(value));
-                _jsonWhitespaceFormatter = value;
-            }
-        }
+            keyNormalizer.MustNotBeNull(nameof(keyNormalizer));
+            whitespaceFormatter.MustNotBeNull(nameof(whitespaceFormatter));
 
-        /// <summary>
-        ///     Gets or sets the normalizer that is used to format keys in complex JSON objects. This values defaults to a FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer instance.
-        /// </summary>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
-        public IJsonKeyNormalizer KeyNormalizer
-        {
-            get { return _keyNormalizer; }
-            set
-            {
-                value.MustNotBeNull(nameof(value));
-                _keyNormalizer = value;
-            }
+            _keyNormalizer = keyNormalizer;
+            _whitespaceFormatter = whitespaceFormatter;
         }
 
         /// <summary>
         ///     Creates a new instance of JsonWriter using a StringBuilder and StringWriter.
         /// </summary>
         /// <returns>The initialized JsonWriter.</returns>
+        /// <exception cref="InvalidOperationException">Thrown when a previous call to Create was not finished with <see cref="FinishWriteProcessAndReleaseResources" />.</exception>
         public IJsonWriter Create()
         {
             Check.That(_stringBuilder == null,
@@ -56,12 +42,8 @@ namespace Light.Serialization.Json.LowLevelWriting
 
             _stringBuilder = new StringBuilder();
             _stringWriter = new StringWriter(_stringBuilder);
-            IJsonWriter returnValue = new JsonWriter(_stringWriter, _jsonWhitespaceFormatter, _keyNormalizer);
-            // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (var decorateFunction in _decorateFunctions)
-            {
-                returnValue = decorateFunction(returnValue);
-            }
+            _whitespaceFormatter.ResetIndentationLevel();
+            IJsonWriter returnValue = new JsonWriter(_stringWriter, _whitespaceFormatter, _keyNormalizer);
             return returnValue;
         }
 
@@ -82,17 +64,21 @@ namespace Light.Serialization.Json.LowLevelWriting
         }
 
         /// <summary>
-        ///     Registers the specified delegate with this factory that is called during <see cref="Create" />. The delegate should then decorate the JsonWriter.
+        ///     Creates a new JsonWriterFactory instance with the default normalizer (for JSON keys with lowerCamelCase style and without special characters)
+        ///     and the default whitespace formatter (no whitespace to keep the document small).
         /// </summary>
-        /// <param name="decoratorFunction">The delegate that decorates the JsonWriter with another object.</param>
-        /// <returns>The factory for method-chaining.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="decoratorFunction" /> is null.</exception>
-        public JsonWriterFactory DecorateCreationWith(Func<IJsonWriter, IJsonWriter> decoratorFunction)
+        public static JsonWriterFactory CreateDefault()
         {
-            decoratorFunction.MustNotBeNull(nameof(decoratorFunction));
+            return new JsonWriterFactory(new FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer(), new WhitespaceFormatterNullObject());
+        }
 
-            _decorateFunctions.Add(decoratorFunction);
-            return this;
+        /// <summary>
+        ///     Creates a new JsonWriterFactory instance with the default normalizer (for JSON keys with lowerCamelCase style and without special characters)
+        ///     and an IndentingWhitespaceFormatter for human-readable JSON documents with indenting.
+        /// </summary>
+        public static JsonWriterFactory CreateDefaultWithIndentingWhitespaceFormatter()
+        {
+            return new JsonWriterFactory(new FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer(), new IndentingWhitespaceFormatter());
         }
     }
 }
