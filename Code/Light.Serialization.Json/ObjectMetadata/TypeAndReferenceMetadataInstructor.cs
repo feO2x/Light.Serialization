@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Light.GuardClauses;
 using Light.GuardClauses.Exceptions;
+using Light.Serialization.Json.BuilderInterfaces;
 using Light.Serialization.Json.LowLevelWriting;
 
 namespace Light.Serialization.Json.ObjectMetadata

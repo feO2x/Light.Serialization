@@ -1,7 +1,7 @@
 ﻿using System;
 using Light.Serialization.Json.PrimitiveTypeFormatters;
 
-namespace Light.Serialization.Json.BuilderInjection
+namespace Light.Serialization.Json.BuilderInterfaces
 {
     /// <summary>
     ///     Represents the abstraction to inject a metadata instructor via a property set method.

@@ -1,4 +1,4 @@
-namespace Light.Serialization.Json.ObjectMetadata
+namespace Light.Serialization.Json.BuilderInterfaces
 {
     /// <summary>
     ///     Represents the abstraction used to clear the object cache of a metadata instructor.

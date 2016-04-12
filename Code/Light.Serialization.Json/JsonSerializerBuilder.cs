@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Light.GuardClauses;
-using Light.Serialization.Json.BuilderInjection;
+using Light.Serialization.Json.BuilderInterfaces;
 using Light.Serialization.Json.Caching;
 using Light.Serialization.Json.ComplexTypeDecomposition;
 using Light.Serialization.Json.LowLevelWriting;
@@ -62,7 +62,7 @@ namespace Light.Serialization.Json
         /// </summary>
         /// <param name="characterEscaper">The character escaper used for characters and strings.</param>
         /// <returns>The builder for method chaining.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="characterEscaper"/> is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="characterEscaper" /> is null.</exception>
         public JsonSerializerBuilder WithCharacterEscaper(ICharacterEscaper characterEscaper)
         {
             characterEscaper.MustNotBeNull(nameof(characterEscaper));
@@ -82,7 +82,7 @@ namespace Light.Serialization.Json
         /// </summary>
         /// <param name="typeAnalyzer">The object that creates value providers for the given type.</param>
         /// <returns>The builder for method chaining.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeAnalyzer"/> is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeAnalyzer" /> is null.</exception>
         public JsonSerializerBuilder WithTypeAnalyzer(IReadableValuesTypeAnalyzer typeAnalyzer)
         {
             typeAnalyzer.MustNotBeNull(nameof(typeAnalyzer));
@@ -211,7 +211,7 @@ namespace Light.Serialization.Json
         /// </summary>
         /// <param name="instructorCache">The dictionary used as the instructorCache.</param>
         /// <returns>The builder for method chaining.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="instructorCache"/> is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="instructorCache" /> is null.</exception>
         public JsonSerializerBuilder WithInstructorCache(IDictionary<Type, IJsonWriterInstructor> instructorCache)
         {
             instructorCache.MustNotBeNull(nameof(instructorCache));
@@ -226,7 +226,7 @@ namespace Light.Serialization.Json
         /// <typeparam name="T">The type of the writer instructor that should be configured.</typeparam>
         /// <param name="configureInstructor">The delegate that configures the actual instructor.</param>
         /// <returns>The builder for method chaining.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureInstructor"/> is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureInstructor" /> is null.</exception>
         public JsonSerializerBuilder ConfigureInstructor<T>(Action<T> configureInstructor)
             where T : IJsonWriterInstructor
         {
@@ -242,7 +242,7 @@ namespace Light.Serialization.Json
         /// <typeparam name="T">The type of the formatter that should be configured.</typeparam>
         /// <param name="configureFormatter">The delegate that configures the actual formatter instance.</param>
         /// <returns>The builder for method chaining.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureFormatter"/> is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureFormatter" /> is null.</exception>
         public JsonSerializerBuilder ConfigurePrimitiveTypeFormatter<T>(Action<T> configureFormatter)
             where T : IPrimitiveTypeFormatter
         {
@@ -264,7 +264,7 @@ namespace Light.Serialization.Json
         /// <typeparam name="T">The type that should be configured for serialization.</typeparam>
         /// <param name="configureRule">The delegate that configures the serialization rule.</param>
         /// <returns>The builder for method chaining.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureRule"/> is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureRule" /> is null.</exception>
         public JsonSerializerBuilder WithRuleFor<T>(Action<Rule<T>> configureRule)
         {
             configureRule.MustNotBeNull(nameof(configureRule));
@@ -288,7 +288,7 @@ namespace Light.Serialization.Json
         /// </summary>
         /// <param name="metadataInstructor">The new metadata instructor.</param>
         /// <returns>The builder for method chaining.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="metadataInstructor"/> is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="metadataInstructor" /> is null.</exception>
         public JsonSerializerBuilder WithObjectMetadataInstructor(IObjectMetadataInstructor metadataInstructor)
         {
             metadataInstructor.MustNotBeNull(nameof(metadataInstructor));
@@ -321,10 +321,74 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
+        ///     Configures the metadata instructor to not include object IDs in the JSON document.
+        /// </summary>
+        /// <returns>The builder for method chaining.</returns>
+        public JsonSerializerBuilder DisableObjectReferencePreservation()
+        {
+            var metadataInstructor = _metadataInstructor as ISetObjectReferencePreservationStatus;
+
+            if (metadataInstructor == null)
+                return this;
+
+            metadataInstructor.IsSerializingObjectIds = false;
+            return this;
+        }
+
+        /// <summary>
+        ///     Configures the metadata instructor to include object IDs in the JSON document. This is turned on by default.
+        /// </summary>
+        /// <returns>The builder for method chaining.</returns>
+        public JsonSerializerBuilder EnableObjectReferencePreservation()
+        {
+            var metadataInstructor = _metadataInstructor as ISetObjectReferencePreservationStatus;
+
+            if (metadataInstructor == null)
+                return this;
+
+            metadataInstructor.IsSerializingObjectIds = true;
+            return this;
+        }
+
+        /// <summary>
+        ///     Configures the metadata instructor to not include type information of complex .NET types.
+        /// </summary>
+        /// <returns>The builder for method chaining.</returns>
+        public JsonSerializerBuilder DisableTypeMetadata()
+        {
+            var metadataInstructor = _metadataInstructor as ISetTypeInfoSerializationStatus;
+
+            if (metadataInstructor == null)
+                return this;
+
+            metadataInstructor.IsSerializingTypeInfo = false;
+
+            return this;
+        }
+
+        /// <summary>
+        ///     Configures the metadata instructor to include type information for complex .NET types.
+        /// </summary>
+        /// <returns>The builder for method chaining.</returns>
+        public JsonSerializerBuilder EnableTypeMetadata()
+        {
+            var metadataInstructor = _metadataInstructor as ISetTypeInfoSerializationStatus;
+
+            if (metadataInstructor == null)
+                return this;
+
+            metadataInstructor.IsSerializingTypeInfo = true;
+
+            return this;
+        }
+
+        /// <summary>
         ///     Creates a new instance of <see cref="JsonSerializer" /> using the specified builder settings.
         /// </summary>
         public JsonSerializer Build()
         {
+            (_metadataInstructor as IClearSerializedObjectsCache)?.ClearSerializedObjects();
+
             return new JsonSerializer(WriterInstructors, _createWriterFactory(), _instructorCache);
         }
     }

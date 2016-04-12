@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Light.GuardClauses;
-using Light.Serialization.Json.BuilderInjection;
+using Light.Serialization.Json.BuilderInterfaces;
 using Light.Serialization.Json.ObjectMetadata;
 using Light.Serialization.Json.PrimitiveTypeFormatters;
 

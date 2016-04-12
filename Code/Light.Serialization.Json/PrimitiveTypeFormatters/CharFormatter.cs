@@ -1,6 +1,6 @@
 ﻿using System;
 using Light.GuardClauses;
-using Light.Serialization.Json.BuilderInjection;
+using Light.Serialization.Json.BuilderInterfaces;
 using Light.Serialization.Json.FrameworkExtensions;
 
 namespace Light.Serialization.Json.PrimitiveTypeFormatters

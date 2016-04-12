@@ -41,9 +41,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BuilderInjection\ISetCharacterEscaper.cs" />
-    <Compile Include="BuilderInjection\ISetPrimitiveTypeFormatters.cs" />
-    <Compile Include="BuilderInjection\ISetTypeAnalyzer.cs" />
+    <Compile Include="BuilderInterfaces\ISetCharacterEscaper.cs" />
+    <Compile Include="BuilderInterfaces\ISetPrimitiveTypeFormatters.cs" />
+    <Compile Include="BuilderInterfaces\ISetTypeAnalyzer.cs" />
     <Compile Include="Caching\ValueProvidersCacheDecorator.cs" />
     <Compile Include="ComplexTypeDecomposition\IReadableValuesTypeAnalyzer.cs" />
     <Compile Include="ComplexTypeDecomposition\IValueProvider.cs" />
@@ -55,16 +55,16 @@
     <Compile Include="FrameworkExtensions\ReflectionExtensions.cs" />
     <Compile Include="FrameworkExtensions\StringBuilderExtensions.cs" />
     <Compile Include="FrameworkExtensions\StringExtensions.cs" />
-    <Compile Include="BuilderInjection\ISetObjectMetadataInstructor.cs" />
+    <Compile Include="BuilderInterfaces\ISetObjectMetadataInstructor.cs" />
     <Compile Include="JsonSerializerBuilder.cs" />
     <Compile Include="JsonSerializerBuilderExtensions.cs" />
     <Compile Include="LowLevelWriting\IJsonWriter.cs" />
     <Compile Include="LowLevelWriting\IJsonWriterFactory.cs" />
-    <Compile Include="ObjectMetadata\IClearSerializedObjectsCache.cs" />
+    <Compile Include="BuilderInterfaces\IClearSerializedObjectsCache.cs" />
     <Compile Include="ObjectMetadata\INameToTypeMapping.cs" />
     <Compile Include="ObjectMetadata\IObjectMetadataInstructor.cs" />
-    <Compile Include="ObjectMetadata\ISetObjectReferencePreservationStatus.cs" />
-    <Compile Include="ObjectMetadata\ISetTypeInfoSerializationStatus.cs" />
+    <Compile Include="BuilderInterfaces\ISetObjectReferencePreservationStatus.cs" />
+    <Compile Include="BuilderInterfaces\ISetTypeInfoSerializationStatus.cs" />
     <Compile Include="ObjectMetadata\ITypeToNameMapping.cs" />
     <Compile Include="ObjectMetadata\SimpleNameToTypeMapping.cs" />
     <Compile Include="ObjectMetadata\TypeAndReferenceMetadataInstructor.cs" />
