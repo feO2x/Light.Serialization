@@ -14,5 +14,7 @@
         public const string ULongFormatter = "ULongFormatter";
         public const string UShortFormatter = "UShortFormatter";
         public const string SByteFormatter = "SByteFormatter";
+        public const string ObjectMetadataInstructor = "ObjectMetadataInstructor";
+        public const string CollectionMetadataInstructor = "CollectionMetadataInstructor";
     }
 }

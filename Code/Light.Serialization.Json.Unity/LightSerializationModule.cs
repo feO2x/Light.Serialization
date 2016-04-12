@@ -46,9 +46,14 @@ namespace Light.Serialization.Json.Unity
                 .RegisterType<IReadOnlyList<IJsonWriterInstructor>, IJsonWriterInstructor[]>()
                 .RegisterTypeWithTypeName<IJsonWriterInstructor, PrimitiveValueInstructor>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonWriterInstructor, EnumInstructor>(new ContainerControlledLifetimeManager())
-                .RegisterTypeWithTypeName<IJsonWriterInstructor, DictionaryInstructor>(new ContainerControlledLifetimeManager())
-                .RegisterTypeWithTypeName<IJsonWriterInstructor, CollectionInstructor>(new ContainerControlledLifetimeManager())
-                .RegisterTypeWithTypeName<IJsonWriterInstructor, ComplexObjectInstructor>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonWriterInstructor, DictionaryInstructor>(new InjectionFactory(c => new DictionaryInstructor(c.Resolve<IDictionary<Type, IPrimitiveTypeFormatter>>(),
+                                                                                                                                          c.Resolve<IMetadataInstructor>(KnownNames.ObjectMetadataInstructor))),
+                                                                                       new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonWriterInstructor, CollectionInstructor>(new InjectionFactory(c => new CollectionInstructor(c.Resolve<IMetadataInstructor>(KnownNames.CollectionMetadataInstructor))),
+                                                                                       new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonWriterInstructor, ComplexObjectInstructor>(new InjectionFactory(c => new ComplexObjectInstructor(c.Resolve<IReadableValuesTypeAnalyzer>(),
+                                                                                                                                                c.Resolve<IMetadataInstructor>(KnownNames.ObjectMetadataInstructor))),
+                                                                                          new ContainerControlledLifetimeManager())
 
                 // Primitive Type Formatters
                 .RegisterType<IDictionary<Type, IPrimitiveTypeFormatter>>(new ContainerControlledLifetimeManager(),
@@ -98,8 +103,9 @@ namespace Light.Serialization.Json.Unity
                 .RegisterType<IReadableValuesTypeAnalyzer>(new ContainerControlledLifetimeManager(),
                                                            new InjectionFactory(c => new ValueProvidersCacheDecorator(new PublicPropertiesAndFieldsAnalyzer(),
                                                                                                                       new Dictionary<Type, IList<IValueProvider>>())))
-                // Metadata instructor for complex .NET types
-                .RegisterType<IMetadataInstructor, TypeAndReferenceMetadataInstructor>(new PerResolveLifetimeManager())
+                // Metadata instructors for complex .NET types and collections
+                .RegisterType<IMetadataInstructor, TypeAndReferenceMetadataInstructor>(KnownNames.ObjectMetadataInstructor, new ContainerControlledLifetimeManager())
+                .RegisterType<IMetadataInstructor, CollectionReferenceMetadataInstructor>(KnownNames.CollectionMetadataInstructor, new ContainerControlledLifetimeManager())
 
                 // Type to name mapping
                 .RegisterType<ITypeToNameMapping, SimpleNameToTypeMapping>(new ContainerControlledLifetimeManager());
@@ -134,6 +140,27 @@ namespace Light.Serialization.Json.Unity
 
             lifetimeManager = lifetimeManager ?? new TransientLifetimeManager();
             return container.RegisterType<TFrom, TTo>(typeof (TTo).Name, lifetimeManager);
+        }
+
+        /// <summary>
+        ///     Registers the specified type with the container using the concrete type name as the name for the registration.
+        /// </summary>
+        /// <typeparam name="TFrom">The type of the abstraction.</typeparam>
+        /// <typeparam name="TTo">The concrete type.</typeparam>
+        /// <param name="container">The container to be populated.</param>
+        /// <param name="injectionFactory">The factory that creates the specified object.</param>
+        /// <param name="lifetimeManager">The lifetime manager used for the registration (optional). By default, a <see cref="TransientLifetimeManager" /> is used.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> or <paramref name="injectionFactory" /> is null.</exception>
+        public static IUnityContainer RegisterTypeWithTypeName<TFrom, TTo>(this IUnityContainer container,
+                                                                           InjectionFactory injectionFactory,
+                                                                           LifetimeManager lifetimeManager = null) where TTo : TFrom
+        {
+            container.MustNotBeNull(nameof(container));
+            injectionFactory.MustNotBeNull(nameof(injectionFactory));
+
+            lifetimeManager = lifetimeManager ?? new TransientLifetimeManager();
+            return container.RegisterType<TFrom, TTo>(typeof (TTo).Name, lifetimeManager, injectionFactory);
         }
     }
 }
