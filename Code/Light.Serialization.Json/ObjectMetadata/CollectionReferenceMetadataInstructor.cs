@@ -8,7 +8,7 @@ namespace Light.Serialization.Json.ObjectMetadata
     /// <summary>
     ///     Represents a metadata instructor that writes Object IDs in a JSON string as the first item of a JSON array.
     /// </summary>
-    public sealed class CollectionReferenceMetadataInstructor : ICollectionMetadataInstructor, ISetObjectReferencePreservationStatus
+    public sealed class CollectionReferenceMetadataInstructor : IMetadataInstructor, ISetObjectReferencePreservationStatus
     {
         private string _idSymbol = JsonSymbols.DefaultIdSymbol;
         private bool _isSerializingObjectIds = true;

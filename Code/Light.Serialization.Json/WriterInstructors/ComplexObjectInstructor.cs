@@ -11,7 +11,7 @@ namespace Light.Serialization.Json.WriterInstructors
     /// </summary>
     public sealed class ComplexObjectInstructor : IJsonWriterInstructor, ISetObjectMetadataInstructor, ISetTypeAnalyzer
     {
-        private IObjectMetadataInstructor _metadataInstructor;
+        private IMetadataInstructor _metadataInstructor;
         private IReadableValuesTypeAnalyzer _typeAnalyzer;
 
         /// <summary>
@@ -20,7 +20,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// <param name="typeAnalyzer">The object that is used to analyze types for readable members (usually properties and fields).</param>
         /// <param name="metadataInstructor">The object that serializes the metadata section of the complex object.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeAnalyzer" /> or <paramref name="metadataInstructor" /> is null.</exception>
-        public ComplexObjectInstructor(IReadableValuesTypeAnalyzer typeAnalyzer, IObjectMetadataInstructor metadataInstructor)
+        public ComplexObjectInstructor(IReadableValuesTypeAnalyzer typeAnalyzer, IMetadataInstructor metadataInstructor)
         {
             TypeAnalyzer = typeAnalyzer;
             MetadataInstructor = metadataInstructor;
@@ -44,7 +44,7 @@ namespace Light.Serialization.Json.WriterInstructors
         ///     Gets or sets the metadata instructor used to serialize the metadata section of the complex object.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
-        public IObjectMetadataInstructor MetadataInstructor
+        public IMetadataInstructor MetadataInstructor
         {
             get { return _metadataInstructor; }
             set

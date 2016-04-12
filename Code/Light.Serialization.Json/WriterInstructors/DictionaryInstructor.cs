@@ -13,7 +13,7 @@ namespace Light.Serialization.Json.WriterInstructors
     /// </summary>
     public sealed class DictionaryInstructor : IJsonWriterInstructor, ISetObjectMetadataInstructor, ISetPrimitiveTypeFormatters
     {
-        private IObjectMetadataInstructor _metadataInstructor;
+        private IMetadataInstructor _metadataInstructor;
         private IDictionary<Type, IPrimitiveTypeFormatter> _primitiveTypeFormattersMapping;
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// <param name="primitiveTypeFormattersMapping">The dictionary containing mappings from type to primitive type formatters which are used to serialize keys.</param>
         /// <param name="metadataInstructor">The object that is used to serialize the metadata section of the complex object.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="primitiveTypeFormattersMapping" /> or <paramref name="metadataInstructor" /> is null.</exception>
-        public DictionaryInstructor(IDictionary<Type, IPrimitiveTypeFormatter> primitiveTypeFormattersMapping, IObjectMetadataInstructor metadataInstructor)
+        public DictionaryInstructor(IDictionary<Type, IPrimitiveTypeFormatter> primitiveTypeFormattersMapping, IMetadataInstructor metadataInstructor)
         {
             primitiveTypeFormattersMapping.MustNotBeNull(nameof(primitiveTypeFormattersMapping));
             metadataInstructor.MustNotBeNull(nameof(metadataInstructor));
@@ -96,7 +96,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// <summary>
         ///     Gets or sets the object used to serialize the metadata section of the dictionary.
         /// </summary>
-        public IObjectMetadataInstructor MetadataInstructor
+        public IMetadataInstructor MetadataInstructor
         {
             get { return _metadataInstructor; }
             set

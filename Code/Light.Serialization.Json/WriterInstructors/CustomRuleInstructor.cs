@@ -20,7 +20,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// </summary>
         public readonly Type TargetType;
 
-        private IObjectMetadataInstructor _metadataInstructor;
+        private IMetadataInstructor _metadataInstructor;
 
         /// <summary>
         ///     Creates a new instance of <see cref="CustomRuleInstructor" />.
@@ -29,7 +29,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// <param name="valueProviders">The set of value providers used to read values from instances of the target type.</param>
         /// <param name="metadataInstructor">The object used to serialize the metadata section of the complex object.</param>
         /// <exception cref="ArgumentNullException">Thrown when any of the parameters is null.</exception>
-        public CustomRuleInstructor(Type targetType, IList<IValueProvider> valueProviders, IObjectMetadataInstructor metadataInstructor)
+        public CustomRuleInstructor(Type targetType, IList<IValueProvider> valueProviders, IMetadataInstructor metadataInstructor)
         {
             valueProviders.MustNotBeNull(nameof(valueProviders));
             targetType.MustNotBeNull(nameof(targetType));
@@ -60,7 +60,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// <summary>
         ///     Gets or sets the object used to serialize the metadata section of the complex object.
         /// </summary>
-        public IObjectMetadataInstructor MetadataInstructor
+        public IMetadataInstructor MetadataInstructor
         {
             get { return _metadataInstructor; }
             set

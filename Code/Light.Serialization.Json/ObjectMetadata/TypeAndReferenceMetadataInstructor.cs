@@ -10,7 +10,7 @@ namespace Light.Serialization.Json.ObjectMetadata
     /// <summary>
     ///     Represents an IObjectMetadataInstructor that serializes ids and type information in the metadata section of a complex JSON object.
     /// </summary>
-    public sealed class TypeAndReferenceMetadataInstructor : IObjectMetadataInstructor, ISetObjectReferencePreservationStatus, ISetTypeInfoSerializationStatus
+    public sealed class TypeAndReferenceMetadataInstructor : IMetadataInstructor, ISetObjectReferencePreservationStatus, ISetTypeInfoSerializationStatus
     {
         private string _concreteTypeSymbol = JsonSymbols.DefaultConcreteTypeSymbol;
         private string _genericTypeArgumentsSymbol = JsonSymbols.DefaultGenericTypeArgumentsSymbol;

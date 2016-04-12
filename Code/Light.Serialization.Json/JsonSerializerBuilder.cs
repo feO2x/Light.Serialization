@@ -24,9 +24,10 @@ namespace Light.Serialization.Json
         public readonly List<IJsonWriterInstructor> WriterInstructors;
 
         private ICharacterEscaper _characterEscaper = new DefaultCharacterEscaper();
+        private IMetadataInstructor _collectionMetadataInstructor = new CollectionReferenceMetadataInstructor();
         private Func<IJsonWriterFactory> _createWriterFactory;
         private IDictionary<Type, IJsonWriterInstructor> _instructorCache;
-        private IObjectMetadataInstructor _metadataInstructor = new TypeAndReferenceMetadataInstructor(new SimpleNameToTypeMapping());
+        private IMetadataInstructor _objectMetadataInstructor = new TypeAndReferenceMetadataInstructor(new SimpleNameToTypeMapping());
         private IDictionary<Type, IPrimitiveTypeFormatter> _primitiveTypeFormattersMapping;
         private IReadableValuesTypeAnalyzer _typeAnalyzer = new ValueProvidersCacheDecorator(new PublicPropertiesAndFieldsAnalyzer(), new Dictionary<Type, IList<IValueProvider>>());
 
@@ -43,7 +44,8 @@ namespace Light.Serialization.Json
 
             WriterInstructors = new List<IJsonWriterInstructor>().AddDefaultWriterInstructors(_primitiveTypeFormattersMapping,
                                                                                               _typeAnalyzer,
-                                                                                              _metadataInstructor);
+                                                                                              _collectionMetadataInstructor,
+                                                                                              _objectMetadataInstructor);
         }
 
         /// <summary>
@@ -278,22 +280,22 @@ namespace Light.Serialization.Json
             if (existingInstructor != null)
                 WriterInstructors.Remove(existingInstructor);
 
-            WriterInstructors.Insert(0, new CustomRuleInstructor(typeof (T), newRule.CreateValueProviders(), _metadataInstructor));
+            WriterInstructors.Insert(0, new CustomRuleInstructor(typeof (T), newRule.CreateValueProviders(), _objectMetadataInstructor));
 
             return this;
         }
 
         /// <summary>
-        ///     Exchanges the specified metadata instructor with the existing one.
+        ///     Exchanges the existing object metadata instructor with the specified one.
         /// </summary>
-        /// <param name="metadataInstructor">The new metadata instructor.</param>
+        /// <param name="metadataInstructor">The new metadata instructor for complex JSON objects.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="metadataInstructor" /> is null.</exception>
-        public JsonSerializerBuilder WithObjectMetadataInstructor(IObjectMetadataInstructor metadataInstructor)
+        public JsonSerializerBuilder WithObjectMetadataInstructor(IMetadataInstructor metadataInstructor)
         {
             metadataInstructor.MustNotBeNull(nameof(metadataInstructor));
 
-            _metadataInstructor = metadataInstructor;
+            _objectMetadataInstructor = metadataInstructor;
 
             foreach (var instructor in WriterInstructors.OfType<ISetObjectMetadataInstructor>())
             {
@@ -304,82 +306,120 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Configures the metadata instructor with the specified delegate. The default metadata instructor is of type TypeAndReferenceMetadataInstructor.
+        ///     Exchanges the specified collection metadata instructor with the specified one.
         /// </summary>
-        /// <typeparam name="T">The actual type of the metadata instructor. This type must derive from IObjectMetadataInstructor.</typeparam>
+        /// <param name="metadataInstructor">The new metadata instructor for JSON arrays.</param>
+        /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="metadataInstructor" /> is null.</exception>
+        public JsonSerializerBuilder WithCollectionMetadataInstructor(IMetadataInstructor metadataInstructor)
+        {
+            metadataInstructor.MustNotBeNull(nameof(metadataInstructor));
+
+            _collectionMetadataInstructor = metadataInstructor;
+
+            foreach (var instructor in WriterInstructors.OfType<ISetCollectionMetadataInstructor>())
+            {
+                instructor.MetadataInstructor = _collectionMetadataInstructor;
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        ///     Configures the metadata instructor for complex JSON objects with the specified delegate. The default metadata instructor is of type TypeAndReferenceMetadataInstructor.
+        /// </summary>
+        /// <typeparam name="T">The actual type of the metadata instructor. This type must derive from IMetadataInstructor.</typeparam>
         /// <param name="configureInstructor">The delegate that configures the instructor.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureInstructor" /> is null.</exception>
         public JsonSerializerBuilder ConfigureObjectMetadataInstructor<T>(Action<T> configureInstructor)
-            where T : IObjectMetadataInstructor
+            where T : IMetadataInstructor
         {
             configureInstructor.MustNotBeNull(nameof(configureInstructor));
 
-            configureInstructor((T) _metadataInstructor);
+            configureInstructor((T) _objectMetadataInstructor);
 
             return this;
         }
 
         /// <summary>
-        ///     Configures the metadata instructor to not include object IDs in the JSON document.
+        ///     Configures the metadata instructor for JSON arrays with the specified delegate. The default metadata instructor is of type CollectionReferenceMetadataInstructor.
+        /// </summary>
+        /// <typeparam name="T">The actual type of the metadata instructor. This type must derive from IMetadataInstructor.</typeparam>
+        /// <param name="configureInstructor">The delegate that configures the instructor.</param>
+        /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureInstructor" /> is null.</exception>
+        public JsonSerializerBuilder ConfigureCollectionMetadataInstructor<T>(Action<T> configureInstructor)
+        {
+            configureInstructor.MustNotBeNull(nameof(configureInstructor));
+
+            configureInstructor((T) _collectionMetadataInstructor);
+
+            return this;
+        }
+
+        /// <summary>
+        ///     Configures the metadata instructors to not include object IDs in the JSON document.
         /// </summary>
         /// <returns>The builder for method chaining.</returns>
         public JsonSerializerBuilder DisableObjectReferencePreservation()
         {
-            var metadataInstructor = _metadataInstructor as ISetObjectReferencePreservationStatus;
-
-            if (metadataInstructor == null)
-                return this;
-
-            metadataInstructor.IsSerializingObjectIds = false;
+            SetObjectReferencePreservationIfPossible(_objectMetadataInstructor, false);
+            SetObjectReferencePreservationIfPossible(_collectionMetadataInstructor, false);
             return this;
         }
 
         /// <summary>
-        ///     Configures the metadata instructor to include object IDs in the JSON document. This is turned on by default.
+        ///     Configures the metadata instructors to include object IDs in the JSON document. This is turned on by default.
         /// </summary>
         /// <returns>The builder for method chaining.</returns>
         public JsonSerializerBuilder EnableObjectReferencePreservation()
         {
-            var metadataInstructor = _metadataInstructor as ISetObjectReferencePreservationStatus;
-
-            if (metadataInstructor == null)
-                return this;
-
-            metadataInstructor.IsSerializingObjectIds = true;
+            SetObjectReferencePreservationIfPossible(_objectMetadataInstructor, true);
+            SetObjectReferencePreservationIfPossible(_collectionMetadataInstructor, true);
             return this;
         }
 
+        private static void SetObjectReferencePreservationIfPossible(IMetadataInstructor instructor, bool value)
+        {
+            var metadataInstructor = instructor as ISetObjectReferencePreservationStatus;
+            if (metadataInstructor == null)
+                return;
+
+            metadataInstructor.IsSerializingObjectIds = value;
+        }
+
         /// <summary>
-        ///     Configures the metadata instructor to not include type information of complex .NET types.
+        ///     Configures the object metadata instructor to not include type information of complex .NET types.
         /// </summary>
         /// <returns>The builder for method chaining.</returns>
         public JsonSerializerBuilder DisableTypeMetadata()
         {
-            var metadataInstructor = _metadataInstructor as ISetTypeInfoSerializationStatus;
-
-            if (metadataInstructor == null)
-                return this;
-
-            metadataInstructor.IsSerializingTypeInfo = false;
+            SetTypeInfoSerializationStatus(_objectMetadataInstructor, false);
+            SetTypeInfoSerializationStatus(_collectionMetadataInstructor, false);
 
             return this;
         }
 
         /// <summary>
-        ///     Configures the metadata instructor to include type information for complex .NET types.
+        ///     Configures the metadata instructor to include type information for complex .NET types. This is turned on by default for the object metadata instructor (the default collection metadata instructor does not support this feature).
         /// </summary>
         /// <returns>The builder for method chaining.</returns>
         public JsonSerializerBuilder EnableTypeMetadata()
         {
-            var metadataInstructor = _metadataInstructor as ISetTypeInfoSerializationStatus;
-
-            if (metadataInstructor == null)
-                return this;
-
-            metadataInstructor.IsSerializingTypeInfo = true;
+            SetTypeInfoSerializationStatus(_objectMetadataInstructor, true);
+            SetTypeInfoSerializationStatus(_collectionMetadataInstructor, true);
 
             return this;
+        }
+
+        private static void SetTypeInfoSerializationStatus(IMetadataInstructor instructor, bool value)
+        {
+            var metadataInstructor = instructor as ISetTypeInfoSerializationStatus;
+            if (metadataInstructor == null)
+                return;
+
+            metadataInstructor.IsSerializingTypeInfo = value;
         }
 
         /// <summary>

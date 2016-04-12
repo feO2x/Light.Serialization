@@ -99,7 +99,7 @@ namespace Light.Serialization.Json.Unity
                                                            new InjectionFactory(c => new ValueProvidersCacheDecorator(new PublicPropertiesAndFieldsAnalyzer(),
                                                                                                                       new Dictionary<Type, IList<IValueProvider>>())))
                 // Metadata instructor for complex .NET types
-                .RegisterType<IObjectMetadataInstructor, TypeAndReferenceMetadataInstructor>(new PerResolveLifetimeManager())
+                .RegisterType<IMetadataInstructor, TypeAndReferenceMetadataInstructor>(new PerResolveLifetimeManager())
 
                 // Type to name mapping
                 .RegisterType<ITypeToNameMapping, SimpleNameToTypeMapping>(new ContainerControlledLifetimeManager());
