@@ -62,8 +62,11 @@ namespace Light.Serialization.Json
         /// </summary>
         /// <param name="characterEscaper">The character escaper used for characters and strings.</param>
         /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="characterEscaper"/> is null.</exception>
         public JsonSerializerBuilder WithCharacterEscaper(ICharacterEscaper characterEscaper)
         {
+            characterEscaper.MustNotBeNull(nameof(characterEscaper));
+
             _characterEscaper = characterEscaper;
 
             foreach (var primitiveTypeFormatter in _primitiveTypeFormattersMapping.Values.OfType<ISetCharacterEscaper>())
@@ -79,8 +82,11 @@ namespace Light.Serialization.Json
         /// </summary>
         /// <param name="typeAnalyzer">The object that creates value providers for the given type.</param>
         /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeAnalyzer"/> is null.</exception>
         public JsonSerializerBuilder WithTypeAnalyzer(IReadableValuesTypeAnalyzer typeAnalyzer)
         {
+            typeAnalyzer.MustNotBeNull(nameof(typeAnalyzer));
+
             _typeAnalyzer = typeAnalyzer;
 
             foreach (var instructor in WriterInstructors.OfType<ISetTypeAnalyzer>())
@@ -205,8 +211,11 @@ namespace Light.Serialization.Json
         /// </summary>
         /// <param name="instructorCache">The dictionary used as the instructorCache.</param>
         /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="instructorCache"/> is null.</exception>
         public JsonSerializerBuilder WithInstructorCache(IDictionary<Type, IJsonWriterInstructor> instructorCache)
         {
+            instructorCache.MustNotBeNull(nameof(instructorCache));
+
             _instructorCache = instructorCache;
             return this;
         }
@@ -217,9 +226,12 @@ namespace Light.Serialization.Json
         /// <typeparam name="T">The type of the writer instructor that should be configured.</typeparam>
         /// <param name="configureInstructor">The delegate that configures the actual instructor.</param>
         /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureInstructor"/> is null.</exception>
         public JsonSerializerBuilder ConfigureInstructor<T>(Action<T> configureInstructor)
             where T : IJsonWriterInstructor
         {
+            configureInstructor.MustNotBeNull(nameof(configureInstructor));
+
             configureInstructor(WriterInstructors.OfType<T>().First());
             return this;
         }
@@ -230,9 +242,12 @@ namespace Light.Serialization.Json
         /// <typeparam name="T">The type of the formatter that should be configured.</typeparam>
         /// <param name="configureFormatter">The delegate that configures the actual formatter instance.</param>
         /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureFormatter"/> is null.</exception>
         public JsonSerializerBuilder ConfigurePrimitiveTypeFormatter<T>(Action<T> configureFormatter)
             where T : IPrimitiveTypeFormatter
         {
+            configureFormatter.MustNotBeNull(nameof(configureFormatter));
+
             configureFormatter(_primitiveTypeFormattersMapping.Values
                                                               .OfType<T>()
                                                               .First());
@@ -249,8 +264,11 @@ namespace Light.Serialization.Json
         /// <typeparam name="T">The type that should be configured for serialization.</typeparam>
         /// <param name="configureRule">The delegate that configures the serialization rule.</param>
         /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureRule"/> is null.</exception>
         public JsonSerializerBuilder WithRuleFor<T>(Action<Rule<T>> configureRule)
         {
+            configureRule.MustNotBeNull(nameof(configureRule));
+
             var newRule = new Rule<T>(_typeAnalyzer);
             configureRule(newRule);
 
@@ -270,8 +288,11 @@ namespace Light.Serialization.Json
         /// </summary>
         /// <param name="metadataInstructor">The new metadata instructor.</param>
         /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="metadataInstructor"/> is null.</exception>
         public JsonSerializerBuilder WithObjectMetadataInstructor(IObjectMetadataInstructor metadataInstructor)
         {
+            metadataInstructor.MustNotBeNull(nameof(metadataInstructor));
+
             _metadataInstructor = metadataInstructor;
 
             foreach (var instructor in WriterInstructors.OfType<ISetObjectMetadataInstructor>())
