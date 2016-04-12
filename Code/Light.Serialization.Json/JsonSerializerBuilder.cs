@@ -387,8 +387,6 @@ namespace Light.Serialization.Json
         /// </summary>
         public JsonSerializer Build()
         {
-            (_metadataInstructor as IClearSerializedObjectsCache)?.ClearSerializedObjects();
-
             return new JsonSerializer(WriterInstructors, _createWriterFactory(), _instructorCache);
         }
     }

@@ -43,7 +43,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// <summary>
         ///     Checks if the actual type is equal to the target type registered with this instructor.
         /// </summary>
-        public bool IsSuitableFor(object @object, Type actualType, Type referencedType)
+        public bool IsSuitableFor(object @object, Type actualType)
         {
             return actualType == TargetType;
         }

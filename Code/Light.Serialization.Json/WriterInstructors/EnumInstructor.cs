@@ -12,7 +12,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// <summary>
         ///     Checks if the actual type is an enum.
         /// </summary>
-        public bool IsSuitableFor(object @object, Type actualType, Type referencedType)
+        public bool IsSuitableFor(object @object, Type actualType)
         {
             return actualType.GetTypeInfo().IsEnum;
         }

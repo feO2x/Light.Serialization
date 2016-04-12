@@ -34,7 +34,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// <summary>
         ///     Checks if the specified object is an <see cref="IDictionary" /> instance.
         /// </summary>
-        public bool IsSuitableFor(object @object, Type actualType, Type referencedType)
+        public bool IsSuitableFor(object @object, Type actualType)
         {
             return @object is IDictionary;
         }
@@ -83,10 +83,7 @@ namespace Light.Serialization.Json.WriterInstructors
                 if (value == null)
                     writer.WriteNull();
                 else
-                {
-                    var valueType = value.GetType();
-                    serializationContext.SerializeChild(value, valueType, valueType);
-                }
+                    serializationContext.SerializeChild(value, value.GetType());
 
                 if (dicitionaryEnumerator.MoveNext())
                     writer.WriteDelimiter();

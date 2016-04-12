@@ -12,7 +12,7 @@ namespace Light.Serialization.Json.WriterInstructors
         ///     Checks if the specified object implements the IEnumerable interface.
         /// </summary>
         /// <returns>True if the specified object is an <see cref="IEnumerable" />, else false.</returns>
-        public bool IsSuitableFor(object @object, Type actualType, Type referencedType)
+        public bool IsSuitableFor(object @object, Type actualType)
         {
             return @object is IEnumerable;
         }
@@ -41,10 +41,7 @@ namespace Light.Serialization.Json.WriterInstructors
                 if (currentChildObject == null)
                     writer.WriteNull();
                 else
-                {
-                    var childType = currentChildObject.GetType();
-                    serializationContext.SerializeChild(currentChildObject, childType, childType);
-                }
+                    serializationContext.SerializeChild(currentChildObject, currentChildObject.GetType());
                 if (enumerator.MoveNext())
                     writer.WriteDelimiter();
                 else

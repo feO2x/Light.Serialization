@@ -17,6 +17,7 @@ namespace Light.Serialization.Json
         private readonly IJsonWriterFactory _writerFactory;
         private readonly IReadOnlyList<IJsonWriterInstructor> _writerInstructors;
         private IJsonWriter _jsonWriter;
+        private List<object> _serializedObjects;
 
         /// <summary>
         ///     Creates a new instance of <see cref="JsonSerializer" />.
@@ -42,56 +43,44 @@ namespace Light.Serialization.Json
         /// <summary>
         /// Serializes the specified object graph to a JSON string.
         /// </summary>
-        /// <typeparam name="T">The type of the object graph root.</typeparam>
         /// <param name="objectGraphRoot">The object that is the starting point of the object graph.</param>
         /// <returns>The serialized JSON string.</returns>
         /// <exception cref="SerializationException">Thrown when any part of the object graph could not be serialized.</exception>
-        public string Serialize<T>(T objectGraphRoot)
-        {
-            return Serialize(objectGraphRoot, typeof (T));
-        }
-
-        /// <summary>
-        /// Serializes the specified object graph to a JSON string.
-        /// </summary>
-        /// <param name="objectGraphRoot">The object that is the starting point of the object graph.</param>
-        /// <param name="referencedType">The type that is used to reference the object graph root.</param>
-        /// <returns>The serialized JSON string.</returns>
-        /// <exception cref="SerializationException">Thrown when any part of the object graph could not be serialized.</exception>
-        public string Serialize(object objectGraphRoot, Type referencedType)
+        public string Serialize(object objectGraphRoot)
         {
             objectGraphRoot.MustNotBeNull(nameof(objectGraphRoot));
-            referencedType.MustNotBeNull(nameof(referencedType));
 
             _jsonWriter = _writerFactory.Create();
-            SerializeObject(objectGraphRoot, objectGraphRoot.GetType(), referencedType);
+            _serializedObjects = new List<object>();
+            SerializeObject(objectGraphRoot, objectGraphRoot.GetType());
 
             var json = _writerFactory.FinishWriteProcessAndReleaseResources();
             _jsonWriter = null;
+            _serializedObjects = null;
             return json;
         }
 
-        private void SerializeObject(object @object, Type actualType, Type referencedType)
+        private void SerializeObject(object @object, Type actualType)
         {
             IJsonWriterInstructor targetWriterInstructor;
             if (_instructorCache.TryGetValue(actualType, out targetWriterInstructor) == false)
             {
-                targetWriterInstructor = FindTargetInstructor(@object, actualType, referencedType);
+                targetWriterInstructor = FindTargetInstructor(@object, actualType);
                 if (targetWriterInstructor == null)
                     throw new SerializationException($"Type {actualType.FullName} cannot be serialized because there is no IJsonWriterInstructor registered that can cover this type.");
 
                 _instructorCache.Add(actualType, targetWriterInstructor);
             }
 
-            targetWriterInstructor.Serialize(new JsonSerializationContext(@object, actualType, referencedType, SerializeObject, _jsonWriter));
+            targetWriterInstructor.Serialize(new JsonSerializationContext(@object, actualType, SerializeObject, _jsonWriter, _serializedObjects));
         }
 
-        private IJsonWriterInstructor FindTargetInstructor(object @object, Type objectType, Type referencedType)
+        private IJsonWriterInstructor FindTargetInstructor(object @object, Type objectType)
         {
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (var writerInstructor in _writerInstructors)
             {
-                if (writerInstructor.IsSuitableFor(@object, objectType, referencedType))
+                if (writerInstructor.IsSuitableFor(@object, objectType))
                     return writerInstructor;
             }
             return null;

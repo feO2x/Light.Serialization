@@ -12,9 +12,8 @@ namespace Light.Serialization.Json.WriterInstructors
         /// </summary>
         /// <param name="object">The object to be serialized.</param>
         /// <param name="actualType">The actual type of the object (similar to <c>object.GetType()</c>).</param>
-        /// <param name="referencedType">The type that was used to reference the object.</param>
         /// <returns>True if this writer instructor can serialize the specified object, else false.</returns>
-        bool IsSuitableFor(object @object, Type actualType, Type referencedType);
+        bool IsSuitableFor(object @object, Type actualType);
 
         /// <summary>
         ///     Serializes the object using the specified context. You must only call this method if you ensured that <see cref="IsSuitableFor" /> would return true.

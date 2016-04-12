@@ -59,7 +59,7 @@ namespace Light.Serialization.Json.WriterInstructors
         ///     so that it is ruled out that this instructor serializes a dictionary (or other complex .NET types that should not be treated by it).
         /// </summary>
         /// <returns>True if the specified object is no delegate, else false.</returns>
-        public bool IsSuitableFor(object @object, Type actualType, Type referencedType)
+        public bool IsSuitableFor(object @object, Type actualType)
         {
             return @object is Delegate == false;
         }

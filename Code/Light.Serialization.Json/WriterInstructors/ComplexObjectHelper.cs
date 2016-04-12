@@ -44,7 +44,7 @@ namespace Light.Serialization.Json.WriterInstructors
                 else
                 {
                     var childValueType = childValue.GetType();
-                    context.SerializeChild(childValue, childValueType, valueProvider.ReferenceType);
+                    context.SerializeChild(childValue, childValueType);
                 }
 
                 if (i < valueProvidersForComplexObject.Count - 1)

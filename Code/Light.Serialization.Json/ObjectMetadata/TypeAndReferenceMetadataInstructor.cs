@@ -10,9 +10,8 @@ namespace Light.Serialization.Json.ObjectMetadata
     /// <summary>
     ///     Represents an IObjectMetadataInstructor that serializes ids and type information in the metadata section of a complex JSON object.
     /// </summary>
-    public sealed class TypeAndReferenceMetadataInstructor : IObjectMetadataInstructor, ISetObjectReferencePreservationStatus, ISetTypeInfoSerializationStatus, IClearSerializedObjectsCache
+    public sealed class TypeAndReferenceMetadataInstructor : IObjectMetadataInstructor, ISetObjectReferencePreservationStatus, ISetTypeInfoSerializationStatus
     {
-        private readonly List<object> _serializedObjects = new List<object>();
         private string _concreteTypeSymbol = JsonSymbols.DefaultConcreteTypeSymbol;
         private string _genericTypeArgumentsSymbol = JsonSymbols.DefaultGenericTypeArgumentsSymbol;
         private string _genericTypeNameSymbol = JsonSymbols.DefaultGenericTypeNameSymbol;
@@ -132,14 +131,6 @@ namespace Light.Serialization.Json.ObjectMetadata
         }
 
         /// <summary>
-        ///     Clears the list of serialized objects - this should be done when a new object graph is serialized.
-        /// </summary>
-        public void ClearSerializedObjects()
-        {
-            _serializedObjects.Clear();
-        }
-
-        /// <summary>
         ///     Serializes the JSON document ID and the type name of the specified object.
         /// </summary>
         /// <param name="serializationContext">The serialization context for the object to be serialized.</param>
@@ -150,7 +141,7 @@ namespace Light.Serialization.Json.ObjectMetadata
 
             if (_isSerializingObjectIds)
             {
-                var indexOfObject = GetIndexOfAlreadySerializedObject(serializationContext.ObjectToBeSerialized);
+                var indexOfObject = GetIndexOfAlreadySerializedObject(serializationContext.ObjectToBeSerialized, serializationContext.SerializedObjects);
 
                 if (indexOfObject != -1)
                 {
@@ -159,9 +150,9 @@ namespace Light.Serialization.Json.ObjectMetadata
                     return false;
                 }
 
-                _serializedObjects.Add(serializationContext.ObjectToBeSerialized);
+                serializationContext.SerializedObjects.Add(serializationContext.ObjectToBeSerialized);
                 writer.WriteKey(_idSymbol);
-                writer.WritePrimitiveValue((_serializedObjects.Count - 1).ToString());
+                writer.WritePrimitiveValue((serializationContext.SerializedObjects.Count - 1).ToString());
                 writer.WriteDelimiter();
             }
 
@@ -224,11 +215,11 @@ namespace Light.Serialization.Json.ObjectMetadata
             writer.EndObject();
         }
 
-        private int GetIndexOfAlreadySerializedObject(object @object)
+        private static int GetIndexOfAlreadySerializedObject(object @object, List<object> serializedObjects)
         {
-            for (var i = 0; i < _serializedObjects.Count; i++)
+            for (var i = 0; i < serializedObjects.Count; i++)
             {
-                if (ReferenceEquals(_serializedObjects[i], @object))
+                if (ReferenceEquals(serializedObjects[i], @object))
                     return i;
             }
             return -1;

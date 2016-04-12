@@ -60,7 +60,6 @@
     <Compile Include="JsonSerializerBuilderExtensions.cs" />
     <Compile Include="LowLevelWriting\IJsonWriter.cs" />
     <Compile Include="LowLevelWriting\IJsonWriterFactory.cs" />
-    <Compile Include="BuilderInterfaces\IClearSerializedObjectsCache.cs" />
     <Compile Include="ObjectMetadata\INameToTypeMapping.cs" />
     <Compile Include="ObjectMetadata\IObjectMetadataInstructor.cs" />
     <Compile Include="BuilderInterfaces\ISetObjectReferencePreservationStatus.cs" />
