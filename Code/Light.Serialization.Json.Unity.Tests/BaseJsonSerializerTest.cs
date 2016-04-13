@@ -55,11 +55,7 @@ namespace Light.Serialization.Json.Tests
 
         protected void ReplaceTimeZoneInfoInDateTimeFormatter(TimeZoneInfo timeZoneInfo)
         {
-            _container.RegisterType<IPrimitiveTypeFormatter, DateTimeFormatter>(typeof (DateTimeFormatter).Name,
-                                                                               new ContainerControlledLifetimeManager(), new InjectionFactory(c => new DateTimeFormatter
-                                                                                                                                                   {
-                                                                                                                                                       TimeZoneInfo = timeZoneInfo
-                                                                                                                                                   }));
+            _container.Resolve<DateTimeFormatter>().TimeZoneInfo = timeZoneInfo;
         }
 
         protected void DisableObjectReferencePreservation()
