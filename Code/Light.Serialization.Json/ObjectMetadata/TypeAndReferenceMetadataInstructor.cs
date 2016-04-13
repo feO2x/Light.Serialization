@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Light.GuardClauses;
 using Light.GuardClauses.Exceptions;
 using Light.Serialization.Json.BuilderInterfaces;
@@ -10,7 +9,7 @@ namespace Light.Serialization.Json.ObjectMetadata
     /// <summary>
     ///     Represents an IObjectMetadataInstructor that serializes ids and type information in the metadata section of a complex JSON object.
     /// </summary>
-    public sealed class TypeAndReferenceMetadataInstructor : IMetadataInstructor, ISetObjectReferencePreservationStatus, ISetTypeInfoSerializationStatus
+    public sealed class TypeAndReferenceMetadataInstructor : IMetadataInstructor, ISetObjectReferencePreservationStatus, ISetTypeInfoSerializationStatus, ISetTypeToNameMapping
     {
         private string _concreteTypeSymbol = JsonSymbols.DefaultConcreteTypeSymbol;
         private string _genericTypeArgumentsSymbol = JsonSymbols.DefaultGenericTypeArgumentsSymbol;
@@ -117,20 +116,6 @@ namespace Light.Serialization.Json.ObjectMetadata
         }
 
         /// <summary>
-        ///     Gets or sets the object used to map from .NET types to JSON names.
-        /// </summary>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
-        public ITypeToNameMapping TypeToNameMapping
-        {
-            get { return _typeToNameMapping; }
-            set
-            {
-                value.MustNotBeNull(nameof(value));
-                _typeToNameMapping = value;
-            }
-        }
-
-        /// <summary>
         ///     Serializes the JSON object ID and the type name of the specified object.
         /// </summary>
         /// <param name="serializationContext">The serialization context for the object to be serialized.</param>
@@ -181,6 +166,20 @@ namespace Light.Serialization.Json.ObjectMetadata
         {
             get { return _isSerializingTypeInfo; }
             set { _isSerializingTypeInfo = value; }
+        }
+
+        /// <summary>
+        ///     Gets or sets the object used to map from .NET types to JSON names.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
+        public ITypeToNameMapping TypeToNameMapping
+        {
+            get { return _typeToNameMapping; }
+            set
+            {
+                value.MustNotBeNull(nameof(value));
+                _typeToNameMapping = value;
+            }
         }
 
         private void SerializeTypeInfo(Type currentType, IJsonWriter writer)

@@ -45,6 +45,7 @@
     <Compile Include="BuilderInterfaces\ISetCollectionMetadataInstructor.cs" />
     <Compile Include="BuilderInterfaces\ISetPrimitiveTypeFormatters.cs" />
     <Compile Include="BuilderInterfaces\ISetTypeAnalyzer.cs" />
+    <Compile Include="BuilderInterfaces\ISetTypeToNameMapping.cs" />
     <Compile Include="Caching\ValueProvidersCacheDecorator.cs" />
     <Compile Include="ComplexTypeDecomposition\IReadableValuesTypeAnalyzer.cs" />
     <Compile Include="ComplexTypeDecomposition\IValueProvider.cs" />

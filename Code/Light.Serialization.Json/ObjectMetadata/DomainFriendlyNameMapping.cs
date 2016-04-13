@@ -177,5 +177,13 @@ namespace Light.Serialization.Json.ObjectMetadata
             _typeToNameMappings.Clear();
             return this;
         }
+
+        /// <summary>
+        ///     Creates a new instance of DomainFriendlyNameMapping with the default mappings for basic .NET types already registered.
+        /// </summary>
+        public static DomainFriendlyNameMapping CreateWithDefaultTypeMappings()
+        {
+            return new DomainFriendlyNameMapping().AddDefaultMappingsForBasicTypes();
+        }
     }
 }

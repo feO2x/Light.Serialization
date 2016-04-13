@@ -16,7 +16,7 @@ namespace Light.Serialization.Json
     /// <summary>
     ///     Represents a builder for JSON Serializer instances.
     /// </summary>
-    public class JsonSerializerBuilder
+    public sealed class JsonSerializerBuilder
     {
         /// <summary>
         ///     Gets the list containing all writer instructors.
@@ -27,9 +27,10 @@ namespace Light.Serialization.Json
         private IMetadataInstructor _collectionMetadataInstructor = new CollectionReferenceMetadataInstructor();
         private Func<IJsonWriterFactory> _createWriterFactory;
         private IDictionary<Type, IJsonWriterInstructor> _instructorCache;
-        private IMetadataInstructor _objectMetadataInstructor = new TypeAndReferenceMetadataInstructor(new SimpleNameToTypeMapping());
+        private IMetadataInstructor _objectMetadataInstructor;
         private IDictionary<Type, IPrimitiveTypeFormatter> _primitiveTypeFormattersMapping;
         private IReadableValuesTypeAnalyzer _typeAnalyzer = new ValueProvidersCacheDecorator(new PublicPropertiesAndFieldsAnalyzer(), new Dictionary<Type, IList<IValueProvider>>());
+        private ITypeToNameMapping _typeToNameMapping = new SimpleNameToTypeMapping();
 
         /// <summary>
         ///     Initializes a new instance of <see cref="JsonSerializerBuilder" />.
@@ -41,6 +42,8 @@ namespace Light.Serialization.Json
 
             _primitiveTypeFormattersMapping = new List<IPrimitiveTypeFormatter>().AddDefaultPrimitiveTypeFormatters(_characterEscaper)
                                                                                  .ToDictionary(f => f.TargetType);
+
+            _objectMetadataInstructor = new TypeAndReferenceMetadataInstructor(_typeToNameMapping);
 
             WriterInstructors = new List<IJsonWriterInstructor>().AddDefaultWriterInstructors(_primitiveTypeFormattersMapping,
                                                                                               _typeAnalyzer,
@@ -420,6 +423,33 @@ namespace Light.Serialization.Json
                 return;
 
             metadataInstructor.IsSerializingTypeInfo = value;
+        }
+
+        /// <summary>
+        ///     Exchanges the existing mapping from .NET types to JSON names with the specified one.
+        /// </summary>
+        /// <param name="typeToNameMapping">The new mapping from .NET types to JSON names.</param>
+        /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeToNameMapping" /> is null.</exception>
+        public JsonSerializerBuilder WithTypeToNameMapping(ITypeToNameMapping typeToNameMapping)
+        {
+            typeToNameMapping.MustNotBeNull(nameof(typeToNameMapping));
+
+            _typeToNameMapping = typeToNameMapping;
+
+            SetTypeToNameMapping(_objectMetadataInstructor, typeToNameMapping);
+            SetTypeToNameMapping(_collectionMetadataInstructor, typeToNameMapping);
+
+            return this;
+        }
+
+        private static void SetTypeToNameMapping(IMetadataInstructor instructor, ITypeToNameMapping typeToNameMapping)
+        {
+            var metadataInstructor = instructor as ISetTypeToNameMapping;
+            if (metadataInstructor == null)
+                return;
+
+            metadataInstructor.TypeToNameMapping = typeToNameMapping;
         }
 
         /// <summary>
