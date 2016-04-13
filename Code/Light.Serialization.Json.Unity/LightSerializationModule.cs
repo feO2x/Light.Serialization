@@ -108,20 +108,55 @@ namespace Light.Serialization.Json.Unity
                 .RegisterType<IMetadataInstructor, CollectionReferenceMetadataInstructor>(KnownNames.CollectionMetadataInstructor, new ContainerControlledLifetimeManager())
 
                 // Type to name mapping
-                .RegisterType<ITypeToNameMapping, SimpleNameToTypeMapping>(new ContainerControlledLifetimeManager());
+                .RegisterType<ITypeToNameMapping, SimpleNameToTypeMapping>(new ContainerControlledLifetimeManager())
+                .RegisterType<INameToTypeMapping, SimpleNameToTypeMapping>(new ContainerControlledLifetimeManager());
         }
 
         /// <summary>
         ///     Registers an indenting whitespace formatter with the specified container so that the JSON serializer produces human-readable documents with newlines and indenting.
         /// </summary>
         /// <param name="container">The container to be populated.</param>
-        /// <returns>The container for method-chaining.</returns>
+        /// <returns>The container for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> is null.</exception>
         public static IUnityContainer UserIndentingWhitespaceFormatterForSerialization(this IUnityContainer container)
         {
             container.MustNotBeNull(nameof(container));
 
             return container.RegisterType<IJsonWhitespaceFormatter, IndentingWhitespaceFormatter>();
+        }
+
+        /// <summary>
+        ///     Configures the metadata instructors for serialization to use Domain Friendly Names which can be configured by the specified delegate.
+        /// </summary>
+        /// <param name="container">The container to be populated.</param>
+        /// <param name="configureMapping">The delegate that configures the Domain Friendly Name mapping.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> or <paramref name="configureMapping" /> is null.</exception>
+        public static IUnityContainer UseDomainFriendlyNaming(this IUnityContainer container, Action<TypeNameToJsonNameScanner.IScanningOptions> configureMapping)
+        {
+            container.MustNotBeNull(nameof(container));
+            configureMapping.MustNotBeNull(nameof(configureMapping));
+
+            var domainFriendlyNameMapping = DomainFriendlyNameMapping.CreateWithDefaultTypeMappings()
+                                                                     .ScanTypes(configureMapping);
+
+            return container.UseDomainFriendlyNaming(domainFriendlyNameMapping);
+        }
+
+        /// <summary>
+        ///     Configures the metadata instructors for serialization to use the specified Domain Friendly Name mapping.
+        /// </summary>
+        /// <param name="container">The container to be populated.</param>
+        /// <param name="mapping">The mapping that should be used as ITypeToNameMapping and INameToTypeMapping.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> or <paramref name="mapping" /> is null.</exception>
+        public static IUnityContainer UseDomainFriendlyNaming(this IUnityContainer container, DomainFriendlyNameMapping mapping)
+        {
+            container.MustNotBeNull(nameof(container));
+            mapping.MustNotBeNull(nameof(mapping));
+
+            return container.RegisterInstance<ITypeToNameMapping>(mapping)
+                            .RegisterInstance<INameToTypeMapping>(mapping);
         }
 
         /// <summary>
@@ -141,6 +176,7 @@ namespace Light.Serialization.Json.Unity
             lifetimeManager = lifetimeManager ?? new TransientLifetimeManager();
             return container.RegisterType<TFrom, TTo>(typeof (TTo).Name, lifetimeManager);
         }
+
 
         /// <summary>
         ///     Registers the specified type with the container using the concrete type name as the name for the registration.
