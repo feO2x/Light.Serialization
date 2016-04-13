@@ -61,13 +61,17 @@
     <Compile Include="JsonSerializerBuilderExtensions.cs" />
     <Compile Include="LowLevelWriting\IJsonWriter.cs" />
     <Compile Include="LowLevelWriting\IJsonWriterFactory.cs" />
+    <Compile Include="ObjectMetadata\BasicNetTypeNames.cs" />
     <Compile Include="ObjectMetadata\CollectionReferenceMetadataInstructor.cs" />
+    <Compile Include="ObjectMetadata\DomainFriendlyNameMapping.cs" />
+    <Compile Include="ObjectMetadata\IAddOneToOneMapping.cs" />
     <Compile Include="ObjectMetadata\INameToTypeMapping.cs" />
     <Compile Include="ObjectMetadata\IMetadataInstructor.cs" />
     <Compile Include="BuilderInterfaces\ISetObjectReferencePreservationStatus.cs" />
     <Compile Include="BuilderInterfaces\ISetTypeInfoSerializationStatus.cs" />
     <Compile Include="ObjectMetadata\ITypeToNameMapping.cs" />
     <Compile Include="ObjectMetadata\ListExtensions.cs" />
+    <Compile Include="ObjectMetadata\TypeNameToJsonNameScanner.cs" />
     <Compile Include="ObjectMetadata\SimpleNameToTypeMapping.cs" />
     <Compile Include="ObjectMetadata\TypeAndReferenceMetadataInstructor.cs" />
     <Compile Include="SerializationRules\IAndBlackListRule.cs" />
