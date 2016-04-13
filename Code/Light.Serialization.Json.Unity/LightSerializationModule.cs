@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Light.GuardClauses;
 using Light.Serialization.Abstractions;
+using Light.Serialization.Json.BuilderInterfaces;
 using Light.Serialization.Json.Caching;
 using Light.Serialization.Json.ComplexTypeDecomposition;
 using Light.Serialization.Json.LowLevelWriting;
@@ -157,6 +158,25 @@ namespace Light.Serialization.Json.Unity
 
             return container.RegisterInstance<ITypeToNameMapping>(mapping)
                             .RegisterInstance<INameToTypeMapping>(mapping);
+        }
+
+        /// <summary>
+        ///     Configures all metadata instructors for serialization to not serialize object IDs in the JSON document.
+        /// </summary>
+        /// <param name="container">The container to be configured.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> is null.</exception>
+        public static IUnityContainer DisableObjectReferencePreservation(this IUnityContainer container)
+        {
+            container.MustNotBeNull(nameof(container));
+
+            foreach (var setPreservationStatus in container.ResolveAll<IMetadataInstructor>()
+                                                           .OfType<ISetObjectReferencePreservationStatus>())
+            {
+                setPreservationStatus.IsSerializingObjectIds = false;
+            }
+
+            return container;
         }
 
         /// <summary>

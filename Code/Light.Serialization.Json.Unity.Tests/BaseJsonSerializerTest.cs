@@ -12,11 +12,11 @@ namespace Light.Serialization.Json.Tests
 {
     public abstract class BaseJsonSerializerTest
     {
-        protected IUnityContainer Container;
+        private readonly IUnityContainer _container;
 
         protected BaseJsonSerializerTest()
         {
-            Container = new UnityContainer().RegisterDefaultSerializationTypes();
+            _container = new UnityContainer().RegisterDefaultSerializationTypes();
         }
 
         protected void CompareJsonToExpected<T>(T value, string expected)
@@ -35,31 +35,36 @@ namespace Light.Serialization.Json.Tests
 
         protected string GetSerializedJson<T>(T value)
         {
-            var jsonSerializer = Container.Resolve<ISerializer>();
+            var jsonSerializer = _container.Resolve<ISerializer>();
 
             return jsonSerializer.Serialize(value);
         }
 
         protected string GetSerializedHumanReadableJson<T>(T value)
         {
-            Container.UserIndentingWhitespaceFormatterForSerialization();
-            var jsonSerializer = Container.Resolve<ISerializer>();
+            _container.UserIndentingWhitespaceFormatterForSerialization();
+            var jsonSerializer = _container.Resolve<ISerializer>();
 
             return jsonSerializer.Serialize(value);
         }
 
         protected void AddRule<T>(Action<Rule<T>> rule)
         {
-            Container.WithSerializationRuleFor(rule);
+            _container.WithSerializationRuleFor(rule);
         }
 
         protected void ReplaceTimeZoneInfoInDateTimeFormatter(TimeZoneInfo timeZoneInfo)
         {
-            Container.RegisterType<IPrimitiveTypeFormatter, DateTimeFormatter>(typeof (DateTimeFormatter).Name,
+            _container.RegisterType<IPrimitiveTypeFormatter, DateTimeFormatter>(typeof (DateTimeFormatter).Name,
                                                                                new ContainerControlledLifetimeManager(), new InjectionFactory(c => new DateTimeFormatter
                                                                                                                                                    {
                                                                                                                                                        TimeZoneInfo = timeZoneInfo
                                                                                                                                                    }));
+        }
+
+        protected void DisableObjectReferencePreservation()
+        {
+            _container.DisableObjectReferencePreservation();
         }
     }
 }

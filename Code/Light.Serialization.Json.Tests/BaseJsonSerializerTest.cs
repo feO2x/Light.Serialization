@@ -8,11 +8,11 @@ namespace Light.Serialization.Json.Tests
 {
     public abstract class BaseJsonSerializerTest
     {
-        protected JsonSerializerBuilder JsonSerializerBuilder;
+        private readonly JsonSerializerBuilder _jsonSerializerBuilder;
 
         protected BaseJsonSerializerTest()
         {
-            JsonSerializerBuilder = new JsonSerializerBuilder();
+            _jsonSerializerBuilder = new JsonSerializerBuilder();
         }
 
         protected void CompareJsonToExpected<T>(T value, string expected)
@@ -31,14 +31,14 @@ namespace Light.Serialization.Json.Tests
 
         protected string GetSerializedJson<T>(T value)
         {
-            var jsonSerializer = JsonSerializerBuilder.Build();
+            var jsonSerializer = _jsonSerializerBuilder.Build();
 
             return jsonSerializer.Serialize(value);
         }
 
         protected string GetSerializedHumanReadableJson<T>(T value)
         {
-            var jsonSerializer = JsonSerializerBuilder.WithWriterFactory(JsonWriterFactory.CreateDefaultWithIndentingWhitespaceFormatter)
+            var jsonSerializer = _jsonSerializerBuilder.WithWriterFactory(JsonWriterFactory.CreateDefaultWithIndentingWhitespaceFormatter)
                                                       .Build();
 
             return jsonSerializer.Serialize(value);
@@ -46,12 +46,17 @@ namespace Light.Serialization.Json.Tests
 
         protected void AddRule<T>(Action<Rule<T>> rule)
         {
-            JsonSerializerBuilder.WithRuleFor(rule);
+            _jsonSerializerBuilder.WithRuleFor(rule);
         }
 
         protected void ReplaceTimeZoneInfoInDateTimeFormatter(TimeZoneInfo timeZoneInfo)
         {
-            JsonSerializerBuilder.ConfigurePrimitiveTypeFormatter<DateTimeFormatter>(f => f.TimeZoneInfo = timeZoneInfo);
+            _jsonSerializerBuilder.ConfigurePrimitiveTypeFormatter<DateTimeFormatter>(f => f.TimeZoneInfo = timeZoneInfo);
+        }
+
+        protected void DisableObjectReferencePreservation()
+        {
+            _jsonSerializerBuilder.DisableObjectReferencePreservation();
         }
     }
 }
