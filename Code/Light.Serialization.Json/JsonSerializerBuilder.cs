@@ -27,6 +27,7 @@ namespace Light.Serialization.Json
         private IMetadataInstructor _collectionMetadataInstructor = new CollectionReferenceMetadataInstructor();
         private Func<IJsonWriterFactory> _createWriterFactory;
         private IDictionary<Type, IJsonWriterInstructor> _instructorCache;
+        private IJsonKeyNormalizer _keyNormalizer = new FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer();
         private IMetadataInstructor _objectMetadataInstructor;
         private IDictionary<Type, IPrimitiveTypeFormatter> _primitiveTypeFormattersMapping;
         private IReadableValuesTypeAnalyzer _typeAnalyzer = new ValueProvidersCacheDecorator(new PublicPropertiesAndFieldsAnalyzer(), new Dictionary<Type, IList<IValueProvider>>());
@@ -207,8 +208,13 @@ namespace Light.Serialization.Json
         /// <returns>The builder for method chaining.</returns>
         public JsonSerializerBuilder UseDefaultWriterFactory()
         {
-            _createWriterFactory = JsonWriterFactory.CreateDefault;
+            _createWriterFactory = CreateDefaultWriterFactory;
             return this;
+        }
+
+        private JsonWriterFactory CreateDefaultWriterFactory()
+        {
+            return new JsonWriterFactory(_keyNormalizer, new WhitespaceFormatterNullObject());
         }
 
         /// <summary>
@@ -450,6 +456,20 @@ namespace Light.Serialization.Json
                 return;
 
             metadataInstructor.TypeToNameMapping = typeToNameMapping;
+        }
+
+        /// <summary>
+        ///     Exchanges the currently used keyNormalizer with the specified one. The default key normalizer is an instance of FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer.
+        /// </summary>
+        /// <param name="keyNormalizer">The new key normalizer.</param>
+        /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="keyNormalizer" /> is null.</exception>
+        public JsonSerializerBuilder WithKeyNormalizer(IJsonKeyNormalizer keyNormalizer)
+        {
+            keyNormalizer.MustNotBeNull(nameof(keyNormalizer));
+
+            _keyNormalizer = keyNormalizer;
+            return this;
         }
 
         /// <summary>
