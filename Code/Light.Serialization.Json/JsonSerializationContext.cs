@@ -11,13 +11,6 @@ namespace Light.Serialization.Json
     public struct JsonSerializationContext
     {
         /// <summary>
-        ///     Represents a delegate that should be called to serialize a child object in the graph.
-        /// </summary>
-        /// <param name="child">The child object to be serialized.</param>
-        /// <param name="actualType">The actual type of the child object.</param>
-        public delegate void SerializeChildMethod(object child, Type actualType);
-
-        /// <summary>
         ///     Gets the object that should be serialized. This value is never null.
         /// </summary>
         public readonly object ObjectToBeSerialized;
@@ -30,7 +23,7 @@ namespace Light.Serialization.Json
         /// <summary>
         ///     Gets the delegate you can use to serialize a child object
         /// </summary>
-        public readonly SerializeChildMethod SerializeChild;
+        public readonly Action<object> SerializeChild;
 
         /// <summary>
         ///     Gets the writer that creates the actual JSON document.
@@ -53,7 +46,7 @@ namespace Light.Serialization.Json
         /// <exception cref="ArgumentNullException">Thrown when any of the specified parameters is null.</exception>
         public JsonSerializationContext(object objectToBeSerialized,
                                         Type actualType,
-                                        SerializeChildMethod serializeChild,
+                                        Action<object> serializeChild,
                                         IJsonWriter writer,
                                         List<object> serializedObjects)
         {

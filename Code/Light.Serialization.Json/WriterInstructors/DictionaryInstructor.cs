@@ -83,7 +83,7 @@ namespace Light.Serialization.Json.WriterInstructors
                 if (value == null)
                     writer.WriteNull();
                 else
-                    serializationContext.SerializeChild(value, value.GetType());
+                    serializationContext.SerializeChild(value);
 
                 if (dicitionaryEnumerator.MoveNext())
                     writer.WriteDelimiter();

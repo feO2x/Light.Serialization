@@ -76,6 +76,7 @@
     <Compile Include="SerializationTests\DateTimeOffsetTests.cs" />
     <Compile Include="SerializationTests\DateTimeTests.cs" />
     <Compile Include="SerializationTests\DelegateTests.cs" />
+    <Compile Include="SerializationTests\NullableTests.cs" />
     <Compile Include="StringExtensionsTests.cs" />
     <Compile Include="SerializationTests\TimeSpanTests.cs" />
     <Compile Include="SerializationTests\PrimitiveValuesTests.cs" />

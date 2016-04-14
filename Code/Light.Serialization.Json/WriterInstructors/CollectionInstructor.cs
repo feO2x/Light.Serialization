@@ -65,7 +65,7 @@ namespace Light.Serialization.Json.WriterInstructors
                 if (currentChildObject == null)
                     writer.WriteNull();
                 else
-                    serializationContext.SerializeChild(currentChildObject, currentChildObject.GetType());
+                    serializationContext.SerializeChild(currentChildObject);
                 if (enumerator.MoveNext())
                     writer.WriteDelimiter();
                 else

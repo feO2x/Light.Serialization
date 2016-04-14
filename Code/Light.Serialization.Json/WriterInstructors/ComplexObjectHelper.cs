@@ -42,10 +42,7 @@ namespace Light.Serialization.Json.WriterInstructors
                 if (childValue == null)
                     writer.WriteNull();
                 else
-                {
-                    var childValueType = childValue.GetType();
-                    context.SerializeChild(childValue, childValueType);
-                }
+                    context.SerializeChild(childValue);
 
                 if (i < valueProvidersForComplexObject.Count - 1)
                     writer.WriteDelimiter();

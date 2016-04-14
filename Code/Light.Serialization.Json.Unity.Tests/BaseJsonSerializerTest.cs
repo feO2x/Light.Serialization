@@ -8,7 +8,6 @@ using Light.Serialization.Json.Unity;
 using Microsoft.Practices.Unity;
 
 // ReSharper disable once CheckNamespace
-
 namespace Light.Serialization.Json.Tests
 {
     public abstract class BaseJsonSerializerTest

@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using Xunit;
 using TestData = System.Collections.Generic.IEnumerable<object[]>;
 
+#pragma warning disable CS0436 // Type conflicts with imported type
+
 namespace Light.Serialization.Json.Tests.SerializationTests
 {
     public sealed class CollectionTests : BaseJsonSerializerTest

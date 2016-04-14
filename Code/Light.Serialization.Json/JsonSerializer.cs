@@ -48,11 +48,9 @@ namespace Light.Serialization.Json
         /// <exception cref="SerializationException">Thrown when any part of the object graph could not be serialized.</exception>
         public string Serialize(object objectGraphRoot)
         {
-            objectGraphRoot.MustNotBeNull(nameof(objectGraphRoot));
-
-            _jsonWriter = _writerFactory.Create();
+           _jsonWriter = _writerFactory.Create();
             _serializedObjects = new List<object>();
-            SerializeObject(objectGraphRoot, objectGraphRoot.GetType());
+            SerializeObject(objectGraphRoot);
 
             var json = _writerFactory.FinishWriteProcessAndReleaseResources();
             _jsonWriter = null;
@@ -60,8 +58,15 @@ namespace Light.Serialization.Json
             return json;
         }
 
-        private void SerializeObject(object @object, Type actualType)
+        private void SerializeObject(object @object)
         {
+            if (@object == null)
+            {
+                _jsonWriter.WriteNull();
+                return;
+            }
+
+            var actualType = @object.GetType();
             IJsonWriterInstructor targetWriterInstructor;
             if (_instructorCache.TryGetValue(actualType, out targetWriterInstructor) == false)
             {
