@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using Light.Serialization.Json.FrameworkExtensions;
 
 namespace Light.Serialization.Json.WriterInstructors
 {
@@ -23,7 +22,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// <param name="serializationContext">The serialization context of the enum value.</param>
         public void Serialize(JsonSerializationContext serializationContext)
         {
-            serializationContext.Writer.WritePrimitiveValue(serializationContext.ObjectToBeSerialized.ToString().SurroundWithQuotationMarks());
+            serializationContext.Writer.WriteString(serializationContext.ObjectToBeSerialized.ToString());
         }
     }
 }

@@ -156,6 +156,12 @@ namespace Light.Serialization.Json.Unity
             container.MustNotBeNull(nameof(container));
             mapping.MustNotBeNull(nameof(mapping));
 
+            foreach (var metadataInstructor in container.ResolveAll<IMetadataInstructor>()
+                                                        .OfType<ISetTypeToNameMapping>())
+            {
+                metadataInstructor.TypeToNameMapping = mapping;
+            }
+
             return container.RegisterInstance<ITypeToNameMapping>(mapping)
                             .RegisterInstance<INameToTypeMapping>(mapping);
         }
@@ -168,12 +174,65 @@ namespace Light.Serialization.Json.Unity
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> is null.</exception>
         public static IUnityContainer DisableObjectReferencePreservation(this IUnityContainer container)
         {
+            return container.SetObjectReferencePreservation(false);
+        }
+
+        /// <summary>
+        ///     Configures all metadata instructors for serialization to serialize object IDs in the JSON document and reference already serialized objects.
+        ///     By default, this option is turned on, so you do not have to call this method if you have not turned off Object Reference Preservation before.
+        /// </summary>
+        /// <param name="container">The container to be configured.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> is null.</exception>
+        public static IUnityContainer EnableObjectReferencePreservation(this IUnityContainer container)
+        {
+            return container.SetObjectReferencePreservation(true);
+        }
+
+        private static IUnityContainer SetObjectReferencePreservation(this IUnityContainer container, bool value)
+        {
             container.MustNotBeNull(nameof(container));
 
-            foreach (var setPreservationStatus in container.ResolveAll<IMetadataInstructor>()
-                                                           .OfType<ISetObjectReferencePreservationStatus>())
+            foreach (var metadataInstructor in container.ResolveAll<IMetadataInstructor>()
+                                                        .OfType<ISetObjectReferencePreservationStatus>())
             {
-                setPreservationStatus.IsSerializingObjectIds = false;
+                metadataInstructor.IsSerializingObjectIds = value;
+            }
+
+            return container;
+        }
+
+        /// <summary>
+        ///     Configures all metadata instructors for serialization to not serialize type metadata in the JSON document.
+        /// </summary>
+        /// <param name="container">The container to be configured.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> is null.</exception>
+        public static IUnityContainer DisableTypeMetadata(this IUnityContainer container)
+        {
+            return container.SetTypeMetadataStatus(false);
+        }
+
+        /// <summary>
+        ///     Configures all metadata instructors for serialization to serialize type metadata in the JSON document.
+        ///     By default, this option is turned on, so you do not have to call this method if you have not turned off Type Metadata before.
+        /// </summary>
+        /// <param name="container">The container to be configured.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> is null.</exception>
+        public static IUnityContainer EnableTypeMetadata(this IUnityContainer container)
+        {
+            return container.SetTypeMetadataStatus(true);
+        }
+
+        private static IUnityContainer SetTypeMetadataStatus(this IUnityContainer container, bool value)
+        {
+            container.MustNotBeNull(nameof(container));
+
+            foreach (var metadataInstructor in container.ResolveAll<IMetadataInstructor>()
+                                                        .OfType<ISetTypeInfoSerializationStatus>())
+            {
+                metadataInstructor.IsSerializingTypeInfo = value;
             }
 
             return container;

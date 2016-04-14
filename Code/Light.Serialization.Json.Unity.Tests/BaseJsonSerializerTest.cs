@@ -1,6 +1,7 @@
 ﻿using System;
 using FluentAssertions;
 using Light.Serialization.Abstractions;
+using Light.Serialization.Json.ObjectMetadata;
 using Light.Serialization.Json.PrimitiveTypeFormatters;
 using Light.Serialization.Json.SerializationRules;
 using Light.Serialization.Json.Unity;
@@ -61,6 +62,16 @@ namespace Light.Serialization.Json.Tests
         protected void DisableObjectReferencePreservation()
         {
             _container.DisableObjectReferencePreservation();
+        }
+
+        protected void DisableTypeMetadata()
+        {
+            _container.DisableTypeMetadata();
+        }
+
+        protected void UseDomainFriendlyNames(Action<TypeNameToJsonNameScanner.IScanningOptions> options)
+        {
+            _container.UseDomainFriendlyNaming(options);
         }
     }
 }

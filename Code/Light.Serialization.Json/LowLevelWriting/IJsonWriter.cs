@@ -29,7 +29,7 @@ namespace Light.Serialization.Json.LowLevelWriting
         void EndObject();
 
         /// <summary>
-        ///     Writes the key and a key-value delimiter in a currently open complex JSON object.
+        ///     Writes the key and a key-value delimiter in a currently open complex JSON object. It is ensured that the key is surrounded by quotation marks.
         /// </summary>
         /// <param name="key">The key to be written.</param>
         /// <param name="shouldNormalizeKey">
@@ -51,6 +51,13 @@ namespace Light.Serialization.Json.LowLevelWriting
         /// </summary>
         /// <param name="string">The string to be written to the JSON document.</param>
         void WritePrimitiveValue(string @string);
+
+        /// <summary>
+        ///     Writes the specified string as a JSON string. It is ensured the the JSON string in the document will be surrounded by quotation marks.
+        /// </summary>
+        /// <param name="string">The string to be written.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="string" /> is null.</exception>
+        void WriteString(string @string);
 
         /// <summary>
         ///     Writes null as a value to the JSON document.

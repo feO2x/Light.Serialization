@@ -130,20 +130,20 @@ namespace Light.Serialization.Json.ObjectMetadata
 
                 if (indexOfObject != -1)
                 {
-                    writer.WriteKey(_referenceSymbol);
+                    writer.WriteKey(_referenceSymbol, false);
                     writer.WritePrimitiveValue(indexOfObject.ToString());
                     return false;
                 }
 
                 serializationContext.SerializedObjects.Add(serializationContext.ObjectToBeSerialized);
-                writer.WriteKey(_idSymbol);
+                writer.WriteKey(_idSymbol, false);
                 writer.WritePrimitiveValue((serializationContext.SerializedObjects.Count - 1).ToString());
                 writer.WriteDelimiter();
             }
 
             if (_isSerializingTypeInfo)
             {
-                writer.WriteKey(_concreteTypeSymbol);
+                writer.WriteKey(_concreteTypeSymbol, false);
                 SerializeTypeInfo(serializationContext.ActualType, writer);
                 writer.WriteDelimiter();
             }
@@ -187,18 +187,18 @@ namespace Light.Serialization.Json.ObjectMetadata
             if (currentType.IsConstructedGenericType == false)
             {
                 var typeName = _typeToNameMapping.Map(currentType);
-                writer.WritePrimitiveValue(typeName);
+                writer.WriteString(typeName);
                 return;
             }
 
             writer.BeginObject();
 
-            writer.WriteKey(_genericTypeNameSymbol);
+            writer.WriteKey(_genericTypeNameSymbol, false);
             var genericTypeName = _typeToNameMapping.Map(currentType);
-            writer.WritePrimitiveValue(genericTypeName);
+            writer.WriteString(genericTypeName);
             writer.WriteDelimiter();
 
-            writer.WriteKey(_genericTypeArgumentsSymbol);
+            writer.WriteKey(_genericTypeArgumentsSymbol, false);
             writer.BeginArray();
 
             var genericTypeArguments = currentType.GenericTypeArguments;
@@ -208,7 +208,10 @@ namespace Light.Serialization.Json.ObjectMetadata
                 if (i < genericTypeArguments.Length - 1)
                     writer.WriteDelimiter();
                 else
+                {
                     writer.EndArray();
+                    break;
+                }
             }
 
             writer.EndObject();

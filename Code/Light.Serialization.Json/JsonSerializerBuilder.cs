@@ -284,7 +284,7 @@ namespace Light.Serialization.Json
             configureRule(newRule);
 
             var existingInstructor = WriterInstructors.OfType<CustomRuleInstructor>()
-                                                      .First(i => i.TargetType == typeof (T));
+                                                      .FirstOrDefault(i => i.TargetType == typeof (T));
 
             if (existingInstructor != null)
                 WriterInstructors.Remove(existingInstructor);

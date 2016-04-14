@@ -27,7 +27,9 @@ namespace Light.Serialization.Json.Unity
 
             var newRule = container.Resolve<Rule<T>>();
             configureRule(newRule);
-            var customInstructor = new CustomRuleInstructor(newRule.TargetType, newRule.CreateValueProviders(), container.Resolve<IMetadataInstructor>());
+            var customInstructor = new CustomRuleInstructor(newRule.TargetType,
+                                                            newRule.CreateValueProviders(),
+                                                            container.Resolve<IMetadataInstructor>(KnownNames.ObjectMetadataInstructor));
             container.RegisterInstance(typeof (T).FullName, customInstructor);
             return container;
         }

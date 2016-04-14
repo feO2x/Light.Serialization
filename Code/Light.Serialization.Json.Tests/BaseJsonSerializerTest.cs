@@ -1,6 +1,7 @@
 ﻿using System;
 using FluentAssertions;
 using Light.Serialization.Json.LowLevelWriting;
+using Light.Serialization.Json.ObjectMetadata;
 using Light.Serialization.Json.PrimitiveTypeFormatters;
 using Light.Serialization.Json.SerializationRules;
 
@@ -39,7 +40,7 @@ namespace Light.Serialization.Json.Tests
         protected string GetSerializedHumanReadableJson<T>(T value)
         {
             var jsonSerializer = _jsonSerializerBuilder.WithWriterFactory(JsonWriterFactory.CreateDefaultWithIndentingWhitespaceFormatter)
-                                                      .Build();
+                                                       .Build();
 
             return jsonSerializer.Serialize(value);
         }
@@ -57,6 +58,19 @@ namespace Light.Serialization.Json.Tests
         protected void DisableObjectReferencePreservation()
         {
             _jsonSerializerBuilder.DisableObjectReferencePreservation();
+        }
+
+        protected void DisableTypeMetadata()
+        {
+            _jsonSerializerBuilder.DisableTypeMetadata();
+        }
+
+        protected void UseDomainFriendlyNames(Action<TypeNameToJsonNameScanner.IScanningOptions> options)
+        {
+            var domainFriendlyNameMapping = DomainFriendlyNameMapping.CreateWithDefaultTypeMappings()
+                                                                     .ScanTypes(options);
+
+            _jsonSerializerBuilder.WithTypeToNameMapping(domainFriendlyNameMapping);
         }
     }
 }

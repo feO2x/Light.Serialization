@@ -70,7 +70,7 @@ namespace Light.Serialization.Json.LowLevelWriting
         }
 
         /// <summary>
-        ///     Writes the key and a key-value delimiter in a currently open complex JSON object.
+        ///     Writes the key and a key-value delimiter in a currently open complex JSON object. It is ensured the the JSON string in the document will be surrounded by quotation marks.
         /// </summary>
         /// <param name="key">The key to be written.</param>
         /// <param name="shouldNormalizeKey">
@@ -111,6 +111,32 @@ namespace Light.Serialization.Json.LowLevelWriting
         public void WritePrimitiveValue(string @string)
         {
             _textWriter.Write(@string);
+        }
+
+        /// <summary>
+        ///     Writes the specified string as a JSON string. It is ensured the the JSON string in the document will be surrounded by quotation marks.
+        /// </summary>
+        /// <param name="string">The string to be written.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="string" /> is null.</exception>
+        public void WriteString(string @string)
+        {
+            @string.MustNotBeNull(nameof(@string));
+
+            if (@string[0] == JsonSymbols.StringDelimiter)
+            {
+                _textWriter.Write(@string);
+
+                if (@string[@string.Length - 1] != JsonSymbols.StringDelimiter)
+                    _textWriter.Write(JsonSymbols.StringDelimiter);
+
+                return;
+            }
+
+            _textWriter.Write(JsonSymbols.StringDelimiter);
+            _textWriter.Write(@string);
+
+            if (@string[@string.Length - 1] != JsonSymbols.StringDelimiter)
+                _textWriter.Write(JsonSymbols.StringDelimiter);
         }
 
         /// <summary>
