@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Light.GuardClauses;
@@ -111,6 +112,11 @@ namespace Light.Serialization.Json.ObjectMetadata
         public const string GenericCollection = "genericCollection";
 
         /// <summary>
+        /// Gets the "genericSet" name for all types that implement ISet of T.
+        /// </summary>
+        public const string GenericSet = "genericSet";
+
+        /// <summary>
         ///     Adds all mappings for basic .NET types to the specified DomainFriendlyNameMapping.
         /// </summary>
         /// <param name="mapping">The mapping to be populated.</param>
@@ -139,7 +145,9 @@ namespace Light.Serialization.Json.ObjectMetadata
                           .AddMapping(TimeSpan, typeof (TimeSpan))
                           .AddMapping(DateTimeOffset, typeof (DateTimeOffset))
                           .AddMapping(GenericCollection, typeof (List<>), typeof (IList<>), typeof (ICollection<>), typeof (IEnumerable<>), typeof (Collection<>), typeof (ObservableCollection<>))
-                          .AddMapping(GenericDictionary, typeof (Dictionary<,>), typeof (IDictionary<,>));
+                          .AddMapping(GenericDictionary, typeof (Dictionary<,>), typeof (IDictionary<,>), typeof (IDictionary), typeof (IReadOnlyDictionary<,>), typeof (SortedDictionary<,>))
+                          .AddMapping(GenericSet, typeof (HashSet<>), typeof (ISet<>), typeof (SortedSet<>));
+
         }
     }
 }

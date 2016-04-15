@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Light.GuardClauses;
+using Light.Serialization.Abstractions;
 using Light.Serialization.Json.BuilderInterfaces;
 using Light.Serialization.Json.ObjectMetadata;
 using Light.Serialization.Json.PrimitiveTypeFormatters;
@@ -64,20 +65,17 @@ namespace Light.Serialization.Json.WriterInstructors
             while (true)
             {
                 var key = dicitionaryEnumerator.Key;
-                if (key == null)
-                    writer.WriteKey(JsonSymbols.Null);
-                else
+
+                // Keys in a (.NET) dictionary can never be null, thus there is no check here.
+
+                var keyType = key.GetType();
+                if (_primitiveTypeFormattersMapping.ContainsKey(keyType))
                 {
-                    var keyType = key.GetType();
-                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                    if (_primitiveTypeFormattersMapping.ContainsKey(keyType))
-                    {
-                        var typeFormatter = _primitiveTypeFormattersMapping[keyType];
-                        writer.WriteKey(typeFormatter.FormatPrimitiveType(key), typeFormatter.ShouldBeNormalizedKey);
-                    }
-                    else
-                        writer.WriteKey(key.ToString(), false);
+                    var typeFormatter = _primitiveTypeFormattersMapping[keyType];
+                    writer.WriteKey(typeFormatter.FormatPrimitiveType(key), typeFormatter.ShouldBeNormalizedKey);
                 }
+                else
+                    throw new SerializationException($"The value \"{key}\" can not be transformed to a JSON string and therefore cannot be used as a key in a complex JSON object.");
 
                 var value = dicitionaryEnumerator.Value;
                 if (value == null)

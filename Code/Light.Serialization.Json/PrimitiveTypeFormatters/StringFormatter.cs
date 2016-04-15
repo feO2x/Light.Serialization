@@ -19,7 +19,7 @@ namespace Light.Serialization.Json.PrimitiveTypeFormatters
         /// </summary>
         /// <param name="characterEscaper">The object that is used to escape special characters.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="characterEscaper" /> is null.</exception>
-        public StringFormatter(ICharacterEscaper characterEscaper) : base(true)
+        public StringFormatter(ICharacterEscaper characterEscaper) : base(false)
         {
             CharacterEscaper = characterEscaper;
         }

@@ -194,7 +194,7 @@ namespace Light.Serialization.Json.ObjectMetadata
             writer.BeginObject();
 
             writer.WriteKey(_genericTypeNameSymbol, false);
-            var genericTypeName = _typeToNameMapping.Map(currentType);
+            var genericTypeName = _typeToNameMapping.Map(currentType.GetGenericTypeDefinition());
             writer.WriteString(genericTypeName);
             writer.WriteDelimiter();
 
