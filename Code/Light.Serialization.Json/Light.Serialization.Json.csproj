@@ -58,8 +58,16 @@
     <Compile Include="FrameworkExtensions\StringBuilderExtensions.cs" />
     <Compile Include="FrameworkExtensions\StringExtensions.cs" />
     <Compile Include="BuilderInterfaces\ISetObjectMetadataInstructor.cs" />
+    <Compile Include="JsonDeserializationContext.cs" />
+    <Compile Include="JsonDeserializer.cs" />
+    <Compile Include="Caching\JsonTokenTypeCombination.cs" />
+    <Compile Include="LowLevelReading\IJsonReader.cs" />
+    <Compile Include="LowLevelReading\IJsonReaderFactory.cs" />
+    <Compile Include="LowLevelReading\JsonDocumentException.cs" />
     <Compile Include="JsonSerializerBuilder.cs" />
     <Compile Include="JsonSerializerBuilderExtensions.cs" />
+    <Compile Include="LowLevelReading\JsonToken.cs" />
+    <Compile Include="LowLevelReading\JsonTokenType.cs" />
     <Compile Include="LowLevelWriting\IJsonWriter.cs" />
     <Compile Include="LowLevelWriting\IJsonWriterFactory.cs" />
     <Compile Include="ObjectMetadata\BasicNetTypeNames.cs" />
@@ -79,6 +87,7 @@
     <Compile Include="SerializationRules\IAndWhiteListRule.cs" />
     <Compile Include="SerializationRules\IButWhiteListRule.cs" />
     <Compile Include="SerializationRules\Rule.cs" />
+    <Compile Include="TokenParsers\IJsonTokenParser.cs" />
     <Compile Include="WriterInstructors\IJsonWriterInstructor.cs" />
     <Compile Include="JsonSerializationContext.cs" />
     <Compile Include="JsonSerializer.cs" />
