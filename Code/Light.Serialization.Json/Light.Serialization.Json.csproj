@@ -70,6 +70,7 @@
     <Compile Include="LowLevelReading\JsonToken.cs" />
     <Compile Include="LowLevelReading\JsonTokenType.cs" />
     <Compile Include="LowLevelReading\SingleBufferJsonReader.cs" />
+    <Compile Include="LowLevelReading\SingleBufferJsonReaderFactory.cs" />
     <Compile Include="LowLevelWriting\IJsonWriter.cs" />
     <Compile Include="LowLevelWriting\IJsonWriterFactory.cs" />
     <Compile Include="ObjectMetadata\BasicNetTypeNames.cs" />

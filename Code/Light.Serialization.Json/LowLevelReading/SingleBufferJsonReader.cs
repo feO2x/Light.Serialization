@@ -1,4 +1,5 @@
-﻿using Light.GuardClauses;
+﻿using System;
+using Light.GuardClauses;
 using Light.Serialization.Json.FrameworkExtensions;
 
 namespace Light.Serialization.Json.LowLevelReading
@@ -15,6 +16,7 @@ namespace Light.Serialization.Json.LowLevelReading
         ///     Creates a new instance of <see cref="SingleBufferJsonReader" />.
         /// </summary>
         /// <param name="buffer">The buffer to be read from.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="buffer" /> is null.</exception>
         public SingleBufferJsonReader(char[] buffer)
         {
             buffer.MustNotBeNull(nameof(buffer));
