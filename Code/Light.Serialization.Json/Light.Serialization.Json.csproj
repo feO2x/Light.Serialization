@@ -91,6 +91,7 @@
     <Compile Include="SerializationRules\IButWhiteListRule.cs" />
     <Compile Include="SerializationRules\Rule.cs" />
     <Compile Include="TokenParsers\BooleanParser.cs" />
+    <Compile Include="TokenParsers\CharacterParser.cs" />
     <Compile Include="TokenParsers\IJsonTokenParser.cs" />
     <Compile Include="WriterInstructors\IJsonWriterInstructor.cs" />
     <Compile Include="JsonSerializationContext.cs" />
