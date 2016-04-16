@@ -53,6 +53,7 @@
     <Compile Include="ComplexTypeDecomposition\PublicPropertiesAndFieldsAnalyzer.cs" />
     <Compile Include="ComplexTypeDecomposition\ValueProviderFactoryUsingLambdas.cs" />
     <Compile Include="ComplexTypeDecomposition\ValueProviderUsingLambda.cs" />
+    <Compile Include="FrameworkExtensions\CharExtensions.cs" />
     <Compile Include="FrameworkExtensions\ExpressionExtensions.cs" />
     <Compile Include="FrameworkExtensions\ReflectionExtensions.cs" />
     <Compile Include="FrameworkExtensions\StringBuilderExtensions.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="JsonSerializerBuilderExtensions.cs" />
     <Compile Include="LowLevelReading\JsonToken.cs" />
     <Compile Include="LowLevelReading\JsonTokenType.cs" />
+    <Compile Include="LowLevelReading\SingleBufferJsonReader.cs" />
     <Compile Include="LowLevelWriting\IJsonWriter.cs" />
     <Compile Include="LowLevelWriting\IJsonWriterFactory.cs" />
     <Compile Include="ObjectMetadata\BasicNetTypeNames.cs" />
