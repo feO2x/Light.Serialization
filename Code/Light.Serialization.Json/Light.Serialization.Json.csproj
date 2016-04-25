@@ -94,6 +94,7 @@
     <Compile Include="TokenParsers\CharacterParser.cs" />
     <Compile Include="TokenParsers\DoubleParser.cs" />
     <Compile Include="TokenParsers\EnumParser.cs" />
+    <Compile Include="TokenParsers\FloatParser.cs" />
     <Compile Include="TokenParsers\IJsonTokenParser.cs" />
     <Compile Include="TokenParsers\NullParser.cs" />
     <Compile Include="WriterInstructors\IJsonWriterInstructor.cs" />
