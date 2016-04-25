@@ -95,6 +95,7 @@
     <Compile Include="TokenParsers\DoubleParser.cs" />
     <Compile Include="TokenParsers\EnumParser.cs" />
     <Compile Include="TokenParsers\IJsonTokenParser.cs" />
+    <Compile Include="TokenParsers\NullParser.cs" />
     <Compile Include="WriterInstructors\IJsonWriterInstructor.cs" />
     <Compile Include="JsonSerializationContext.cs" />
     <Compile Include="JsonSerializer.cs" />
