@@ -4,23 +4,23 @@ using Light.Serialization.Json.LowLevelReading;
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents a JSON token parser that can deserialize JSON strings in the ISO 8601 format to .NET date times.
+    ///     Represents a JSON Token Parser that deserializes JSON strings in ISO 8601 format to .NET date time offsets.
     /// </summary>
-    public sealed class DateTimeParser : BaseIso8601DateTimeParser<DateTime>, IJsonStringToPrimitiveParser
+    public sealed class DateTimeOffsetParser : BaseIso8601DateTimeParser<DateTimeOffset>, IJsonStringToPrimitiveParser
     {
         /// <summary>
-        ///     Gets or sets the date time kind that is used for short date values (without time component).
-        ///     This value defaults to DateTimeKind.Utc.
+        ///     Gets or sets the default offset that is used when a ISO 8601 date time has no time part.
+        ///     This value defaults to TimeSpan.Zero.
         /// </summary>
-        public DateTimeKind DefaultDateTimeKind = DateTimeKind.Utc;
+        public TimeSpan DefaultOffset = TimeSpan.Zero;
 
         /// <summary>
-        ///     Gets the value indicating whether this parser can be cached.
+        ///     Gets the value indicating that this parser can be cached.
         /// </summary>
         public bool CanBeCached => true;
 
         /// <summary>
-        ///     Parses the given JSON string in ISO 8601 format to a .NET DateTime value.
+        ///     Parses the given JSON string in ISO 8601 format to a .NET DateTimeOffset value.
         /// </summary>
         public object ParseValue(JsonDeserializationContext context)
         {
@@ -28,7 +28,7 @@ namespace Light.Serialization.Json.TokenParsers
         }
 
         /// <summary>
-        ///     Tries to parse the given JSON string to a .NET DateTime.
+        ///     Tries to parse the given JSON token as a .NET DateTimeOffset value.
         /// </summary>
         public JsonStringParseResult TryParse(JsonToken token)
         {
@@ -42,7 +42,7 @@ namespace Light.Serialization.Json.TokenParsers
             }
         }
 
-        private DateTime Parse(JsonToken token)
+        private DateTimeOffset Parse(JsonToken token)
         {
             int year,
                 month,
@@ -51,70 +51,78 @@ namespace Light.Serialization.Json.TokenParsers
                 minute = 0,
                 second = 0,
                 millisecond = 0;
+            var offset = DefaultOffset;
 
             var currentIndex = 1;
-            var kind = DefaultDateTimeKind;
-
             year = ReadNumber(4, token, ref currentIndex);
             ExpectCharacter('-', token, ref currentIndex);
             month = ReadNumber(2, token, ref currentIndex);
             if (IsEndOfToken(currentIndex, token.Length))
-                goto CreateDateTime;
+                goto CreateDateTimeOffset;
 
             ExpectCharacter('-', token, ref currentIndex);
             day = ReadNumber(2, token, ref currentIndex);
             if (IsEndOfToken(currentIndex, token.Length))
-                goto CreateDateTime;
+                goto CreateDateTimeOffset;
 
             ExpectCharacter('T', token, ref currentIndex);
-            kind = DateTimeKind.Unspecified;
             hour = ReadNumber(2, token, ref currentIndex);
             if (IsEndOfToken(currentIndex, token.Length))
-                goto CreateDateTime;
+                goto CreateDateTimeOffset;
             if (IsTimeZoneIndicator(token, ref currentIndex))
                 goto CheckTimeZoneIndicator;
 
             ExpectCharacter(':', token, ref currentIndex);
             minute = ReadNumber(2, token, ref currentIndex);
             if (IsEndOfToken(currentIndex, token.Length))
-                goto CreateDateTime;
+                goto CreateDateTimeOffset;
             if (IsTimeZoneIndicator(token, ref currentIndex))
                 goto CheckTimeZoneIndicator;
 
             ExpectCharacter(':', token, ref currentIndex);
             second = ReadNumber(2, token, ref currentIndex);
             if (IsEndOfToken(currentIndex, token.Length))
-                goto CreateDateTime;
+                goto CreateDateTimeOffset;
             if (IsTimeZoneIndicator(token, ref currentIndex))
                 goto CheckTimeZoneIndicator;
 
             ExpectCharacter('.', token, ref currentIndex);
             millisecond = ReadNumber(3, token, ref currentIndex);
             if (IsEndOfToken(currentIndex, token.Length))
-                goto CreateDateTime;
+                goto CreateDateTimeOffset;
 
             CheckTimeZoneIndicator:
             var character = token[currentIndex++];
             if (character == 'Z')
-                kind = DateTimeKind.Utc;
+                offset = TimeSpan.Zero;
             else if (character == '+' || character == '-')
             {
-                kind = DateTimeKind.Local;
-                ReadNumber(2, token, ref currentIndex);
+                var hourOffset = ReadNumber(2, token, ref currentIndex);
                 if (IsEndOfToken(currentIndex, token.Length))
-                    goto CreateDateTime;
+                {
+                    offset = TimeSpan.FromHours(character == '+' ? hourOffset : -hourOffset);
+                    goto CreateDateTimeOffset;
+                }
 
                 ExpectCharacter(':', token, ref currentIndex);
-                ReadNumber(2, token, ref currentIndex);
+                var minuteOffset = ReadNumber(2, token, ref currentIndex);
+                if (character == '-')
+                {
+                    hourOffset = -hourOffset;
+                    minuteOffset = -minuteOffset;
+                }
+                offset = new TimeSpan(hourOffset, minuteOffset, 0);
             }
+            else
+                throw CreateException(token);
 
             if (IsEndOfToken(currentIndex, token.Length) == false)
                 throw CreateException(token);
 
-            CreateDateTime:
+            CreateDateTimeOffset:
             try
             {
-                return new DateTime(year, month, day, hour, minute, second, millisecond, kind);
+                return new DateTimeOffset(year, month, day, hour, minute, second, millisecond, offset);
             }
             catch (ArgumentOutOfRangeException ex)
             {

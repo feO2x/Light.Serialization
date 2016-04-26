@@ -21,6 +21,6 @@ namespace Light.Serialization.Json.TokenParsers
         /// </summary>
         /// <param name="token">The token to be parsed.</param>
         /// <returns>The parse result indicating success or failure of the parse operation.</returns>
-        PrimitiveParseResult TryParse(JsonToken token);
+        JsonStringParseResult TryParse(JsonToken token);
     }
 }

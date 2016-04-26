@@ -91,8 +91,9 @@
     <Compile Include="ObjectMetadata\SimpleNameToTypeMapping.cs" />
     <Compile Include="ObjectMetadata\TypeAndReferenceMetadataInstructor.cs" />
     <Compile Include="TokenParsers\BaseIso8601DateTimeParser.cs" />
+    <Compile Include="TokenParsers\DateTimeOffsetParser.cs" />
     <Compile Include="TokenParsers\DateTimeParser.cs" />
-    <Compile Include="TokenParsers\PrimitiveParseResult.cs" />
+    <Compile Include="TokenParsers\JsonStringParseResult.cs" />
     <Compile Include="SerializationRules\IAndBlackListRule.cs" />
     <Compile Include="SerializationRules\IAndWhiteListRule.cs" />
     <Compile Include="SerializationRules\IButWhiteListRule.cs" />
