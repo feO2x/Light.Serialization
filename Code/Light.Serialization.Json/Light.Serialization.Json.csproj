@@ -47,6 +47,17 @@
     <Compile Include="BuilderInterfaces\ISetTypeAnalyzer.cs" />
     <Compile Include="BuilderInterfaces\ISetTypeToNameMapping.cs" />
     <Compile Include="Caching\ValueProvidersCacheDecorator.cs" />
+    <Compile Include="ComplexTypeConstruction\ConstructorDescription.cs" />
+    <Compile Include="ComplexTypeConstruction\DefaultMetaFactory.cs" />
+    <Compile Include="ComplexTypeConstruction\DefaultTypeDescriptionProvider.cs" />
+    <Compile Include="ComplexTypeConstruction\IMetaFactory.cs" />
+    <Compile Include="ComplexTypeConstruction\IInjectableValueNameNormalizer.cs" />
+    <Compile Include="ComplexTypeConstruction\InjectableValueDescription.cs" />
+    <Compile Include="ComplexTypeConstruction\InjectableValueKind.cs" />
+    <Compile Include="ComplexTypeConstruction\ITypeDescriptionProvider.cs" />
+    <Compile Include="ObjectMetadata\MetadataParseResult.cs" />
+    <Compile Include="ComplexTypeConstruction\ToLowerWithoutSpecialCharactersNormalizer.cs" />
+    <Compile Include="ComplexTypeConstruction\TypeCreationDescription.cs" />
     <Compile Include="ComplexTypeDecomposition\IReadableValuesTypeAnalyzer.cs" />
     <Compile Include="ComplexTypeDecomposition\IValueProvider.cs" />
     <Compile Include="ComplexTypeDecomposition\IValueProviderFactory.cs" />
@@ -71,6 +82,7 @@
     <Compile Include="LowLevelReading\JsonDocumentException.cs" />
     <Compile Include="JsonSerializerBuilder.cs" />
     <Compile Include="JsonSerializerBuilderExtensions.cs" />
+    <Compile Include="LowLevelReading\JsonReaderExtensions.cs" />
     <Compile Include="LowLevelReading\JsonToken.cs" />
     <Compile Include="LowLevelReading\JsonTokenType.cs" />
     <Compile Include="LowLevelReading\SingleBufferJsonReader.cs" />
@@ -81,6 +93,7 @@
     <Compile Include="ObjectMetadata\CollectionReferenceMetadataInstructor.cs" />
     <Compile Include="ObjectMetadata\DomainFriendlyNameMapping.cs" />
     <Compile Include="ObjectMetadata\IAddOneToOneMapping.cs" />
+    <Compile Include="ObjectMetadata\IMetadataParser.cs" />
     <Compile Include="ObjectMetadata\INameToTypeMapping.cs" />
     <Compile Include="ObjectMetadata\IMetadataInstructor.cs" />
     <Compile Include="BuilderInterfaces\ISetObjectReferencePreservationStatus.cs" />
@@ -93,6 +106,7 @@
     <Compile Include="TokenParsers\BaseIso8601DateTimeParser.cs" />
     <Compile Include="TokenParsers\DateTimeOffsetParser.cs" />
     <Compile Include="TokenParsers\DateTimeParser.cs" />
+    <Compile Include="TokenParsers\GenericDictionaryParser.cs" />
     <Compile Include="TokenParsers\Iso8601DurationToTimeSpanParser.cs" />
     <Compile Include="TokenParsers\JsonStringParseResult.cs" />
     <Compile Include="SerializationRules\IAndBlackListRule.cs" />

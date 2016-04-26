@@ -16,6 +16,7 @@ namespace Light.Serialization.Json
         private readonly Dictionary<JsonTokenTypeCombination, IJsonTokenParser> _cache;
         private readonly IJsonReaderFactory _jsonReaderFactory;
         private readonly IReadOnlyList<IJsonTokenParser> _tokenParsers;
+        private List<object> _deserializedObjects;
         private IJsonReader _jsonReader;
 
         /// <summary>
@@ -66,8 +67,10 @@ namespace Light.Serialization.Json
             requestedType.MustNotBeNull(nameof(requestedType));
 
             _jsonReader = _jsonReaderFactory.CreateFromString(json);
+            _deserializedObjects = new List<object>();
             var returnValue = DeserializeDocument(requestedType);
             _jsonReader = null;
+            _deserializedObjects = null;
             return returnValue;
         }
 
@@ -100,7 +103,7 @@ namespace Light.Serialization.Json
                     _cache.Add(tokenTypeCombination, parser);
             }
 
-            return parser.ParseValue(new JsonDeserializationContext(token, requestedType, _jsonReader, DeserializeJsonToken));
+            return parser.ParseValue(new JsonDeserializationContext(token, requestedType, _jsonReader, DeserializeJsonToken, _deserializedObjects));
         }
     }
 }
