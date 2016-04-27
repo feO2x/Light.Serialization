@@ -103,6 +103,7 @@
     <Compile Include="ObjectMetadata\TypeNameToJsonNameScanner.cs" />
     <Compile Include="ObjectMetadata\SimpleNameToTypeMapping.cs" />
     <Compile Include="ObjectMetadata\TypeAndReferenceMetadataInstructor.cs" />
+    <Compile Include="TokenParsers\ArrayToGenericCollectionParser.cs" />
     <Compile Include="TokenParsers\BaseIso8601DateTimeParser.cs" />
     <Compile Include="TokenParsers\DateTimeOffsetParser.cs" />
     <Compile Include="TokenParsers\DateTimeParser.cs" />
