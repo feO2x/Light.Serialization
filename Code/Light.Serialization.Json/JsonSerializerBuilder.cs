@@ -24,7 +24,7 @@ namespace Light.Serialization.Json
         public readonly List<IJsonWriterInstructor> WriterInstructors;
 
         private ICharacterEscaper _characterEscaper = new DefaultCharacterEscaper();
-        private IMetadataInstructor _collectionMetadataInstructor = new CollectionReferenceMetadataInstructor();
+        private IMetadataInstructor _collectionMetadataInstructor;
         private Func<IJsonWriterFactory> _createWriterFactory;
         private IDictionary<Type, IJsonWriterInstructor> _instructorCache;
         private IJsonKeyNormalizer _keyNormalizer = new FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer();
@@ -44,7 +44,8 @@ namespace Light.Serialization.Json
             _primitiveTypeFormattersMapping = new List<IPrimitiveTypeFormatter>().AddDefaultPrimitiveTypeFormatters(_characterEscaper)
                                                                                  .ToDictionary(f => f.TargetType);
 
-            _objectMetadataInstructor = new TypeAndReferenceMetadataInstructor(_typeToNameMapping);
+            _collectionMetadataInstructor = new ArrayMetadataInstructor(_typeToNameMapping);
+            _objectMetadataInstructor = new ComplexObjectMetadataInstructor(_typeToNameMapping);
 
             WriterInstructors = new List<IJsonWriterInstructor>().AddDefaultWriterInstructors(_primitiveTypeFormattersMapping,
                                                                                               _typeAnalyzer,

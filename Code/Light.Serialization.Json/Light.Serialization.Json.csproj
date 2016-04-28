@@ -55,6 +55,7 @@
     <Compile Include="ComplexTypeConstruction\InjectableValueDescription.cs" />
     <Compile Include="ComplexTypeConstruction\InjectableValueKind.cs" />
     <Compile Include="ComplexTypeConstruction\ITypeDescriptionProvider.cs" />
+    <Compile Include="ObjectMetadata\BaseMetadataInstructor.cs" />
     <Compile Include="ObjectMetadata\MetadataParseResult.cs" />
     <Compile Include="ComplexTypeConstruction\ToLowerWithoutSpecialCharactersNormalizer.cs" />
     <Compile Include="ComplexTypeConstruction\TypeCreationDescription.cs" />
@@ -90,9 +91,9 @@
     <Compile Include="LowLevelWriting\IJsonWriter.cs" />
     <Compile Include="LowLevelWriting\IJsonWriterFactory.cs" />
     <Compile Include="ObjectMetadata\BasicNetTypeNames.cs" />
-    <Compile Include="ObjectMetadata\CollectionReferenceMetadataInstructor.cs" />
+    <Compile Include="ObjectMetadata\ArrayMetadataInstructor.cs" />
     <Compile Include="ObjectMetadata\DomainFriendlyNameMapping.cs" />
-    <Compile Include="ObjectMetadata\IAddOneToOneMapping.cs" />
+    <Compile Include="ObjectMetadata\IAddMapping.cs" />
     <Compile Include="ObjectMetadata\IMetadataParser.cs" />
     <Compile Include="ObjectMetadata\INameToTypeMapping.cs" />
     <Compile Include="ObjectMetadata\IMetadataInstructor.cs" />
@@ -102,7 +103,7 @@
     <Compile Include="ObjectMetadata\ListExtensions.cs" />
     <Compile Include="ObjectMetadata\TypeNameToJsonNameScanner.cs" />
     <Compile Include="ObjectMetadata\SimpleNameToTypeMapping.cs" />
-    <Compile Include="ObjectMetadata\TypeAndReferenceMetadataInstructor.cs" />
+    <Compile Include="ObjectMetadata\ComplexObjectMetadataInstructor.cs" />
     <Compile Include="TokenParsers\ArrayToGenericCollectionParser.cs" />
     <Compile Include="TokenParsers\BaseIso8601DateTimeParser.cs" />
     <Compile Include="TokenParsers\DateTimeOffsetParser.cs" />

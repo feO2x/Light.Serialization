@@ -20,9 +20,9 @@ namespace Light.Serialization.Json.Tests.SerializationTests
         public static readonly TestData CollectionsTestData =
             new[]
             {
-                new object[] { new[] { 1, 2, 3 }, "[\"$id:0\",1,2,3]" },
-                new object[] { new List<string> { "Foo", null, "Bar" }, "[\"$id:0\",\"Foo\",null,\"Bar\"]" },
-                new object[] { new ObservableCollection<bool> { true, false }, "[\"$id:0\",true,false]" }
+                new object[] { new[] { 1, 2, 3 }, "[\"$id\",0,1,2,3]" },
+                new object[] { new List<string> { "Foo", null, "Bar" }, "[\"$id\",0,\"Foo\",null,\"Bar\"]" },
+                new object[] { new ObservableCollection<bool> { true, false }, "[\"$id\",0,true,false]" }
             };
 
         [Theory(DisplayName = "The client should be able to disable the metadata string so that the serializer does not include them in the JSON array.")]
@@ -30,6 +30,7 @@ namespace Light.Serialization.Json.Tests.SerializationTests
         public void DisableMetadata(IEnumerable collection, string expectedJson)
         {
             DisableObjectReferencePreservation();
+            DisableTypeMetadata();
 
             CompareJsonToExpected(collection, expectedJson);
         }

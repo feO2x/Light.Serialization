@@ -105,7 +105,7 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// </summary>
         /// <param name="mapping">The object containing all mappings from JSON names to .NET types.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="mapping" /> is null.</exception>
-        public void CreateMappings(IAddOneToOneMapping mapping)
+        public void CreateMappings(IAddMapping mapping)
         {
             mapping.MustNotBeNull(nameof(mapping));
 

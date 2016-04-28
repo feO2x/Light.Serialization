@@ -102,19 +102,99 @@ namespace Light.Serialization.Json.ObjectMetadata
         public const string DateTimeOffset = "localDateTime";
 
         /// <summary>
-        ///     Gets the "genericMap" name for all types that implement IDictionary of TKey, TValue.
+        ///     Gets the "genericMap" name for the Dictionary of TKey, TValue type.
         /// </summary>
         public const string GenericDictionary = "genericMap";
 
         /// <summary>
-        ///     Gets the "genericCollection" name for all types that implement IEnumerable of T.
+        ///     Gets the "sortedGenericMap" name for the SortedDictionary of TKey, TValue type.
+        /// </summary>
+        public const string SortedGenericDictionary = "sortedGenericMap";
+
+        /// <summary>
+        ///     Gets the "abstractGenericMap" name for the IDictionary of TKey, TValue type.
+        /// </summary>
+        public const string AbstractGenericDictionary = "abstractGenericMap";
+
+        /// <summary>
+        ///     Gets the "abstractMap" name for the non-generic IDictionary type.
+        /// </summary>
+        public const string AbstractDictionary = "abstractMap";
+
+        /// <summary>
+        ///     Gets the "abstractReadOnlyGenericMap" name for the IReadOnlyDictionary of TKey, TValue type.
+        /// </summary>
+        public const string AbstractReadOnlyGenericDictionary = "abstractReadOnlyGenericMap";
+
+        /// <summary>
+        ///     Gets the "genericCollection" name for the List of T type.
+        /// </summary>
+        public const string GenericList = "genericList";
+
+        /// <summary>
+        ///     Gets the "observableGenericList" name for the ObservableCollection of T type.
+        /// </summary>
+        public const string ObservableGenericCollection = "observableGenericList";
+
+        /// <summary>
+        ///     Gets the "genericCollection" name for the Collection of T type.
         /// </summary>
         public const string GenericCollection = "genericCollection";
 
         /// <summary>
-        /// Gets the "genericSet" name for all types that implement ISet of T.
+        ///     Gets the "abstractGenericList" name for the IList of T type.
         /// </summary>
-        public const string GenericSet = "genericSet";
+        public const string AbstractGenericList = "abstractGenericList";
+
+        /// <summary>
+        ///     Gets the "abstractGenericCollection" name for the ICollection of T type.
+        /// </summary>
+        public const string AbstractGenericCollection = "abstractGenericCollection";
+
+        /// <summary>
+        ///     Gets the "abstractGenericEnumerable" name for the IEnumerable of T type.
+        /// </summary>
+        public const string AbstractGenericEnumerable = "abstractGenericEnumerable";
+
+        /// <summary>
+        ///     Gets the "abstractReadOnlyGenericList" name for the IReadOnlyList of T type.
+        /// </summary>
+        public const string AbstractReadOnlyGenericList = "abstractReadOnlyGenericList";
+
+        /// <summary>
+        ///     Gets the "abstractReadOnlyGenericCollection" name for the IReadOnlyCollection of T type.
+        /// </summary>
+        public const string AbstractReadOnlyGenericCollection = "abstractReadOnlyGenericCollection";
+
+        /// <summary>
+        ///     Gets the "abstractList" name for the non-generic IList type.
+        /// </summary>
+        public const string AbstractList = "abstractList";
+
+        /// <summary>
+        ///     Gets the "abstractCollection" name for the non-generic ICollection type.
+        /// </summary>
+        public const string AbstractCollection = "abstractCollection";
+
+        /// <summary>
+        ///     Gets the "abstractEnumerable" name for the non-generic IEnumerable type.
+        /// </summary>
+        public const string AbstractEnumerable = "abstractEnumerable";
+
+        /// <summary>
+        ///     Gets the "genericSet" name for the HashSet of T type.
+        /// </summary>
+        public const string GenericHashSet = "genericHashSet";
+
+        /// <summary>
+        ///     Gets the "sortedGenericSet" name for the SortedSet of T type.
+        /// </summary>
+        public const string SortedGenericSet = "sortedGenericSet";
+
+        /// <summary>
+        ///     Gets the "abstractGenericSet" name for the ISet of T type.
+        /// </summary>
+        public const string AbstractGenericSet = "abstractGenericSet";
 
         /// <summary>
         ///     Adds all mappings for basic .NET types to the specified DomainFriendlyNameMapping.
@@ -122,32 +202,50 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// <param name="mapping">The mapping to be populated.</param>
         /// <returns>The mapping for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="mapping" /> is null.</exception>
-        public static DomainFriendlyNameMapping AddDefaultMappingsForBasicTypes(this DomainFriendlyNameMapping mapping)
+        public static IAddMapping AddDefaultMappingsForBasicTypes(this IAddMapping mapping)
         {
             mapping.MustNotBeNull(nameof(mapping));
 
-            return mapping.AddMapping(Int32, typeof (int))
-                          .AddMapping(Int64, typeof (long))
-                          .AddMapping(Int16, typeof (short))
-                          .AddMapping(Sbyte, typeof (sbyte))
-                          .AddMapping(UInt32, typeof (uint))
-                          .AddMapping(UInt64, typeof (ulong))
-                          .AddMapping(UInt16, typeof (ushort))
-                          .AddMapping(Byte, typeof (byte))
-                          .AddMapping(Single, typeof (float))
-                          .AddMapping(Double, typeof (double))
-                          .AddMapping(Decimal, typeof (decimal))
-                          .AddMapping(Bool, typeof (bool))
-                          .AddMapping(Character, typeof (char))
-                          .AddMapping(String, typeof (string))
-                          .AddMapping(Object, typeof (object))
-                          .AddMapping(DateTime, typeof (DateTime))
-                          .AddMapping(TimeSpan, typeof (TimeSpan))
-                          .AddMapping(DateTimeOffset, typeof (DateTimeOffset))
-                          .AddMapping(GenericCollection, typeof (List<>), typeof (IList<>), typeof (ICollection<>), typeof (IEnumerable<>), typeof (Collection<>), typeof (ObservableCollection<>))
-                          .AddMapping(GenericDictionary, typeof (Dictionary<,>), typeof (IDictionary<,>), typeof (IDictionary), typeof (IReadOnlyDictionary<,>), typeof (SortedDictionary<,>))
-                          .AddMapping(GenericSet, typeof (HashSet<>), typeof (ISet<>), typeof (SortedSet<>));
+            return mapping
+                // Primitive types
+                .AddMapping(Int32, typeof(int))
+                .AddMapping(Int64, typeof(long))
+                .AddMapping(Int16, typeof(short))
+                .AddMapping(Sbyte, typeof(sbyte))
+                .AddMapping(UInt32, typeof(uint))
+                .AddMapping(UInt64, typeof(ulong))
+                .AddMapping(UInt16, typeof(ushort))
+                .AddMapping(Byte, typeof(byte))
+                .AddMapping(Single, typeof(float))
+                .AddMapping(Double, typeof(double))
+                .AddMapping(Decimal, typeof(decimal))
+                .AddMapping(Bool, typeof(bool))
+                .AddMapping(Character, typeof(char))
+                .AddMapping(String, typeof(string))
+                .AddMapping(Object, typeof(object))
+                .AddMapping(DateTime, typeof(DateTime))
+                .AddMapping(TimeSpan, typeof(TimeSpan))
+                .AddMapping(DateTimeOffset, typeof(DateTimeOffset))
 
+                // Collections, dictionaries, and sets
+                .AddMapping(GenericList, typeof(List<>))
+                .AddMapping(ObservableGenericCollection, typeof(ObservableCollection<>))
+                .AddMapping(GenericCollection, typeof(Collection<>))
+                .AddMapping(AbstractGenericList, typeof(IList<>))
+                .AddMapping(AbstractGenericCollection, typeof(ICollection<>))
+                .AddMapping(AbstractGenericEnumerable, typeof(IEnumerable<>))
+                .AddMapping(AbstractList, typeof(IList))
+                .AddMapping(AbstractCollection, typeof(ICollection))
+                .AddMapping(AbstractEnumerable, typeof(IEnumerable))
+                .AddMapping(AbstractReadOnlyGenericList, typeof(IReadOnlyList<>))
+                .AddMapping(AbstractReadOnlyGenericCollection, typeof(IReadOnlyCollection<>))
+                .AddMapping(GenericDictionary, typeof(Dictionary<,>))
+                .AddMapping(AbstractGenericDictionary, typeof(IDictionary<,>))
+                .AddMapping(AbstractDictionary, typeof(IDictionary))
+                .AddMapping(AbstractReadOnlyGenericDictionary, typeof(IReadOnlyDictionary<,>))
+                .AddMapping(SortedGenericDictionary, typeof(SortedDictionary<,>))
+                .AddMapping(GenericHashSet, typeof(HashSet<>))
+                .AddMapping(AbstractGenericSet, typeof(ISet<>));
         }
     }
 }

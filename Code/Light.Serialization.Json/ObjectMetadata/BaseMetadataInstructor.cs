@@ -7,25 +7,17 @@ using Light.Serialization.Json.LowLevelWriting;
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents an IObjectMetadataInstructor that serializes ids and type information in the metadata section of a complex JSON object.
+    ///     Represents the base class for metadata instructors that handle object reference preservation and
+    ///     type information.
     /// </summary>
-    public sealed class TypeAndReferenceMetadataInstructor : IMetadataInstructor, ISetObjectReferencePreservationStatus, ISetTypeInfoSerializationStatus, ISetTypeToNameMapping
+    public abstract class BaseMetadataInstructor : IMetadataInstructor, ISetObjectReferencePreservationStatus, ISetTypeInfoSerializationStatus, ISetTypeToNameMapping
     {
-        private string _concreteTypeSymbol = JsonSymbols.DefaultConcreteTypeSymbol;
-        private string _genericTypeArgumentsSymbol = JsonSymbols.DefaultGenericTypeArgumentsSymbol;
-        private string _genericTypeNameSymbol = JsonSymbols.DefaultGenericTypeNameSymbol;
-        private string _idSymbol = JsonSymbols.DefaultIdSymbol;
-        private bool _isSerializingObjectIds = true;
-        private bool _isSerializingTypeInfo = true;
-        private string _referenceSymbol = JsonSymbols.DefaultReferenceSymbol;
-        private ITypeToNameMapping _typeToNameMapping;
-
         /// <summary>
-        ///     Creates a new instance of <see cref="TypeAndReferenceMetadataInstructor" />.
+        ///     Creates a new instance of <see cref="BaseMetadataInstructor" />.
         /// </summary>
         /// <param name="typeToNameMapping">The object that is used to map from .NET types to JSON type names.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeToNameMapping" /> is null.</exception>
-        public TypeAndReferenceMetadataInstructor(ITypeToNameMapping typeToNameMapping)
+        protected BaseMetadataInstructor(ITypeToNameMapping typeToNameMapping)
         {
             typeToNameMapping.MustNotBeNull(nameof(typeToNameMapping));
 
@@ -122,31 +114,23 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// <returns>True if the object was not serialized before, else false.</returns>
         public bool SerializeMetadata(JsonSerializationContext serializationContext)
         {
-            var writer = serializationContext.Writer;
-
             if (_isSerializingObjectIds)
             {
                 var indexOfObject = serializationContext.SerializedObjects.GetIndexOfSame(serializationContext.ObjectToBeSerialized);
 
                 if (indexOfObject != -1)
                 {
-                    writer.WriteKey(_referenceSymbol, false);
-                    writer.WritePrimitiveValue(indexOfObject.ToString());
+                    SerializeReferenceId(indexOfObject, serializationContext);
                     return false;
                 }
 
                 serializationContext.SerializedObjects.Add(serializationContext.ObjectToBeSerialized);
-                writer.WriteKey(_idSymbol, false);
-                writer.WritePrimitiveValue((serializationContext.SerializedObjects.Count - 1).ToString());
-                writer.WriteDelimiter();
+                SerializeObjectId(serializationContext.SerializedObjects.Count - 1, serializationContext);
             }
 
             if (_isSerializingTypeInfo)
-            {
-                writer.WriteKey(_concreteTypeSymbol, false);
-                SerializeTypeInfo(serializationContext.ActualType, writer);
-                writer.WriteDelimiter();
-            }
+                SerializeTypeInfo(serializationContext);
+
             return true;
         }
 
@@ -182,7 +166,33 @@ namespace Light.Serialization.Json.ObjectMetadata
             }
         }
 
-        private void SerializeTypeInfo(Type currentType, IJsonWriter writer)
+        /// <summary>
+        ///     Writes the reference id ($ref) in the metadata section of a complex JSON object or JSON array.
+        /// </summary>
+        /// <param name="referenceId">The id pointing to another object in the JSON document.</param>
+        /// <param name="serializationContext">The serialization context.</param>
+        protected abstract void SerializeReferenceId(int referenceId, JsonSerializationContext serializationContext);
+
+        /// <summary>
+        ///     Writes the object id ($id) in the metadata section of a complex JSON object or JSON array.
+        /// </summary>
+        /// <param name="documentIdForObject">The JSON document id for the object.</param>
+        /// <param name="serializationContext">The serialization context.</param>
+        protected abstract void SerializeObjectId(int documentIdForObject, JsonSerializationContext serializationContext);
+
+        /// <summary>
+        ///     Writes information about the type to the metadata section of a complex JSON object or JSON array.
+        /// </summary>
+        /// <param name="serializationContext">The serialization context.</param>
+        protected abstract void SerializeTypeInfo(JsonSerializationContext serializationContext);
+
+        /// <summary>
+        ///     Serializes the specified type as a JSON string if it is a non-generic type, or as a
+        ///     complex JSON object if it is a generic type.
+        /// </summary>
+        /// <param name="currentType">The type to be written to the metadata section.</param>
+        /// <param name="writer">The object that writes the JSON document.</param>
+        protected void SerializeTypeInfoRecursively(Type currentType, IJsonWriter writer)
         {
             if (currentType.IsConstructedGenericType == false)
             {
@@ -204,7 +214,7 @@ namespace Light.Serialization.Json.ObjectMetadata
             var genericTypeArguments = currentType.GenericTypeArguments;
             for (var i = 0; i < genericTypeArguments.Length; i++)
             {
-                SerializeTypeInfo(genericTypeArguments[i], writer);
+                SerializeTypeInfoRecursively(genericTypeArguments[i], writer);
                 if (i < genericTypeArguments.Length - 1)
                     writer.WriteDelimiter();
                 else
@@ -216,5 +226,16 @@ namespace Light.Serialization.Json.ObjectMetadata
 
             writer.EndObject();
         }
+
+        // ReSharper disable InconsistentNaming
+        protected string _concreteTypeSymbol = JsonSymbols.DefaultConcreteTypeSymbol;
+        protected string _genericTypeArgumentsSymbol = JsonSymbols.DefaultGenericTypeArgumentsSymbol;
+        protected string _genericTypeNameSymbol = JsonSymbols.DefaultGenericTypeNameSymbol;
+        protected string _idSymbol = JsonSymbols.DefaultIdSymbol;
+        private bool _isSerializingObjectIds = true;
+        private bool _isSerializingTypeInfo = true;
+        protected string _referenceSymbol = JsonSymbols.DefaultReferenceSymbol;
+        private ITypeToNameMapping _typeToNameMapping;
+        // ReSharper restore InconsistentNaming
     }
 }

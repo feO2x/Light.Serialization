@@ -9,14 +9,36 @@ namespace Light.Serialization.Json.ObjectMetadata
     /// <summary>
     ///     Represents a JSON name to .NET type mapping (and vice versa).
     /// </summary>
-    public sealed class DomainFriendlyNameMapping : INameToTypeMapping, ITypeToNameMapping, IAddOneToOneMapping
+    public sealed class DomainFriendlyNameMapping : INameToTypeMapping, ITypeToNameMapping, IAddMapping
     {
-        private readonly Dictionary<string, List<Type>> _nameToTypeMappings = new Dictionary<string, List<Type>>();
-        private readonly Dictionary<Type, string> _typeToNameMappings = new Dictionary<Type, string>();
+        private readonly Dictionary<string, Type> _nameToTypeMappings;
+        private readonly Dictionary<Type, string> _typeToNameMappings;
 
-        void IAddOneToOneMapping.AddMapping(string jsonName, Type correspondingType)
+        /// <summary>
+        ///     Creates a new instance of <see cref="DomainFriendlyNameMapping" />.
+        /// </summary>
+        public DomainFriendlyNameMapping()
         {
-            AddMapping(jsonName, correspondingType);
+            _nameToTypeMappings = new Dictionary<string, Type>();
+            _typeToNameMappings = new Dictionary<Type, string>();
+        }
+
+        /// <summary>
+        ///     Creates a new instance of <see cref="DomainFriendlyNameMapping" />
+        /// </summary>
+        /// <param name="nameToTypeMappings">The dictionary containing all mappings from JSON name to .NET type.</param>
+        public DomainFriendlyNameMapping(Dictionary<string, Type> nameToTypeMappings)
+        {
+            nameToTypeMappings.MustNotBeNull(nameof(nameToTypeMappings));
+            nameToTypeMappings.Values.MustNotContainNull(message: "The mapping must not contain type values that are null.");
+
+            _nameToTypeMappings = nameToTypeMappings;
+            _typeToNameMappings = nameToTypeMappings.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
+        }
+
+        IAddMapping IAddMapping.AddMapping(string jsonName, Type correspondingType)
+        {
+            return AddMapping(jsonName, correspondingType);
         }
 
         /// <summary>
@@ -27,7 +49,7 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// <exception cref="KeyNotFoundException">Thrown when <paramref name="typeName" /> is not a known JSON name.</exception>
         public Type Map(string typeName)
         {
-            return _nameToTypeMappings[typeName][0];
+            return _nameToTypeMappings[typeName];
         }
 
         /// <summary>
@@ -45,43 +67,19 @@ namespace Light.Serialization.Json.ObjectMetadata
         ///     Adds a mapping for the JSON name to the specified type (or types). This mapping works in both directions.
         /// </summary>
         /// <param name="jsonName">The JSON name of the mapping.</param>
-        /// <param name="defaultMappedType">The type that is returned when the JSON name should be mapped.</param>
-        /// <param name="otherMappedTypes">The types that also map to the specified JSON name. Usually, you have to provide these only for special types like collection or dictionary types.</param>
+        /// <param name="mappedType">The type that is returned when the JSON name should be mapped.</param>
         /// <returns>The mapping for method chaining.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="jsonName" /> or <paramref name="defaultMappedType" /> is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="jsonName" /> or <paramref name="mappedType" /> is null.</exception>
         /// <exception cref="EmptyStringException">Thrown when <paramref name="jsonName" /> is an empty string.</exception>
         /// <exception cref="StringIsOnlyWhiteSpaceException">Thrown when <paramref name="jsonName" /> contains only whitespace.</exception>
-        public DomainFriendlyNameMapping AddMapping(string jsonName, Type defaultMappedType, params Type[] otherMappedTypes)
+        public DomainFriendlyNameMapping AddMapping(string jsonName, Type mappedType)
         {
             jsonName.MustNotBeNullOrWhiteSpace(nameof(jsonName));
-            defaultMappedType.MustNotBeNull(nameof(defaultMappedType));
+            mappedType.MustNotBeNull(nameof(mappedType));
 
-            var mappedTypes = new List<Type> { defaultMappedType };
-            mappedTypes.AddRange(otherMappedTypes);
-            return AddMapping(jsonName, mappedTypes);
-        }
+            _nameToTypeMappings.Add(jsonName, mappedType);
+            _typeToNameMappings.Add(mappedType, jsonName);
 
-        /// <summary>
-        ///     Adds a mapping for the JSON name to the specified types. This mapping works in both directions. The first item of the specified collection is
-        ///     used as the default type when the JSON name should be mapped.
-        /// </summary>
-        /// <param name="jsonName">The JSON name of the mapping.</param>
-        /// <param name="mappedTypes">The types mapped to the JSON name. This collection must have at least one item.</param>
-        /// <returns>The mapping for method chaining.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when any parameter is null.</exception>
-        /// <exception cref="EmptyStringException">Thrown when <paramref name="jsonName" /> is an empty string.</exception>
-        /// <exception cref="StringIsOnlyWhiteSpaceException">Thrown when <paramref name="jsonName" /> contains only whitespace.</exception>
-        /// <exception cref="EmptyCollectionException">Thrown when <paramref name="mappedTypes" /> is an empty collection.</exception>
-        public DomainFriendlyNameMapping AddMapping(string jsonName, List<Type> mappedTypes)
-        {
-            jsonName.MustNotBeNullOrWhiteSpace(nameof(jsonName));
-            mappedTypes.MustNotBeNullOrEmpty(nameof(mappedTypes));
-
-            _nameToTypeMappings.Add(jsonName, mappedTypes.ToList());
-            foreach (var type in mappedTypes)
-            {
-                _typeToNameMappings.Add(type, jsonName);
-            }
             return this;
         }
 
@@ -96,12 +94,10 @@ namespace Light.Serialization.Json.ObjectMetadata
         {
             jsonName.MustBeKeyOf(_nameToTypeMappings, nameof(jsonName));
 
-            var types = _nameToTypeMappings[jsonName];
+            var type = _nameToTypeMappings[jsonName];
             _nameToTypeMappings.Remove(jsonName);
-            foreach (var type in types)
-            {
-                _typeToNameMappings.Remove(type);
-            }
+            _typeToNameMappings.Remove(type);
+
             return this;
         }
 
@@ -118,34 +114,7 @@ namespace Light.Serialization.Json.ObjectMetadata
 
             var jsonName = _typeToNameMappings[type];
             _typeToNameMappings.Remove(type);
-
-            var allMappedTypes = _nameToTypeMappings[jsonName];
-            allMappedTypes.Remove(type);
-            if (allMappedTypes.Count == 0)
-                _nameToTypeMappings.Remove(jsonName);
-            return this;
-        }
-
-        /// <summary>
-        ///     Sets the default type for a JSON name to multiple .NET types mapping. If the specified type is not already part of the mapping, it will be added to it.
-        /// </summary>
-        /// <param name="jsonName">The JSON name of the mapping.</param>
-        /// <param name="newDefaultType">The new default type that will be returned when the JSON name is mapped.</param>
-        /// <returns>The mapping for method chaining.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="jsonName" /> is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when there is no mapping containing <paramref name="jsonName" />.</exception>
-        public DomainFriendlyNameMapping SetDefaultType(string jsonName, Type newDefaultType)
-        {
-            jsonName.MustBeKeyOf(_nameToTypeMappings, nameof(jsonName));
-
-            var types = _nameToTypeMappings[jsonName];
-            var indexOfNewDefaultType = types.IndexOf(newDefaultType);
-            if (indexOfNewDefaultType == -1)
-                _typeToNameMappings.Add(newDefaultType, jsonName);
-            else
-                types.RemoveAt(indexOfNewDefaultType);
-
-            types.Insert(0, newDefaultType);
+            _nameToTypeMappings.Remove(jsonName);
 
             return this;
         }
@@ -183,7 +152,9 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// </summary>
         public static DomainFriendlyNameMapping CreateWithDefaultTypeMappings()
         {
-            return new DomainFriendlyNameMapping().AddDefaultMappingsForBasicTypes();
+            var mapping = new DomainFriendlyNameMapping();
+            mapping.AddDefaultMappingsForBasicTypes();
+            return mapping;
         }
     }
 }
