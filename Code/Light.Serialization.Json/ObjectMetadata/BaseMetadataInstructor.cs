@@ -108,7 +108,7 @@ namespace Light.Serialization.Json.ObjectMetadata
         }
 
         /// <summary>
-        /// Gets or sets the symbol that is used to mark the JSON string containing the actual type of a .NET array.
+        ///     Gets or sets the symbol that is used to mark the JSON string containing the actual type of a .NET array.
         /// </summary>
         public string ArrayTypeNameSymbol
         {
@@ -224,15 +224,12 @@ namespace Light.Serialization.Json.ObjectMetadata
 
         private void WriteGenericTypeInformation(Type currentType, IJsonWriter writer)
         {
-            writer.BeginObject();
-
-            writer.WriteKey(_genericTypeNameSymbol, false);
-            var genericTypeName = _typeToNameMapping.Map(currentType.GetGenericTypeDefinition());
-            writer.WriteString(genericTypeName);
-            writer.WriteDelimiter();
-
-            writer.WriteKey(_genericTypeArgumentsSymbol, false);
-            writer.BeginArray();
+            writer.BeginObject()
+                  .WriteKey(_genericTypeNameSymbol, false)
+                  .WriteString(_typeToNameMapping.Map(currentType.GetGenericTypeDefinition()))
+                  .WriteDelimiter()
+                  .WriteKey(_genericTypeArgumentsSymbol, false)
+                  .BeginArray();
 
             var genericTypeArguments = currentType.GenericTypeArguments;
             for (var i = 0; i < genericTypeArguments.Length; i++)
@@ -252,20 +249,16 @@ namespace Light.Serialization.Json.ObjectMetadata
 
         private void WriteArrayTypeInformation(Type arrayType, IJsonWriter writer)
         {
-            writer.BeginObject();
-
-            writer.WriteKey(_genericTypeNameSymbol, false);
-            writer.WriteString(_typeToNameMapping.Map(typeof(Array)));
-            writer.WriteDelimiter();
-
-            writer.WriteKey(_arrayTypeNameSymbol, false);
-            writer.WriteString(_typeToNameMapping.Map(arrayType.GetElementType()));
-            writer.WriteDelimiter();
-
-            writer.WriteKey(_arrayRankSymbol, false);
-            writer.WritePrimitiveValue(arrayType.GetArrayRank().ToString());
-
-            writer.EndObject();
+            writer.BeginObject()
+                  .WriteKey(_genericTypeNameSymbol, false)
+                  .WriteString(_typeToNameMapping.Map(typeof(Array)))
+                  .WriteDelimiter()
+                  .WriteKey(_arrayTypeNameSymbol, false)
+                  .WriteString(_typeToNameMapping.Map(arrayType.GetElementType()))
+                  .WriteDelimiter()
+                  .WriteKey(_arrayRankSymbol, false)
+                  .WritePrimitiveValue(arrayType.GetArrayRank().ToString())
+                  .EndObject();
         }
 
         // ReSharper disable InconsistentNaming
