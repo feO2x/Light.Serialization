@@ -16,14 +16,14 @@ namespace Light.Serialization.Json.ObjectMetadata
 
         protected override void SerializeReferenceId(int referenceId, JsonSerializationContext serializationContext)
         {
-            serializationContext.Writer.WritePrimitiveValue(_referenceSymbol);
+            serializationContext.Writer.WriteString(_referenceSymbol);
             serializationContext.Writer.WriteDelimiter();
             serializationContext.Writer.WritePrimitiveValue(referenceId.ToString());
         }
 
         protected override void SerializeObjectId(int documentIdForObject, JsonSerializationContext serializationContext)
         {
-            serializationContext.Writer.WritePrimitiveValue(_idSymbol);
+            serializationContext.Writer.WriteString(_idSymbol);
             serializationContext.Writer.WriteDelimiter();
             serializationContext.Writer.WritePrimitiveValue(documentIdForObject.ToString());
             serializationContext.Writer.WriteDelimiter();
@@ -31,7 +31,7 @@ namespace Light.Serialization.Json.ObjectMetadata
 
         protected override void SerializeTypeInfo(JsonSerializationContext serializationContext)
         {
-            serializationContext.Writer.WritePrimitiveValue(_concreteTypeSymbol);
+            serializationContext.Writer.WriteString(_concreteTypeSymbol);
             serializationContext.Writer.WriteDelimiter();
             SerializeTypeInfoRecursively(serializationContext.ActualType, serializationContext.Writer);
             serializationContext.Writer.WriteDelimiter();

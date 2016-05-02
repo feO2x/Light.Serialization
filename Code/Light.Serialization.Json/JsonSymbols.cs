@@ -128,25 +128,34 @@ namespace Light.Serialization.Json
         public const string DefaultTypeNameSymbol = "name";
 
         /// <summary>
-        /// Gets the "$id" symbol that marks the JSON document id of a complex JSON object.
+        ///     Gets the "$id" symbol that marks the JSON document id of a complex JSON object.
         /// </summary>
         public const string DefaultIdSymbol = "$id";
 
         /// <summary>
-        /// Gets the "$ref" symbol that marks a reference to another complex JSON object in the document.
+        ///     Gets the "$ref" symbol that marks a reference to another complex JSON object in the document.
         /// </summary>
         public const string DefaultReferenceSymbol = "$ref";
 
         /// <summary>
-        /// Gets the "name" symbol that marks the type name of a generic type serialized in the metadata section of a complex JSON object.
+        ///     Gets the "name" symbol that marks the type name of a generic type serialized in the metadata section of a complex JSON object.
         /// </summary>
         public const string DefaultGenericTypeNameSymbol = "name";
 
         /// <summary>
-        /// Gets the "typeArguments" symbol that marks the JSON array of arguments for generic types.
+        ///     Gets the "typeArguments" symbol that marks the JSON array of arguments for generic types.
         /// </summary>
         public const string DefaultGenericTypeArgumentsSymbol = "typeArguments";
 
+        /// <summary>
+        ///     Gets the "arrayType" symbol that marks the JSON string containing the type to resolve for a .NET array.
+        /// </summary>
+        public const string DefaultArrayTypeNameSymbol = "arrayType";
+
+        /// <summary>
+        ///     Gets the "arrayRank" symbol that marks the JSON number describing the dimensions of a .NET array.
+        /// </summary>
+        public const string DefaultArrayRankSymbol = "arrayRank";
 
         /// <summary>
         ///     Gets the collection containing all single-escaped characters that are used in JSON strings.

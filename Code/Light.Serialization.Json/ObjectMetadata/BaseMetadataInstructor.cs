@@ -108,6 +108,19 @@ namespace Light.Serialization.Json.ObjectMetadata
         }
 
         /// <summary>
+        /// Gets or sets the symbol that is used to mark the JSON string containing the actual type of a .NET array.
+        /// </summary>
+        public string ArrayTypeNameSymbol
+        {
+            get { return _arrayTypeNameSymbol; }
+            set
+            {
+                value.MustNotBeNullOrWhiteSpace(nameof(value));
+                _arrayTypeNameSymbol = value;
+            }
+        }
+
+        /// <summary>
         ///     Serializes the JSON object ID and the type name of the specified object.
         /// </summary>
         /// <param name="serializationContext">The serialization context for the object to be serialized.</param>
@@ -194,13 +207,23 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// <param name="writer">The object that writes the JSON document.</param>
         protected void SerializeTypeInfoRecursively(Type currentType, IJsonWriter writer)
         {
-            if (currentType.IsConstructedGenericType == false)
+            if (currentType.IsArray)
             {
-                var typeName = _typeToNameMapping.Map(currentType);
-                writer.WriteString(typeName);
+                WriteArrayTypeInformation(currentType, writer);
                 return;
             }
 
+            if (currentType.IsConstructedGenericType)
+            {
+                WriteGenericTypeInformation(currentType, writer);
+                return;
+            }
+
+            writer.WriteString(_typeToNameMapping.Map(currentType));
+        }
+
+        private void WriteGenericTypeInformation(Type currentType, IJsonWriter writer)
+        {
             writer.BeginObject();
 
             writer.WriteKey(_genericTypeNameSymbol, false);
@@ -227,6 +250,24 @@ namespace Light.Serialization.Json.ObjectMetadata
             writer.EndObject();
         }
 
+        private void WriteArrayTypeInformation(Type arrayType, IJsonWriter writer)
+        {
+            writer.BeginObject();
+
+            writer.WriteKey(_genericTypeNameSymbol, false);
+            writer.WriteString(_typeToNameMapping.Map(typeof(Array)));
+            writer.WriteDelimiter();
+
+            writer.WriteKey(_arrayTypeNameSymbol, false);
+            writer.WriteString(_typeToNameMapping.Map(arrayType.GetElementType()));
+            writer.WriteDelimiter();
+
+            writer.WriteKey(_arrayRankSymbol, false);
+            writer.WritePrimitiveValue(arrayType.GetArrayRank().ToString());
+
+            writer.EndObject();
+        }
+
         // ReSharper disable InconsistentNaming
         protected string _concreteTypeSymbol = JsonSymbols.DefaultConcreteTypeSymbol;
         protected string _genericTypeArgumentsSymbol = JsonSymbols.DefaultGenericTypeArgumentsSymbol;
@@ -235,6 +276,8 @@ namespace Light.Serialization.Json.ObjectMetadata
         private bool _isSerializingObjectIds = true;
         private bool _isSerializingTypeInfo = true;
         protected string _referenceSymbol = JsonSymbols.DefaultReferenceSymbol;
+        protected string _arrayTypeNameSymbol = JsonSymbols.DefaultArrayTypeNameSymbol;
+        protected string _arrayRankSymbol = JsonSymbols.DefaultArrayRankSymbol;
         private ITypeToNameMapping _typeToNameMapping;
         // ReSharper restore InconsistentNaming
     }

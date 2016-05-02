@@ -19,7 +19,7 @@ namespace Light.Serialization.Json.Tests.SerializationTests
                                                                typeof (NodeWithChilds),
                                                                typeof (LeafNode)));
 
-            const string expectedJson = "{\"$id\":0,\"$type\":\"NodeWithChilds\",\"id\":\"Foo\",\"childNodes\":[\"$id:1\",{\"$id\":2,\"$type\":\"NodeWithChilds\",\"id\":\"Bar\",\"childNodes\":[\"$id:3\",{\"$id\":4,\"$type\":\"LeafNode\",\"id\":\"Baz\"}]},{\"$ref\":4}]}";
+            const string expectedJson = "{\"$id\":0,\"$type\":\"NodeWithChilds\",\"id\":\"Foo\",\"childNodes\":[\"$id\",1,\"$type\",{\"name\":\"genericList\",\"typeArguments\":[\"Node\"]},{\"$id\":2,\"$type\":\"NodeWithChilds\",\"id\":\"Bar\",\"childNodes\":[\"$id\",3,\"$type\",{\"name\":\"array\",\"arrayType\":\"Node\",\"arrayRank\":1},{\"$id\":4,\"$type\":\"LeafNode\",\"id\":\"Baz\"}]},{\"$ref\":4}]}";
 
             CompareJsonToExpected(nodeA, expectedJson);
         }
