@@ -36,37 +36,45 @@ namespace Light.Serialization.Json.LowLevelWriting
         /// <summary>
         ///     Starts a new JSON array.
         /// </summary>
-        public void BeginArray()
+        /// <returns>The JSON writer for method chaining.</returns>
+        public IJsonWriter BeginArray()
         {
             _textWriter.Write(JsonSymbols.BeginOfArray);
             _whitespaceFormatter.NewlineAndIncreaseIndent(this);
+            return this;
         }
 
         /// <summary>
         ///     Ends a currently open JSON array.
         /// </summary>
-        public void EndArray()
+        /// <returns>The JSON writer for method chaining.</returns>
+        public IJsonWriter EndArray()
         {
             _whitespaceFormatter.NewlineAndDecreaseIndent(this);
             _textWriter.Write(JsonSymbols.EndOfArray);
+            return this;
         }
 
         /// <summary>
         ///     Starts a complex JSON object.
         /// </summary>
-        public void BeginObject()
+        /// <returns>The JSON writer for method chaining.</returns>
+        public IJsonWriter BeginObject()
         {
             _textWriter.Write(JsonSymbols.BeginOfObject);
             _whitespaceFormatter.NewlineAndIncreaseIndent(this);
+            return this;
         }
 
         /// <summary>
         ///     Ends a currently open complex JSON object.
         /// </summary>
-        public void EndObject()
+        /// <returns>The JSON writer for method chaining.</returns>
+        public IJsonWriter EndObject()
         {
             _whitespaceFormatter.NewlineAndDecreaseIndent(this);
             _textWriter.Write(JsonSymbols.EndOfObject);
+            return this;
         }
 
         /// <summary>
@@ -77,10 +85,11 @@ namespace Light.Serialization.Json.LowLevelWriting
         ///     The boolean indicating whether the specified key should be normalized to the default JSON naming style (lowerCamelCase).
         ///     This option is true by default. Don't use it for key types like GUIDs where normalization would change the value.
         /// </param>
+        /// <returns>The JSON writer for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="key" /> is null.</exception>
         /// <exception cref="EmptyStringException">Thrown when <paramref name="key" /> is an empty string.</exception>
         /// <exception cref="StringIsOnlyWhiteSpaceException">Thrown when <paramref name="key" /> contains only whitespace.</exception>
-        public void WriteKey(string key, bool shouldNormalizeKey = true)
+        public IJsonWriter WriteKey(string key, bool shouldNormalizeKey = true)
         {
             key.MustNotBeNullOrWhiteSpace(nameof(key));
 
@@ -93,34 +102,48 @@ namespace Light.Serialization.Json.LowLevelWriting
             _textWriter.Write(key);
             _textWriter.Write(JsonSymbols.PairDelimiter);
             _whitespaceFormatter.InsertWhitespaceBetweenKeyAndValue(this);
+
+            return this;
         }
 
         /// <summary>
         ///     Writers a delimiter after a value in a currently open JSON object or JSON array.
         /// </summary>
-        public void WriteDelimiter()
+        /// <returns>The JSON writer for method chaining.</returns>
+        public IJsonWriter WriteDelimiter()
         {
             _textWriter.Write(JsonSymbols.ValueDelimiter);
             _whitespaceFormatter.Newline(this);
+            return this;
         }
 
         /// <summary>
         ///     Writes the specified string as a raw value.
         /// </summary>
         /// <param name="string">The string to be written to the JSON document.</param>
-        public void WritePrimitiveValue(string @string)
+        /// <returns>The JSON writer for method chaining.</returns>
+        public IJsonWriter WritePrimitiveValue(string @string)
         {
             _textWriter.Write(@string);
+            return this;
         }
 
         /// <summary>
         ///     Writes the specified string as a JSON string. It is ensured the the JSON string in the document will be surrounded by quotation marks.
         /// </summary>
         /// <param name="string">The string to be written.</param>
+        /// <returns>The JSON writer for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="string" /> is null.</exception>
-        public void WriteString(string @string)
+        public IJsonWriter WriteString(string @string)
         {
             @string.MustNotBeNull(nameof(@string));
+
+            if (@string == string.Empty)
+            {
+                _textWriter.Write(JsonSymbols.StringDelimiter);
+                _textWriter.Write(JsonSymbols.StringDelimiter);
+                return this;
+            }
 
             if (@string[0] == JsonSymbols.StringDelimiter)
             {
@@ -129,7 +152,7 @@ namespace Light.Serialization.Json.LowLevelWriting
                 if (@string[@string.Length - 1] != JsonSymbols.StringDelimiter)
                     _textWriter.Write(JsonSymbols.StringDelimiter);
 
-                return;
+                return this;
             }
 
             _textWriter.Write(JsonSymbols.StringDelimiter);
@@ -137,14 +160,18 @@ namespace Light.Serialization.Json.LowLevelWriting
 
             if (@string[@string.Length - 1] != JsonSymbols.StringDelimiter)
                 _textWriter.Write(JsonSymbols.StringDelimiter);
+
+            return this;
         }
 
         /// <summary>
         ///     Writes null as a value to the JSON document.
         /// </summary>
-        public void WriteNull()
+        /// <returns>The JSON writer for method chaining.</returns>
+        public IJsonWriter WriteNull()
         {
             _textWriter.Write(JsonSymbols.Null);
+            return this;
         }
     }
 }
