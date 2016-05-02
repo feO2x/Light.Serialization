@@ -197,6 +197,11 @@ namespace Light.Serialization.Json.ObjectMetadata
         public const string AbstractGenericSet = "abstractGenericSet";
 
         /// <summary>
+        ///     Gets the "array" name for the Array type.
+        /// </summary>
+        public const string Array = "array";
+
+        /// <summary>
         ///     Adds all mappings for basic .NET types to the specified DomainFriendlyNameMapping.
         /// </summary>
         /// <param name="mapping">The mapping to be populated.</param>
@@ -228,6 +233,7 @@ namespace Light.Serialization.Json.ObjectMetadata
                 .AddMapping(DateTimeOffset, typeof(DateTimeOffset))
 
                 // Collections, dictionaries, and sets
+                .AddMapping(Array, typeof(Array))
                 .AddMapping(GenericList, typeof(List<>))
                 .AddMapping(ObservableGenericCollection, typeof(ObservableCollection<>))
                 .AddMapping(GenericCollection, typeof(Collection<>))
