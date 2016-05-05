@@ -150,12 +150,17 @@ namespace Light.Serialization.Json
         /// <summary>
         ///     Gets the "arrayType" symbol that marks the JSON string containing the type to resolve for a .NET array.
         /// </summary>
-        public const string DefaultArrayTypeNameSymbol = "arrayType";
+        public const string DefaultArrayTypeSymbol = "arrayType";
 
         /// <summary>
         ///     Gets the "arrayRank" symbol that marks the JSON number describing the dimensions of a .NET array.
         /// </summary>
         public const string DefaultArrayRankSymbol = "arrayRank";
+
+        /// <summary>
+        /// Gets the "arrayLength" symbol that marks the JSON number describing the length of a .NET array.
+        /// </summary>
+        public const string DefaultArrayLengthSymbol = "arrayLenght";
 
         /// <summary>
         ///     Gets the collection containing all single-escaped characters that are used in JSON strings.

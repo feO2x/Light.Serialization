@@ -8,6 +8,7 @@ using Light.Serialization.Json.Unity;
 using Microsoft.Practices.Unity;
 
 // ReSharper disable once CheckNamespace
+
 namespace Light.Serialization.Json.Tests
 {
     public abstract class BaseJsonSerializerTest
@@ -68,9 +69,12 @@ namespace Light.Serialization.Json.Tests
             _container.DisableTypeMetadata();
         }
 
-        protected void UseDomainFriendlyNames(Action<TypeNameToJsonNameScanner.IScanningOptions> options)
+        protected void UseDomainFriendlyNames(Action<TypeNameToJsonNameScanner.IScanningOptions> options = null)
         {
-            _container.UseDomainFriendlyNaming(options);
+            if (options == null)
+                _container.UseDomainFriendlyNaming(DomainFriendlyNameMapping.CreateWithDefaultTypeMappings());
+            else
+                _container.UseDomainFriendlyNaming(options);
         }
     }
 }

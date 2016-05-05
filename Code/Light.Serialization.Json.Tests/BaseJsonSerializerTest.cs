@@ -65,11 +65,13 @@ namespace Light.Serialization.Json.Tests
             _jsonSerializerBuilder.DisableTypeMetadata();
         }
 
-        protected void UseDomainFriendlyNames(Action<TypeNameToJsonNameScanner.IScanningOptions> options)
+        protected void UseDomainFriendlyNames(Action<TypeNameToJsonNameScanner.IScanningOptions> options = null)
         {
-            var domainFriendlyNameMapping = DomainFriendlyNameMapping.CreateWithDefaultTypeMappings()
-                                                                     .ScanTypes(options);
+            var domainFriendlyNameMapping = DomainFriendlyNameMapping.CreateWithDefaultTypeMappings();
 
+            if (options != null)
+                domainFriendlyNameMapping.ScanTypes(options);
+                                                                     
             _jsonSerializerBuilder.WithTypeToNameMapping(domainFriendlyNameMapping);
         }
     }

@@ -110,15 +110,17 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// <summary>
         ///     Gets or sets the symbol that is used to mark the JSON string containing the actual type of a .NET array.
         /// </summary>
-        public string ArrayTypeNameSymbol
+        public string ArrayTypeSymbol
         {
-            get { return _arrayTypeNameSymbol; }
+            get { return _arrayTypeSymbol; }
             set
             {
                 value.MustNotBeNullOrWhiteSpace(nameof(value));
-                _arrayTypeNameSymbol = value;
+                _arrayTypeSymbol = value;
             }
         }
+
+
 
         /// <summary>
         ///     Serializes the JSON object ID and the type name of the specified object.
@@ -253,9 +255,11 @@ namespace Light.Serialization.Json.ObjectMetadata
                   .WriteKey(_genericTypeNameSymbol, false)
                   .WriteString(_typeToNameMapping.Map(typeof(Array)))
                   .WriteDelimiter()
-                  .WriteKey(_arrayTypeNameSymbol, false)
-                  .WriteString(_typeToNameMapping.Map(arrayType.GetElementType()))
-                  .WriteDelimiter()
+                  .WriteKey(_arrayTypeSymbol, false);
+
+            SerializeTypeInfoRecursively(arrayType.GetElementType(), writer);
+                  
+            writer.WriteDelimiter()
                   .WriteKey(_arrayRankSymbol, false)
                   .WritePrimitiveValue(arrayType.GetArrayRank().ToString())
                   .EndObject();
@@ -269,9 +273,9 @@ namespace Light.Serialization.Json.ObjectMetadata
         private bool _isSerializingObjectIds = true;
         private bool _isSerializingTypeInfo = true;
         protected string _referenceSymbol = JsonSymbols.DefaultReferenceSymbol;
-        protected string _arrayTypeNameSymbol = JsonSymbols.DefaultArrayTypeNameSymbol;
+        protected string _arrayTypeSymbol = JsonSymbols.DefaultArrayTypeSymbol;
         protected string _arrayRankSymbol = JsonSymbols.DefaultArrayRankSymbol;
-        private ITypeToNameMapping _typeToNameMapping;
+        protected ITypeToNameMapping _typeToNameMapping;
         // ReSharper restore InconsistentNaming
     }
 }
