@@ -22,7 +22,7 @@ namespace Light.Serialization.Json.Tests.SerializationTests
         public static readonly TestData CollectionsTestData =
             new[]
             {
-                new object[] { new[] { 1, 2, 3 }, "[\"$id\",0,\"$type\",{\"name\":\"array\",\"arrayType\":\"int32\",\"arrayRank\":1,\"arrayLenght\":3},1,2,3]" },
+                new object[] { new[] { 1, 2, 3 }, "[\"$id\",0,\"$type\",{\"name\":\"array\",\"arrayType\":\"int32\",\"arrayLength\":3},1,2,3]" },
                 new object[] { new List<string> { "Foo", null, "Bar" }, "[\"$id\",0,\"$type\",{\"name\":\"genericList\",\"typeArguments\":[\"string\"]},\"Foo\",null,\"Bar\"]" },
                 new object[] { new ObservableCollection<bool> { true, false }, "[\"$id\",0,\"$type\",{\"name\":\"observableGenericList\",\"typeArguments\":[\"bool\"]},true,false]" }
             };
@@ -44,26 +44,39 @@ namespace Light.Serialization.Json.Tests.SerializationTests
                 new object[] { new List<string> { "Foo", "Bar" }, "[\"Foo\",\"Bar\"]" }
             };
 
-        // TODO: add tests for multidimensional and jagged arrays
-        //[Fact(DisplayName = "The serializer must serialize include the array length of multidimensional arrays in the corresponding metadata sections.")]
-        //public void MultidimensionalArrays()
-        //{
-        //    UseDomainFriendlyNames();
-        //    var twoByTwoArray = new int[,];
-        //    var arrayContent = 5;
-        //    for (var i = 0; i < 2; i++)
-        //    {
-        //        twoByTwoArray[i] = new[] { arrayContent++, arrayContent++, arrayContent++ };
-        //    }
-        //    /*
-        //     * This array is the same as
-        //     * 5  6  7
-        //     * 8  9 10
-        //     */
+        [Fact(DisplayName = "The serializer must include the array rank as an integer number and the length as a JSON array for multidimensional arrays in the corresponding metadata sections.")]
+        public void MultidimensionalArray()
+        {
+            UseDomainFriendlyNames();
+            var threeByTwoArray = new int[2, 3];
+            threeByTwoArray[0, 0] = 5;
+            threeByTwoArray[0, 1] = 6;
+            threeByTwoArray[0, 2] = 7;
+            threeByTwoArray[1, 0] = 8;
+            threeByTwoArray[1, 1] = 9;
+            threeByTwoArray[1, 2] = 10;
+            /*
+             * This array is the same as
+             * 5  6  7
+             * 8  9 10
+             */
 
-        //    const string expectedJson = "[\"$id\",0,\"$type\",{\"name\":\"array\",\"arrayType\":\"int32\",\"arrayRank\":2,\"arrayLenght\":2},[\"$id\",1,\"$type\",{\"name\":\"array\",\"arrayType\":\"int32\",\"arrayRank\":1,\"arrayLenght\":3},5,6,7][\"$id\",2,\"$type\",{\"name\":\"array\",\"arrayType\":\"int32\",\"arrayRank\":1,\"arrayLenght\":3},8,9,10]]";
+            const string expectedJson = "[\"$id\",0,\"$type\",{\"name\":\"array\",\"arrayType\":\"int32\",\"arrayRank\":2,\"arrayLength\":[2,3]},5,6,7,8,9,10]";
 
-        //    CompareJsonToExpected(twoByTwoArray, expectedJson);
-        //}
+            CompareJsonToExpected(threeByTwoArray, expectedJson);
+        }
+
+        [Fact(DisplayName = "The serializer must include the length as a JSON number for jagged arrays in the corresponding metadata sections.")]
+        public void JaggedArray()
+        {
+            UseDomainFriendlyNames();
+            var jaggedArray = new int[2][];
+            jaggedArray[0] = new[] { 42, 87, -111 };
+            jaggedArray[1] = new[] { 66 };
+
+            const string expectedJson = "[\"$id\",0,\"$type\",{\"name\":\"array\",\"arrayType\":{\"name\":\"array\",\"arrayType\":\"int32\"},\"arrayLength\":2},[\"$id\",1,\"$type\",{\"name\":\"array\",\"arrayType\":\"int32\",\"arrayLength\":3},42,87,-111],[\"$id\",2,\"$type\",{\"name\":\"array\",\"arrayType\":\"int32\",\"arrayLength\":1},66]]";
+
+            CompareJsonToExpected(jaggedArray, expectedJson);
+        }
     }
 }

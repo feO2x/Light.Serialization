@@ -56,33 +56,56 @@ namespace Light.Serialization.Json.ObjectMetadata
 
             var actualType = serializationContext.ActualType;
             if (actualType.IsArray)
-            {
-                writer.BeginObject()
-                      .WriteKey(_genericTypeNameSymbol, false)
-                      .WriteString(_typeToNameMapping.Map(typeof(Array)))
-                      .WriteDelimiter()
-                      .WriteKey(_arrayTypeSymbol, false);
-
-                SerializeTypeInfoRecursively(actualType.GetElementType(), writer);
-
-                writer.WriteDelimiter()
-                      .WriteKey(_arrayRankSymbol, false)
-                      .WritePrimitiveValue(actualType.GetArrayRank().ToString())
-                      .WriteDelimiter()
-                      .WriteKey(_arrayLengthSymbol, false)
-                      .WritePrimitiveValue(GetLengthOfArray(serializationContext.ObjectToBeSerialized))
-                      .EndObject();
-            }
+                SerializeArrayInfo(serializationContext);
             else
                 SerializeTypeInfoRecursively(serializationContext.ActualType, serializationContext.Writer);
 
             serializationContext.Writer.WriteDelimiter();
         }
 
-        private static string GetLengthOfArray(object objectToBeSerialized)
+        private void SerializeArrayInfo(JsonSerializationContext serializationContext)
         {
-            var array = objectToBeSerialized as Array;
-            return array == null ? "-1" : array.Length.ToString();
+            var writer = serializationContext.Writer;
+            var actualType = serializationContext.ActualType;
+
+            writer.BeginObject()
+                      .WriteKey(_genericTypeNameSymbol, false)
+                      .WriteString(_typeToNameMapping.Map(typeof(Array)))
+                      .WriteDelimiter()
+                      .WriteKey(_arrayTypeSymbol, false);
+
+            SerializeTypeInfoRecursively(actualType.GetElementType(), writer);
+
+            var arrayRank = actualType.GetArrayRank();
+            var array = (Array)serializationContext.ObjectToBeSerialized;
+            if (arrayRank > 1)
+            {
+                writer.WriteDelimiter()
+                      .WriteKey(_arrayRankSymbol, false)
+                      .WritePrimitiveValue(arrayRank.ToString())
+                      .WriteDelimiter()
+                      .WriteKey(_arrayLengthSymbol, false)
+                      .BeginArray();
+
+                for (var i = 0; i < arrayRank; i++)
+                {
+                    writer.WritePrimitiveValue(array.GetLength(i).ToString());
+                    if (i < arrayRank - 1)
+                        writer.WriteDelimiter();
+                    else
+                        break;
+                }
+
+                writer.EndArray()
+                      .EndObject();
+            }
+            else
+            {
+                writer.WriteDelimiter()
+                      .WriteKey(_arrayLengthSymbol, false)
+                      .WritePrimitiveValue(array.Length.ToString())
+                      .EndObject();
+            }
         }
     }
 }

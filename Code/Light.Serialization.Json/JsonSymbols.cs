@@ -160,7 +160,7 @@ namespace Light.Serialization.Json
         /// <summary>
         /// Gets the "arrayLength" symbol that marks the JSON number describing the length of a .NET array.
         /// </summary>
-        public const string DefaultArrayLengthSymbol = "arrayLenght";
+        public const string DefaultArrayLengthSymbol = "arrayLength";
 
         /// <summary>
         ///     Gets the collection containing all single-escaped characters that are used in JSON strings.

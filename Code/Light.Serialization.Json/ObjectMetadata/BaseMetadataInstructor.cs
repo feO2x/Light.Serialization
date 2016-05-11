@@ -121,7 +121,6 @@ namespace Light.Serialization.Json.ObjectMetadata
         }
 
 
-
         /// <summary>
         ///     Serializes the JSON object ID and the type name of the specified object.
         /// </summary>
@@ -258,11 +257,16 @@ namespace Light.Serialization.Json.ObjectMetadata
                   .WriteKey(_arrayTypeSymbol, false);
 
             SerializeTypeInfoRecursively(arrayType.GetElementType(), writer);
-                  
-            writer.WriteDelimiter()
-                  .WriteKey(_arrayRankSymbol, false)
-                  .WritePrimitiveValue(arrayType.GetArrayRank().ToString())
-                  .EndObject();
+
+            var arrayRank = arrayType.GetArrayRank();
+            if (arrayRank > 1)
+            {
+                writer.WriteDelimiter()
+                      .WriteKey(_arrayRankSymbol, false)
+                      .WritePrimitiveValue(arrayType.GetArrayRank().ToString());
+            }
+
+            writer.EndObject();
         }
 
         // ReSharper disable InconsistentNaming
