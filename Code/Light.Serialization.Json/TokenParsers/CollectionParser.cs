@@ -10,7 +10,7 @@ namespace Light.Serialization.Json.TokenParsers
     /// <summary>
     ///     Represents a JSON Token Parser that deserializes JSON arrays to .NET generic collections.
     /// </summary>
-    public sealed class ArrayToCollectionParser : IJsonTokenParser
+    public sealed class CollectionParser : IJsonTokenParser
     {
         private readonly IMetadataParser _metadataParser;
         private readonly IMetaFactory _metaFactory;
@@ -21,7 +21,7 @@ namespace Light.Serialization.Json.TokenParsers
         /// <param name="metaFactory">The factory that is able to create collection instances from type information.</param>
         /// <param name="metadataParser">The object that can parse the metadata section of a JSON array.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="metaFactory" /> or <paramref name="metadataParser" /> is null.</exception>
-        public ArrayToCollectionParser(IMetaFactory metaFactory, IMetadataParser metadataParser)
+        public CollectionParser(IMetaFactory metaFactory, IMetadataParser metadataParser)
         {
             metaFactory.MustNotBeNull(nameof(metaFactory));
             metadataParser.MustNotBeNull(nameof(metadataParser));

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using Light.GuardClauses;
@@ -12,20 +13,18 @@ namespace Light.Serialization.Json.TokenParsers
     /// <summary>
     ///     Represents a JSON token parser that deserializes complex JSON objects to generic dictionaries.
     /// </summary>
-    public sealed class GenericDictionaryParser : IJsonTokenParser
+    public sealed class DictionaryParser : IJsonTokenParser
     {
         private readonly IMetadataParser _metadataParser;
         private readonly IMetaFactory _metaFactory;
-        private readonly MethodInfo _populateGenericDictionaryInfo = typeof(GenericDictionaryParser).GetTypeInfo().GetDeclaredMethod(nameof(PopulateGenericDictionary));
 
         /// <summary>
-        ///     Creates a new instance of <see cref="GenericDictionaryParser" />.
+        ///     Creates a new instance of <see cref="DictionaryParser" />.
         /// </summary>
         /// <param name="metaFactory">The factory that is able to create dictionaries from type information.</param>
         /// <param name="metadataParser">The object that can parse the metadata section of a complex JSON object.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="metaFactory" /> or <paramref name="metadataParser" /> is null.</exception>
-        public GenericDictionaryParser(IMetaFactory metaFactory,
-                                       IMetadataParser metadataParser)
+        public DictionaryParser(IMetaFactory metaFactory, IMetadataParser metadataParser)
         {
             metaFactory.MustNotBeNull(nameof(metaFactory));
             metadataParser.MustNotBeNull(nameof(metadataParser));
@@ -45,7 +44,7 @@ namespace Light.Serialization.Json.TokenParsers
         public bool IsSuitableFor(JsonToken token, Type requestedType)
         {
             return token.JsonType == JsonTokenType.BeginOfObject &&
-                   requestedType.GetTypeInfo().ImplementsGenericInterface(typeof(IDictionary<,>).GetTypeInfo());
+                   requestedType.GetTypeInfo().ImplementsGenericInterface(typeof(IDictionary<,>));
         }
 
         /// <summary>
@@ -72,34 +71,30 @@ namespace Light.Serialization.Json.TokenParsers
 
             var dictionary = _metaFactory.CreateDictionary(metadataParseResult.TypeToConstruct);
 
-            var specificDictionaryType = metadataParseResult.TypeToConstruct.GetTypeInfo().GetSpecificTypeInfoThatCorrespondsToGenericInterface(typeof(IDictionary<,>).GetTypeInfo());
-            var specificPopulateGenericDictionaryMethod = _populateGenericDictionaryInfo.MakeGenericMethod(specificDictionaryType.GenericTypeArguments);
+            var specificDictionaryType = metadataParseResult.TypeToConstruct.GetTypeInfo().GetResolvedTypeInfoForGenericInterface(typeof(IDictionary<,>));
+            var keyType = specificDictionaryType != null ? specificDictionaryType.GenericTypeArguments[0] : typeof(object);
+            var valueType = specificDictionaryType != null ? specificDictionaryType.GenericTypeArguments[1] : typeof(object);
 
-            var methodParameters = new object[3];
-            methodParameters[0] = currentToken;
-            methodParameters[1] = dictionary;
-            methodParameters[2] = context;
-
-            specificPopulateGenericDictionaryMethod.Invoke(null, methodParameters);
+            PopulateDictionary(currentToken, dictionary, context, keyType, valueType);
 
             return dictionary;
         }
 
-        private static void PopulateGenericDictionary<TKey, TValue>(JsonToken currentToken, IDictionary<TKey, TValue> dictionary, JsonDeserializationContext context)
+        private static void PopulateDictionary(JsonToken currentToken, IDictionary dictionary, JsonDeserializationContext context, Type keyType, Type valueType)
         {
             while (true)
             {
                 if (currentToken.JsonType != JsonTokenType.String)
                     throw new JsonDocumentException($"Expected key in complex JSON object, but found {currentToken}", currentToken);
 
-                var key = context.DeserializeToken<TKey>(currentToken);
+                var key = context.DeserializeToken(currentToken, keyType);
 
                 context.JsonReader.ReadAndExpectPairDelimiterToken();
 
                 currentToken = context.JsonReader.ReadNextToken();
                 currentToken.ExpectBeginOfValue();
 
-                var value = context.DeserializeToken<TValue>(currentToken);
+                var value = context.DeserializeToken(currentToken, valueType);
 
                 dictionary.Add(key, value);
 
