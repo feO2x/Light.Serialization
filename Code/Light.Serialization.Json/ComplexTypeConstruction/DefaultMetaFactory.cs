@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -18,16 +19,16 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         /// </summary>
         /// <param name="requestedDictionaryType">The dictioary abstraction or concrete type that should be instantiated.</param>
         /// <returns>An instance of the given concrete type, or a new instance of the default dictionary type when the requested type is a dictionary abstraction.</returns>
-        public object CreateDictionary(Type requestedDictionaryType)
+        public IDictionary CreateDictionary(Type requestedDictionaryType)
         {
             var dictionary = TryToInstantiateWithDefaultConstructor(requestedDictionaryType);
             if (dictionary != null)
-                return dictionary;
+                return (IDictionary) dictionary;
 
             var createDefaultDictionaryMethod = GetType().GetTypeInfo().GetDeclaredMethod(nameof(CreateDefaultDictionary));
             var resolvedMethod = createDefaultDictionaryMethod.MakeGenericMethod(requestedDictionaryType.GenericTypeArguments);
 
-            return resolvedMethod.Invoke(this, null);
+            return (IDictionary) resolvedMethod.Invoke(this, null);
         }
 
         /// <summary>
@@ -35,17 +36,17 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         /// </summary>
         /// <param name="requestedCollectionType">The collection abstraction or concrete type that should be instantiated.</param>
         /// <returns>An instance of the given concrete type, or a new instance of the default collection type when the requested type is a collection abstraction.</returns>
-        public object CreateCollection(Type requestedCollectionType)
+        public IList CreateCollection(Type requestedCollectionType)
         {
             var collection = TryToInstantiateWithDefaultConstructor(requestedCollectionType);
 
             if (collection != null)
-                return collection;
+                return (IList) collection;
 
             var createDefaultCollectionMethod = GetType().GetTypeInfo().GetDeclaredMethod(nameof(CreateDefaultCollection));
             var resolvedMethod = createDefaultCollectionMethod.MakeGenericMethod(requestedCollectionType.GenericTypeArguments);
 
-            return resolvedMethod.Invoke(this, null);
+            return (IList) resolvedMethod.Invoke(this, null);
         }
 
         /// <summary>

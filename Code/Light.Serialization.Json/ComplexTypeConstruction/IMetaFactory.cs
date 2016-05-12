@@ -12,12 +12,12 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         /// <summary>
         ///     Creates a dictionary for the given dictionary type.
         /// </summary>
-        object CreateDictionary(Type requestedDictionaryType);
+        IDictionary CreateDictionary(Type requestedDictionaryType);
 
         /// <summary>
         ///     Creates a collection for the given collection type.
         /// </summary>
-        object CreateCollection(Type requestedCollectionType);
+        IList CreateCollection(Type requestedCollectionType);
 
         /// <summary>
         ///     Creates a complex object using the given typeCreationDescription, injecting all values given in the deserializedChildValues.
