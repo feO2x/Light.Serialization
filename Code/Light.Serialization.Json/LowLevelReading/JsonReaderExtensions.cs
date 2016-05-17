@@ -67,5 +67,14 @@ namespace Light.Serialization.Json.LowLevelReading
 
             return reader;
         }
+
+        public static JsonToken ReadAndExpectNumber(this IJsonReader reader, string exceptionMessage = null)
+        {
+            var token = reader.ReadNextToken();
+            if (token.JsonType != JsonTokenType.IntegerNumber || token.JsonType == JsonTokenType.FloatingPointNumber)
+                throw new JsonDocumentException(exceptionMessage ?? $"Expected JSON number in document, but found {token}.", token);
+
+            return token;
+        }
     }
 }

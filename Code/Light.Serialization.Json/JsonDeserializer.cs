@@ -16,7 +16,7 @@ namespace Light.Serialization.Json
         private readonly Dictionary<JsonTokenTypeCombination, IJsonTokenParser> _cache;
         private readonly IJsonReaderFactory _jsonReaderFactory;
         private readonly IReadOnlyList<IJsonTokenParser> _tokenParsers;
-        private List<object> _deserializedObjects;
+        private Dictionary<int, object> _deserializedObjects;
         private IJsonReader _jsonReader;
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace Light.Serialization.Json
             requestedType.MustNotBeNull(nameof(requestedType));
 
             _jsonReader = _jsonReaderFactory.CreateFromString(json);
-            _deserializedObjects = new List<object>();
+            _deserializedObjects = new Dictionary<int, object>();
             var returnValue = DeserializeDocument(requestedType);
             _jsonReader = null;
             _deserializedObjects = null;

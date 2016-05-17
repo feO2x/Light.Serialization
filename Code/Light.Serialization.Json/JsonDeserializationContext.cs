@@ -33,7 +33,7 @@ namespace Light.Serialization.Json
         /// <summary>
         ///     Gets the list containing all deserialized objects if Object Reference Preservation is turned on.
         /// </summary>
-        public List<object> DeserializedObjects;
+        public Dictionary<int, object> DeserializedObjects;
 
         /// <summary>
         ///     Creates a new instance of <see cref="JsonDeserializationContext" />.
@@ -42,13 +42,13 @@ namespace Light.Serialization.Json
         /// <param name="requestedType">The requested type of the token.</param>
         /// <param name="jsonReader">The object that is able to read single tokens from a JSON document.</param>
         /// <param name="deserializeToken">The delegate that can be used to deserialize a JSON token.</param>
-        /// <param name="deserializedObjects">The list containing all deserialized objects for this JSON document. Used for Object Reference Preservation.</param>
+        /// <param name="deserializedObjects">The dictionary containing all mappings from document IDs to objects for this JSON document. Used for Object Reference Preservation.</param>
         /// <exception cref="ArgumentNullException">Thrown when any parameter is null.</exception>
         public JsonDeserializationContext(JsonToken token,
                                           Type requestedType,
                                           IJsonReader jsonReader,
                                           Func<JsonToken, Type, object> deserializeToken,
-                                          List<object> deserializedObjects)
+                                          Dictionary<int, object> deserializedObjects)
         {
             requestedType.MustNotBeNull(nameof(requestedType));
             jsonReader.MustNotBeNull(nameof(jsonReader));
