@@ -45,7 +45,7 @@ namespace Light.Serialization.Json.TokenParsers
         public bool IsSuitableFor(JsonToken token, Type requestedType)
         {
             return token.JsonType == JsonTokenType.BeginOfObject &&
-                   requestedType.GetTypeInfo().GetInterfaceHierarchy().Contains(typeof(IDictionary).GetTypeInfo());
+                   requestedType.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IDictionary));
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Light.Serialization.Json.TokenParsers
             while (true)
             {
                 if (currentToken.JsonType != JsonTokenType.String)
-                    throw new JsonDocumentException($"Expected key in complex JSON object, but found {currentToken}", currentToken);
+                    throw new JsonDocumentException($"Expected key in complex JSON object, but found {currentToken}.", currentToken);
 
                 var key = context.DeserializeToken(currentToken, keyType);
 

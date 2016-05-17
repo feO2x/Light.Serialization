@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using Light.GuardClauses;
 using Light.GuardClauses.FrameworkExtensions;
@@ -25,7 +25,7 @@ namespace Light.Serialization.Json.FrameworkExtensions
             type.MustNotBeNull(nameof(type));
             CheckGenericInterfaceType(genericInterface);
 
-            foreach (var interfaceTypeInfo in type.GetInterfaceHierarchy())
+            foreach (var interfaceTypeInfo in type.ImplementedInterfaces.Select(t => t.GetTypeInfo()))
             {
                 if (interfaceTypeInfo.IsGenericType == false)
                     continue;
@@ -52,7 +52,7 @@ namespace Light.Serialization.Json.FrameworkExtensions
             sourceType.MustNotBeNull();
             CheckGenericInterfaceType(genericInterface);
 
-            foreach (var interfaceTypeInfo in sourceType.GetInterfaceHierarchy())
+            foreach (var interfaceTypeInfo in sourceType.ImplementedInterfaces.Select(t => t.GetTypeInfo()))
             {
                 if (interfaceTypeInfo.IsGenericType == false)
                     continue;
@@ -61,29 +61,6 @@ namespace Light.Serialization.Json.FrameworkExtensions
             }
 
             return null;
-        }
-
-        /// <summary>
-        ///     Gets all interfaces that the specified type implements along the whole inheritance line.
-        /// </summary>
-        /// <param name="typeInfo">The info for the type whose interfaces shall be returned.</param>
-        /// <returns>A lazy collection of all interfaces that the type implements.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeInfo" /> is null.</exception>
-        public static IEnumerable<TypeInfo> GetInterfaceHierarchy(this TypeInfo typeInfo)
-        {
-            typeInfo.MustNotBeNull(nameof(typeInfo));
-
-            if (typeInfo.IsInterface)
-                yield return typeInfo;
-            do
-            {
-                foreach (var interfaceType in typeInfo.ImplementedInterfaces)
-                {
-                    yield return interfaceType.GetTypeInfo();
-                }
-
-                typeInfo = typeInfo.BaseType?.GetTypeInfo();
-            } while (typeInfo != null);
         }
 
         [Conditional(Check.CompileAssertionsSymbol)]
