@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Light.GuardClauses;
 using Light.Serialization.Json.ComplexTypeConstruction;
@@ -11,12 +12,12 @@ using Light.Serialization.Json.ObjectMetadata;
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents a JSON token parser that deserializes complex JSON objects to generic dictionaries.
+    ///     Represents a JSON token parser that deserializes complex JSON objects to .NET dictionaries.
     /// </summary>
     public sealed class DictionaryParser : IJsonTokenParser
     {
-        private readonly IMetadataParser _metadataParser;
         private readonly IMetaFactory _metaFactory;
+        private readonly IMetadataParser _metadataParser;
 
         /// <summary>
         ///     Creates a new instance of <see cref="DictionaryParser" />.
@@ -44,11 +45,11 @@ namespace Light.Serialization.Json.TokenParsers
         public bool IsSuitableFor(JsonToken token, Type requestedType)
         {
             return token.JsonType == JsonTokenType.BeginOfObject &&
-                   requestedType.GetTypeInfo().ImplementsGenericInterface(typeof(IDictionary<,>));
+                   requestedType.GetTypeInfo().GetInterfaceHierarchy().Contains(typeof(IDictionary).GetTypeInfo());
         }
 
         /// <summary>
-        ///     Parses the specified JSON complex object as a generic .NET dictionary.
+        ///     Parses the specified JSON complex object as a .NET dictionary.
         ///     This method must only be called when <see cref="IsSuitableFor" /> would return true.
         /// </summary>
         public object ParseValue(JsonDeserializationContext context)
