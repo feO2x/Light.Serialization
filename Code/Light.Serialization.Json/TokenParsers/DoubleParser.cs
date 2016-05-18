@@ -18,8 +18,10 @@ namespace Light.Serialization.Json.TokenParsers
         /// <summary>
         ///     Checks if the specified token can be parsed to a .NET double.
         /// </summary>
-        public bool IsSuitableFor(JsonToken token, Type requestedType)
+        public bool IsSuitableFor(JsonDeserializationContext context)
         {
+            var token = context.Token;
+            var requestedType = context.RequestedType;
             return ((token.JsonType == JsonTokenType.FloatingPointNumber || token.JsonType == JsonTokenType.IntegerNumber || token.JsonType == JsonTokenType.String) && requestedType == typeof(double)) ||
                    (requestedType == typeof(object) || requestedType == typeof(ValueType)) && token.JsonType == JsonTokenType.FloatingPointNumber;
         }
@@ -30,7 +32,7 @@ namespace Light.Serialization.Json.TokenParsers
         /// </summary>
         /// <param name="context">The deserialization context of the specified JSON number.</param>
         /// <returns>The deserialized double value.</returns>
-        public object ParseValue(JsonDeserializationContext context)
+        public ParseResult ParseValue(JsonDeserializationContext context)
         {
             var token = context.Token;
             if (token.JsonType == JsonTokenType.String)
@@ -39,7 +41,7 @@ namespace Light.Serialization.Json.TokenParsers
             var doubleString = token.ToString();
             double result;
             if (double.TryParse(doubleString, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out result))
-                return result;
+                return ParseResult.FromParsedValue(result);
 
             throw new DeserializationException($"Cannot deserialize value {doubleString} to a double value.");
         }

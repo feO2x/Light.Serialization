@@ -22,9 +22,9 @@ namespace Light.Serialization.Json.TokenParsers
         /// <summary>
         ///     Parses the given JSON string in ISO 8601 format to a .NET DateTime value.
         /// </summary>
-        public object ParseValue(JsonDeserializationContext context)
+        public ParseResult ParseValue(JsonDeserializationContext context)
         {
-            return Parse(context.Token);
+            return ParseResult.FromParsedValue(Parse(context.Token));
         }
 
         /// <summary>

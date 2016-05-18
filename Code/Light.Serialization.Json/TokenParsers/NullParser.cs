@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using Light.Serialization.Json.LowLevelReading;
 
 namespace Light.Serialization.Json.TokenParsers
@@ -17,21 +16,19 @@ namespace Light.Serialization.Json.TokenParsers
         /// <summary>
         ///     Checks if the specified token is null and if the requested type is a reference or nullable type.
         /// </summary>
-        /// <param name="token">The token to be deserialized.</param>
-        /// <param name="requestedType">The requested type of the object graph.</param>
-        public bool IsSuitableFor(JsonToken token, Type requestedType)
+        public bool IsSuitableFor(JsonDeserializationContext context)
         {
-            var typeInfo = requestedType.GetTypeInfo();
-            return token.JsonType == JsonTokenType.Null && (typeInfo.IsClass || typeInfo.IsInterface);
+            var typeInfo = context.RequestedType.GetTypeInfo();
+            return context.Token.JsonType == JsonTokenType.Null && (typeInfo.IsClass || typeInfo.IsInterface);
         }
 
         /// <summary>
         ///     Deserializes the specified JSON null value to .NET null. This method must only be called
         ///     when <see cref="IsSuitableFor" /> would return true.
         /// </summary>
-        public object ParseValue(JsonDeserializationContext context)
+        public ParseResult ParseValue(JsonDeserializationContext context)
         {
-            return null;
+            return ParseResult.FromNull();
         }
     }
 }

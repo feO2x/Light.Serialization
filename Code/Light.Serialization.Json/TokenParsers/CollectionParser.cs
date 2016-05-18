@@ -38,25 +38,27 @@ namespace Light.Serialization.Json.TokenParsers
         /// <summary>
         ///     Checks if the JSON token is a begin-of-array token.
         /// </summary>
-        public bool IsSuitableFor(JsonToken token, Type requestedType)
+        public bool IsSuitableFor(JsonDeserializationContext context)
         {
-            return token.JsonType == JsonTokenType.BeginOfArray;
+            return context.Token.JsonType == JsonTokenType.BeginOfArray;
         }
 
         /// <summary>
         ///     Parses the given JSON array to a .NET collection.
         ///     This method must only be called when <see cref="IsSuitableFor" /> would return true.
         /// </summary>
-        public object ParseValue(JsonDeserializationContext context)
+        public ParseResult ParseValue(JsonDeserializationContext context)
         {
             var currentToken = context.JsonReader.ReadNextToken();
 
             if (currentToken.JsonType == JsonTokenType.EndOfArray)
-                return _metaFactory.CreateCollection(context.RequestedType);
+                return ParseResult.FromParsedValue(_metaFactory.CreateCollection(context.RequestedType));
 
             var metadataParseResult = _metadataParser.ParseMetadataSection(ref currentToken, context);
             if (metadataParseResult.ReferencePreservationInfo.WasObjectRetrieved)
-                return metadataParseResult.ReferencePreservationInfo.RetrievedObject;
+                return ParseResult.FromParsedValue(metadataParseResult.ReferencePreservationInfo.RetrievedObject);
+            if (metadataParseResult.ReferencePreservationInfo.IsDeferredReference)
+                return ParseResult.FromDeferredReference(metadataParseResult.ReferencePreservationInfo.Id);
 
             var typeToConstruct = metadataParseResult.TypeToConstruct;
             var collection = _metaFactory.CreateCollection(typeToConstruct);
@@ -65,7 +67,7 @@ namespace Light.Serialization.Json.TokenParsers
             var itemType = typeToConstruct.IsConstructedGenericType ? typeToConstruct.GenericTypeArguments[0] : typeof(object);
             PopulateCollection(currentToken, collection, context, itemType);
 
-            return collection;
+            return ParseResult.FromParsedValue(collection);
         }
 
         private static void PopulateCollection(JsonToken currentToken, IList collection, JsonDeserializationContext context, Type itemType)

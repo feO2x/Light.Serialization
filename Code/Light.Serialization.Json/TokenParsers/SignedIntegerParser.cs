@@ -35,8 +35,11 @@ namespace Light.Serialization.Json.TokenParsers
         /// <summary>
         ///     Checks if the requested type is a signed integer type and if the JSON token is a number or string.
         /// </summary>
-        public bool IsSuitableFor(JsonToken token, Type requestedType)
+        public bool IsSuitableFor(JsonDeserializationContext context)
         {
+            var token = context.Token;
+            var requestedType = context.RequestedType;
+
             return (_signedIntegerTypes.IntegerTypeInfos.ContainsKey(requestedType) && (token.JsonType == JsonTokenType.IntegerNumber || token.JsonType == JsonTokenType.FloatingPointNumber || token.JsonType == JsonTokenType.String)) ||
                    ((requestedType == typeof(object) || requestedType == typeof(ValueType)) && token.JsonType == JsonTokenType.IntegerNumber);
         }
@@ -45,7 +48,7 @@ namespace Light.Serialization.Json.TokenParsers
         ///     Parses the given token as a .NET signed integer type.
         ///     This method must only be called when <see cref="IsSuitableFor" /> would return true.
         /// </summary>
-        public object ParseValue(JsonDeserializationContext context)
+        public ParseResult ParseValue(JsonDeserializationContext context)
         {
             var token = context.Token;
             if (token.JsonType == JsonTokenType.String)
@@ -108,7 +111,7 @@ namespace Light.Serialization.Json.TokenParsers
             if (isResultNegative)
                 result = -result;
 
-            return integerInfo.Type == typeof(long) ? result : integerInfo.DowncastValue(result);
+            return ParseResult.FromParsedValue(integerInfo.Type == typeof(long) ? result : integerInfo.DowncastValue(result));
         }
 
         private static long CalculateBase(int digitsLeftToRead)

@@ -16,8 +16,8 @@ namespace Light.Serialization.Json.TokenParsers
     /// </summary>
     public sealed class DictionaryParser : IJsonTokenParser
     {
-        private readonly IMetaFactory _metaFactory;
         private readonly IMetadataParser _metadataParser;
+        private readonly IMetaFactory _metaFactory;
 
         /// <summary>
         ///     Creates a new instance of <see cref="DictionaryParser" />.
@@ -42,24 +42,24 @@ namespace Light.Serialization.Json.TokenParsers
         /// <summary>
         ///     Checks if the specified token is a Begin of Object, and if the requested type implements IDictionary of T.
         /// </summary>
-        public bool IsSuitableFor(JsonToken token, Type requestedType)
+        public bool IsSuitableFor(JsonDeserializationContext context)
         {
-            return token.JsonType == JsonTokenType.BeginOfObject &&
-                   requestedType.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IDictionary));
+            return context.Token.JsonType == JsonTokenType.BeginOfObject &&
+                   context.RequestedType.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IDictionary));
         }
 
         /// <summary>
         ///     Parses the specified JSON complex object as a .NET dictionary.
         ///     This method must only be called when <see cref="IsSuitableFor" /> would return true.
         /// </summary>
-        public object ParseValue(JsonDeserializationContext context)
+        public ParseResult ParseValue(JsonDeserializationContext context)
         {
             var jsonReader = context.JsonReader;
             var currentToken = jsonReader.ReadNextToken();
 
             // Check if it is an empty JSON object
             if (currentToken.JsonType == JsonTokenType.EndOfObject)
-                return _metaFactory.CreateDictionary(context.RequestedType);
+                return ParseResult.FromParsedValue(_metaFactory.CreateDictionary(context.RequestedType));
 
             // If not, then there must be a JSON string as the first key of the object
             if (currentToken.JsonType != JsonTokenType.String)
@@ -68,7 +68,10 @@ namespace Light.Serialization.Json.TokenParsers
             var metadataParseResult = _metadataParser.ParseMetadataSection(ref currentToken, context);
 
             if (metadataParseResult.ReferencePreservationInfo.WasObjectRetrieved)
-                return metadataParseResult.ReferencePreservationInfo.RetrievedObject;
+                return ParseResult.FromParsedValue(metadataParseResult.ReferencePreservationInfo.RetrievedObject);
+
+            if (metadataParseResult.ReferencePreservationInfo.IsDeferredReference)
+                return ParseResult.FromDeferredReference(metadataParseResult.ReferencePreservationInfo.Id);
 
             var dictionary = _metaFactory.CreateDictionary(metadataParseResult.TypeToConstruct);
 
@@ -78,7 +81,7 @@ namespace Light.Serialization.Json.TokenParsers
 
             PopulateDictionary(currentToken, dictionary, context, keyType, valueType);
 
-            return dictionary;
+            return ParseResult.FromParsedValue(dictionary);
         }
 
         private static void PopulateDictionary(JsonToken currentToken, IDictionary dictionary, JsonDeserializationContext context, Type keyType, Type valueType)

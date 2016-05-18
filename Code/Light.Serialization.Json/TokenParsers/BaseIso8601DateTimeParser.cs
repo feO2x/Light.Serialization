@@ -12,9 +12,9 @@ namespace Light.Serialization.Json.TokenParsers
         /// <summary>
         ///     Checks if the specified token is a JSON string and the requested type is <see cref="T" />.
         /// </summary>
-        public bool IsSuitableFor(JsonToken token, Type requestedType)
+        public bool IsSuitableFor(JsonDeserializationContext context)
         {
-            return token.JsonType == JsonTokenType.String && requestedType == typeof(T);
+            return context.Token.JsonType == JsonTokenType.String && context.RequestedType == typeof(T);
         }
 
         protected static void ExpectCharacter(char character, JsonToken token, ref int currentIndex)

@@ -83,27 +83,28 @@ namespace Light.Serialization.Json
         private object DeserializeJsonToken(JsonToken token, Type requestedType)
         {
             IJsonTokenParser parser;
-
             var tokenTypeCombination = new JsonTokenTypeCombination(token.JsonType, requestedType);
+            var deserializationContext = new JsonDeserializationContext(token, requestedType, _jsonReader, DeserializeJsonToken, _deserializedObjects);
+
             if (_cache.TryGetValue(tokenTypeCombination, out parser) == false)
             {
                 foreach (var tokenParser in _tokenParsers)
                 {
-                    if (tokenParser.IsSuitableFor(token, requestedType) == false)
+                    if (tokenParser.IsSuitableFor(deserializationContext) == false)
                         continue;
 
                     parser = tokenParser;
-                    break;
+                    goto CacheParserIfNecessary;
                 }
 
-                if (parser == null)
-                    throw new DeserializationException($"Cannot deserialize value {token} with requested type {requestedType.FullName} because there is no parser that is suitable for this context.");
+                throw new DeserializationException($"Cannot deserialize value {token} with requested type {requestedType.FullName} because there is no parser that is suitable for this context.");
 
+                CacheParserIfNecessary:
                 if (parser.CanBeCached)
                     _cache.Add(tokenTypeCombination, parser);
             }
 
-            return parser.ParseValue(new JsonDeserializationContext(token, requestedType, _jsonReader, DeserializeJsonToken, _deserializedObjects));
+            return parser.ParseValue(deserializationContext);
         }
     }
 }

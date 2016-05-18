@@ -8,8 +8,6 @@ namespace Light.Serialization.Json.TokenParsers
     /// </summary>
     public sealed class TimeSpanParser : BaseJsonStringToPrimitiveParser<TimeSpan>, IJsonStringToPrimitiveParser
     {
-        private readonly Type _timeSpanType = typeof(TimeSpan);
-
         /// <summary>
         ///     Gets the value indicating that this parser can be cached.
         /// </summary>
@@ -18,18 +16,18 @@ namespace Light.Serialization.Json.TokenParsers
         /// <summary>
         ///     Checks if the token is a JSON string and that the requested type is a time span.
         /// </summary>
-        public bool IsSuitableFor(JsonToken token, Type requestedType)
+        public bool IsSuitableFor(JsonDeserializationContext context)
         {
-            return token.JsonType == JsonTokenType.String && requestedType == _timeSpanType;
+            return context.Token.JsonType == JsonTokenType.String && context.RequestedType == typeof(TimeSpan);
         }
 
         /// <summary>
         ///     Parses the specified JSON string as a .NET TimeSpan value.
         ///     This method must only be called when <see cref="IsSuitableFor" /> would return true.
         /// </summary>
-        public object ParseValue(JsonDeserializationContext context)
+        public ParseResult ParseValue(JsonDeserializationContext context)
         {
-            return ParseValue(context.Token);
+            return ParseResult.FromParsedValue(ParseValue(context.Token));
         }
 
         /// <summary>

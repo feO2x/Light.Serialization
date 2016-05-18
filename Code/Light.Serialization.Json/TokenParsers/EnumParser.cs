@@ -17,9 +17,9 @@ namespace Light.Serialization.Json.TokenParsers
         /// <summary>
         ///     Checks if the specified token is a JSON string and if the requested type is an enum type.
         /// </summary>
-        public bool IsSuitableFor(JsonToken token, Type requestedType)
+        public bool IsSuitableFor(JsonDeserializationContext context)
         {
-            return token.JsonType == JsonTokenType.String && requestedType.GetTypeInfo().IsEnum;
+            return context.Token.JsonType == JsonTokenType.String && context.RequestedType.GetTypeInfo().IsEnum;
         }
 
         /// <summary>
@@ -28,11 +28,11 @@ namespace Light.Serialization.Json.TokenParsers
         /// </summary>
         /// <param name="context">The deserialization context of the enum value to be deserialized.</param>
         /// <returns>The deserialized enum value.</returns>
-        public object ParseValue(JsonDeserializationContext context)
+        public ParseResult ParseValue(JsonDeserializationContext context)
         {
             var @string = context.DeserializeToken<string>(context.Token);
 
-            return Enum.Parse(context.RequestedType, @string, true);
+            return ParseResult.FromParsedValue(Enum.Parse(context.RequestedType, @string, true));
         }
     }
 }

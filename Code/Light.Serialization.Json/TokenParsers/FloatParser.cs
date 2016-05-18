@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using Light.Serialization.Abstractions;
 using Light.Serialization.Json.LowLevelReading;
 
@@ -19,18 +18,17 @@ namespace Light.Serialization.Json.TokenParsers
         ///     Checks that the specified JSON token is either a floating point number, an integer number, or a string
         ///     and that the specified requested type is float.
         /// </summary>
-        /// <param name="token">The token to be deserialized.</param>
-        /// <param name="requestedType">The requested type of the object graph.</param>
-        public bool IsSuitableFor(JsonToken token, Type requestedType)
+        public bool IsSuitableFor(JsonDeserializationContext context)
         {
-            return (token.JsonType == JsonTokenType.FloatingPointNumber || token.JsonType == JsonTokenType.IntegerNumber || token.JsonType == JsonTokenType.String) && requestedType == typeof(float);
+            var token = context.Token;
+            return (token.JsonType == JsonTokenType.FloatingPointNumber || token.JsonType == JsonTokenType.IntegerNumber || token.JsonType == JsonTokenType.String) && context.RequestedType == typeof(float);
         }
 
         /// <summary>
         ///     Parses the specified JSON token to a .NET float value.
         ///     This method must only be called if <see cref="IsSuitableFor" /> would return true.
         /// </summary>
-        public object ParseValue(JsonDeserializationContext context)
+        public ParseResult ParseValue(JsonDeserializationContext context)
         {
             var token = context.Token;
             if (token.JsonType == JsonTokenType.String)
@@ -39,7 +37,7 @@ namespace Light.Serialization.Json.TokenParsers
             var floatString = token.ToString();
             float result;
             if (float.TryParse(floatString, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out result))
-                return result;
+                return ParseResult.FromParsedValue(result);
 
             throw new DeserializationException($"Cannot deserialize value {floatString} to a float value.");
         }

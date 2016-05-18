@@ -1,6 +1,3 @@
-using System;
-using Light.Serialization.Json.LowLevelReading;
-
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
@@ -16,16 +13,15 @@ namespace Light.Serialization.Json.TokenParsers
         /// <summary>
         ///     Checks if this parser is suitable for the specified token with the requested .NET type.
         /// </summary>
-        /// <param name="token">The token to be deserialized.</param>
-        /// <param name="requestedType">The requested .NET type the token should be deserialized to.</param>
+        /// <param name="context">The deserialization context for the object to be parsed.</param>
         /// <returns>True if the parser can deserialized the JSON token as the requested type, else false.</returns>
-        bool IsSuitableFor(JsonToken token, Type requestedType);
+        bool IsSuitableFor(JsonDeserializationContext context);
 
         /// <summary>
         ///     Parses the JSON token using the specified deserialization context.
         /// </summary>
         /// <param name="context">The deserialization context of the object to be parsed.</param>
-        /// <returns>The deserialized object.</returns>
-        object ParseValue(JsonDeserializationContext context);
+        /// <returns>The info about the parsed value.</returns>
+        ParseResult ParseValue(JsonDeserializationContext context);
     }
 }

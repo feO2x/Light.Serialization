@@ -1,5 +1,4 @@
-﻿using System;
-using Light.Serialization.Json.LowLevelReading;
+﻿using Light.Serialization.Json.LowLevelReading;
 
 namespace Light.Serialization.Json.TokenParsers
 {
@@ -16,11 +15,9 @@ namespace Light.Serialization.Json.TokenParsers
         /// <summary>
         ///     Checks if the given JSON token is either true or false.
         /// </summary>
-        /// <param name="token">The JSON token to be checked.</param>
-        /// <param name="requestedType">The requested type of the </param>
-        /// <returns></returns>
-        public bool IsSuitableFor(JsonToken token, Type requestedType)
+        public bool IsSuitableFor(JsonDeserializationContext context)
         {
+            var token = context.Token;
             return token.JsonType == JsonTokenType.True || token.JsonType == JsonTokenType.False;
         }
 
@@ -28,11 +25,10 @@ namespace Light.Serialization.Json.TokenParsers
         ///     Parses the JSON token with the specified deserialization context as a .NET boolean.
         ///     Please note that you may only call this method if <see cref="IsSuitableFor" /> would return true.
         /// </summary>
-        /// <param name="context">The deserialization context of the specified JSON token.</param>
         /// <returns>True if the JSON token is a true, else false.</returns>
-        public object ParseValue(JsonDeserializationContext context)
+        public ParseResult ParseValue(JsonDeserializationContext context)
         {
-            return context.Token.JsonType == JsonTokenType.True;
+            return ParseResult.FromParsedValue(context.Token.JsonType == JsonTokenType.True);
         }
     }
 }

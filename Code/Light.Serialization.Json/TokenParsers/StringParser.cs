@@ -19,18 +19,18 @@ namespace Light.Serialization.Json.TokenParsers
         /// <summary>
         ///     Checks if the specified token is a JSON string and the requested type is a .NET string.
         /// </summary>
-        public bool IsSuitableFor(JsonToken token, Type requestedType)
+        public bool IsSuitableFor(JsonDeserializationContext context)
         {
-            return token.JsonType == JsonTokenType.String && requestedType == typeof(string);
+            return context.Token.JsonType == JsonTokenType.String && context.RequestedType == typeof(string);
         }
 
         /// <summary>
         ///     Deserializes the given token to a .NET string.
         ///     This method must only be called when <see cref="IsSuitableFor" /> would return true.
         /// </summary>
-        public object ParseValue(JsonDeserializationContext context)
+        public ParseResult ParseValue(JsonDeserializationContext context)
         {
-            return ParseValue(context.Token);
+            return ParseResult.FromParsedValue(ParseValue(context.Token));
         }
 
         /// <summary>

@@ -17,16 +17,16 @@ namespace Light.Serialization.Json.TokenParsers
         ///     Checks if the specified token is a JSON string and if the requested type
         ///     is the .NET Guid type.
         /// </summary>
-        public bool IsSuitableFor(JsonToken token, Type requestedType)
+        public bool IsSuitableFor(JsonDeserializationContext context)
         {
-            return token.JsonType == JsonTokenType.String && requestedType == typeof(Guid);
+            return context.Token.JsonType == JsonTokenType.String && context.RequestedType == typeof(Guid);
         }
 
         /// <summary>
         ///     Parses the specified JSON string as a GUID.
         ///     This method must only be called when <see cref="IsSuitableFor" /> would return true.
         /// </summary>
-        public object ParseValue(JsonDeserializationContext context)
+        public ParseResult ParseValue(JsonDeserializationContext context)
         {
             var token = context.Token;
             var guidString = token.ToStringWithoutQuotationMarks();
@@ -35,7 +35,7 @@ namespace Light.Serialization.Json.TokenParsers
             if (Guid.TryParse(guidString, out parsedGuid) == false)
                 throw new JsonDocumentException($"Could not deserialize token {token} to a valid GUID.", token);
 
-            return parsedGuid;
+            return ParseResult.FromParsedValue(parsedGuid);
         }
 
         /// <summary>

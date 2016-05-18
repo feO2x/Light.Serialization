@@ -36,17 +36,18 @@ namespace Light.Serialization.Json.TokenParsers
         /// <summary>
         ///     Checks if the requested type is a .NET unsigned numeric type and if the given token is a JSON number or string.
         /// </summary>
-        public bool IsSuitableFor(JsonToken token, Type requestedType)
+        public bool IsSuitableFor(JsonDeserializationContext context)
         {
+            var token = context.Token;
             return (token.JsonType == JsonTokenType.IntegerNumber || token.JsonType == JsonTokenType.FloatingPointNumber || token.JsonType == JsonTokenType.String) &&
-                   _unsignedIntegerTypes.ContainsKey(requestedType);
+                   _unsignedIntegerTypes.ContainsKey(context.RequestedType);
         }
 
         /// <summary>
         ///     Parses the specified JSON token to a .NET unsigned integer type.
         ///     This method must only be called when <see cref="IsSuitableFor" /> would return true.
         /// </summary>
-        public object ParseValue(JsonDeserializationContext context)
+        public ParseResult ParseValue(JsonDeserializationContext context)
         {
             var token = context.Token;
             if (token.JsonType == JsonTokenType.String)
@@ -68,7 +69,7 @@ namespace Light.Serialization.Json.TokenParsers
                 }
 
                 var info = _unsignedIntegerTypes[context.RequestedType];
-                return info.Type == typeof(ulong) ? 0UL : info.DowncastValue(0UL);
+                return ParseResult.FromParsedValue(info.Type == typeof(ulong) ? 0UL : info.DowncastValue(0UL));
             }
 
             if (token.JsonType == JsonTokenType.FloatingPointNumber)
@@ -106,7 +107,7 @@ namespace Light.Serialization.Json.TokenParsers
                 result += (ulong) digit * CalculateBase(digitsLeftToRead);
             }
 
-            return integerInfo.Type == typeof(ulong) ? result : integerInfo.DowncastValue(result);
+            return ParseResult.FromParsedValue(integerInfo.Type == typeof(ulong) ? result : integerInfo.DowncastValue(result));
         }
 
         private static ulong CalculateBase(int digitsLeftToRead)

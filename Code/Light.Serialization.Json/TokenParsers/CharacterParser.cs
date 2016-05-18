@@ -18,9 +18,9 @@ namespace Light.Serialization.Json.TokenParsers
         /// <summary>
         ///     Checks if the specified JSON token is a string and the requested type is the .NET character type.
         /// </summary>
-        public bool IsSuitableFor(JsonToken token, Type requestedType)
+        public bool IsSuitableFor(JsonDeserializationContext context)
         {
-            return token.JsonType == JsonTokenType.String && requestedType == typeof(char);
+            return context.Token.JsonType == JsonTokenType.String && context.RequestedType == typeof(char);
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Light.Serialization.Json.TokenParsers
         /// </summary>
         /// <param name="context">The deserialization context of the specified JSON token.</param>
         /// <returns>The deserialized .NET character.</returns>
-        public object ParseValue(JsonDeserializationContext context)
+        public ParseResult ParseValue(JsonDeserializationContext context)
         {
             var token = context.Token;
             // The token has at least two elements because it is a JSON string, thus accessing the second one is safe
@@ -39,12 +39,12 @@ namespace Light.Serialization.Json.TokenParsers
                 throw CreateException(token);
             // If not then check if it is an escape sequence
             if (currentCharacter == JsonSymbols.StringEscapeCharacter)
-                return ReadEscapeSequence(token);
+                return ParseResult.FromParsedValue(ReadEscapeSequence(token));
 
             // If it's not an escape sequence, the token size must be three to be a single character (e.g. "a")
             if (token.Length != 3)
                 throw CreateException(token);
-            return currentCharacter;
+            return ParseResult.FromParsedValue(currentCharacter);
         }
 
         private static char ReadEscapeSequence(JsonToken token)
