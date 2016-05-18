@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -33,10 +35,36 @@ namespace Light.Serialization.Json.FrameworkExtensions
                 var usedInterfaceType = interfaceTypeInfo;
                 if (interfaceTypeInfo.IsGenericTypeDefinition == false)
                     usedInterfaceType = interfaceTypeInfo.GetGenericTypeDefinition().GetTypeInfo();
-                if (usedInterfaceType.GetGenericTypeDefinition().EqualsWithHashCode(genericInterface))
+                if (usedInterfaceType.GetGenericTypeDefinition() == genericInterface)
                     return true;
             }
             return false;
+        }
+
+        /// <summary>
+        ///     Checks if the specified type is in the same inheritance hierarchy as IDictionary or IDictionary of TKey, TValue.
+        /// </summary>
+        public static bool IsDictionaryType(this Type type)
+        {
+            type.MustNotBeNull(nameof(type));
+
+            if (IsDictionaryTypeInternal(type))
+                return true;
+
+            foreach (var implementedInterface in type.GetTypeInfo().ImplementedInterfaces)
+            {
+                if (IsDictionaryTypeInternal(implementedInterface))
+                    return true;
+            }
+            return false;
+        }
+
+        private static bool IsDictionaryTypeInternal(Type type)
+        {
+            if (type == typeof(IDictionary))
+                return true;
+
+            return type.IsConstructedGenericType && type.GetTypeInfo().GetGenericTypeDefinition() == typeof(IDictionary<,>);
         }
 
         /// <summary>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Light.GuardClauses;
 using Light.Serialization.Json.ComplexTypeConstruction;
@@ -45,7 +44,7 @@ namespace Light.Serialization.Json.TokenParsers
         public bool IsSuitableFor(JsonDeserializationContext context)
         {
             return context.Token.JsonType == JsonTokenType.BeginOfObject &&
-                   context.RequestedType.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IDictionary));
+                   context.RequestedType.IsDictionaryType();
         }
 
         /// <summary>
@@ -63,7 +62,7 @@ namespace Light.Serialization.Json.TokenParsers
 
             // If not, then there must be a JSON string as the first key of the object
             if (currentToken.JsonType != JsonTokenType.String)
-                throw new JsonDocumentException($"Expected JSON string or end of complex JSON object, but found {currentToken}", currentToken);
+                throw new JsonDocumentException($"Expected JSON string or end of complex JSON object, but found {currentToken}.", currentToken);
 
             var metadataParseResult = _metadataParser.ParseMetadataSection(ref currentToken, context);
 
