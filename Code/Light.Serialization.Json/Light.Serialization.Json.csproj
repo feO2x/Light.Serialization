@@ -102,6 +102,7 @@
     <Compile Include="BuilderInterfaces\ISetTypeInfoSerializationStatus.cs" />
     <Compile Include="ObjectMetadata\ITypeToNameMapping.cs" />
     <Compile Include="ObjectMetadata\ListExtensions.cs" />
+    <Compile Include="ObjectMetadata\ReferencePreservationInfo.cs" />
     <Compile Include="ObjectMetadata\TypeNameToJsonNameScanner.cs" />
     <Compile Include="ObjectMetadata\SimpleNameToTypeMapping.cs" />
     <Compile Include="ObjectMetadata\ComplexObjectMetadataInstructor.cs" />
