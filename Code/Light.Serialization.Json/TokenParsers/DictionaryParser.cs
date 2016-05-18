@@ -67,8 +67,8 @@ namespace Light.Serialization.Json.TokenParsers
 
             var metadataParseResult = _metadataParser.ParseMetadataSection(ref currentToken, context);
 
-            if (metadataParseResult.ObjectFromCache != null)
-                return metadataParseResult.ObjectFromCache;
+            if (metadataParseResult.ReferencePreservationInfo.WasObjectRetrieved)
+                return metadataParseResult.ReferencePreservationInfo.RetrievedObject;
 
             var dictionary = _metaFactory.CreateDictionary(metadataParseResult.TypeToConstruct);
 

@@ -24,6 +24,16 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// </summary>
         public readonly bool IsDeferredReference;
 
+        /// <summary>
+        ///     Gets the value indicating whether an object has been retrieved.
+        /// </summary>
+        public bool WasObjectRetrieved => RetrievedObject != null;
+
+        /// <summary>
+        ///     Gets the value indicating that no Object Reference Preservation metadata is available.
+        /// </summary>
+        public bool IsNotContainingObjectReferencePreservationInfos => Id == -1;
+
         private ReferencePreservationInfo(int id, object retrievedObject, bool isDeferredReference)
         {
             Id = id;
@@ -71,5 +81,10 @@ namespace Light.Serialization.Json.ObjectMetadata
 
             return new ReferencePreservationInfo(id, null, false);
         }
+
+        /// <summary>
+        ///     Creates a new instance of ReferencePreservationInfo for a JSON object that contains no Object Reference Preservation metadata.
+        /// </summary>
+        public static ReferencePreservationInfo Empty => new ReferencePreservationInfo(-1, null, false);
     }
 }

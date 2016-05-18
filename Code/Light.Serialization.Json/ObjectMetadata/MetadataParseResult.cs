@@ -1,53 +1,46 @@
 ﻿using System;
-using Light.GuardClauses;
 
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents the information that is necessary to create a dictionary or complex .NET object
-    ///     from the metadata section of a complex JSON object.
+    ///     Represents the information that is necessary to create a dictionary, a complex .NET object, or a collection
+    ///     from the metadata section of a complex JSON object or JSON array.
     /// </summary>
     public struct MetadataParseResult
     {
-        private object _objectFromCache;
-        private Type _typeToConstruct;
+        /// <summary>
+        ///     Gets the type that should be constructed.
+        /// </summary>
+        public readonly Type TypeToConstruct;
 
         /// <summary>
-        ///     Creates a new instance of <see cref="MetadataParseResult" />.
+        ///     Gets the information about Object-Reference-Preservation.
         /// </summary>
-        /// <param name="typeToConstruct">The requested .NET type for the complex JSON object.</param>
-        public MetadataParseResult(Type typeToConstruct)
-        {
-            typeToConstruct.MustNotBeNull(nameof(typeToConstruct));
+        public readonly ReferencePreservationInfo ReferencePreservationInfo;
 
-            _typeToConstruct = typeToConstruct;
-            _objectFromCache = null;
+        private MetadataParseResult(Type typeToConstruct, ReferencePreservationInfo referencePreservationInfo)
+        {
+            TypeToConstruct = typeToConstruct;
+            ReferencePreservationInfo = referencePreservationInfo;
         }
 
         /// <summary>
-        ///     Gets or sets the reference to the object that was deserialized before.
+        ///     Creates a new instance of MetadataParseResult with an object that already has been deserialized.
         /// </summary>
-        public object ObjectFromCache
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="refId" /> is less than zero.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="deserializedObject" /> is null.</exception>
+        public static MetadataParseResult FromRetrievedObject(int refId, object deserializedObject)
         {
-            get { return _objectFromCache; }
-            set
-            {
-                value.MustNotBeNull(nameof(value));
-                _objectFromCache = value;
-            }
+            return new MetadataParseResult(null, ReferencePreservationInfo.FromAlreadyDeserializedObject(refId, deserializedObject));
         }
 
         /// <summary>
-        ///     Gets or sets the type to construct.
+        ///     Creates a new instance of MetadataParseResult with a deferred reference.
         /// </summary>
-        public Type TypeToConstruct
+        /// <param name="refId">The reference id pointing to another object that has not been fully deserialized yet.</param>
+        public static MetadataParseResult FromDeferredReference(int refId)
         {
-            get { return _typeToConstruct; }
-            set
-            {
-                value.MustNotBeNull(nameof(value));
-                _typeToConstruct = value;
-            }
+            return new MetadataParseResult(null, ReferencePreservationInfo.FromDeferredReference(refId));
         }
     }
 }

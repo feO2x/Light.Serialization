@@ -55,8 +55,8 @@ namespace Light.Serialization.Json.TokenParsers
                 return _metaFactory.CreateCollection(context.RequestedType);
 
             var metadataParseResult = _metadataParser.ParseMetadataSection(ref currentToken, context);
-            if (metadataParseResult.ObjectFromCache != null)
-                return metadataParseResult.ObjectFromCache;
+            if (metadataParseResult.ReferencePreservationInfo.WasObjectRetrieved)
+                return metadataParseResult.ReferencePreservationInfo.RetrievedObject;
 
             var typeToConstruct = metadataParseResult.TypeToConstruct;
             var collection = _metaFactory.CreateCollection(typeToConstruct);

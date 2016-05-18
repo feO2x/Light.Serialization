@@ -52,7 +52,6 @@ namespace Light.Serialization.Json.ObjectMetadata
             firstLabelToken.JsonType.MustBe(JsonTokenType.String, $"The {nameof(firstLabelToken)} is not a JSON string.");
 
             var jsonReader = context.JsonReader;
-            var metadataParseResult = new MetadataParseResult(context.RequestedType);
             var firstLabelString = context.DeserializeToken<string>(firstLabelToken);
 
             // Check if the first label of the complex json object marks a reference to another object
@@ -62,16 +61,11 @@ namespace Light.Serialization.Json.ObjectMetadata
                                             .ReadAndExpectNumber();
                 jsonReader.ReadAndExpectEndOfObject();
                 var objectId = context.DeserializeToken<int>(numberToken);
-                object returnedObject;
-                if (context.DeserializedObjects.TryGetValue(objectId, out returnedObject) == false)
-                {
-                    // TODO: here, the target object was not deserialized before. Setting this object must be enqueued for later
-                    // We should communicate this via the metadata parse result
-                    throw new NotImplementedException("The requested object was not deserialized before.");
-                }
+                object retrievedObject;
+                if (context.DeserializedObjects.TryGetValue(objectId, out retrievedObject))
+                    return MetadataParseResult.FromRetrievedObject(objectId, retrievedObject);
 
-                metadataParseResult.ObjectFromCache = returnedObject;
-                return metadataParseResult;
+                return MetadataParseResult.FromDeferredReference(objectId);
             }
 
             // If not, check if the first label is the id symbol
