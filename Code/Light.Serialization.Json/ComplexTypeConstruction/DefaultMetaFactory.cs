@@ -14,19 +14,31 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
     /// </summary>
     public class DefaultMetaFactory : IMetaFactory
     {
+        private readonly MethodInfo _createDefaultDictionaryMethod;
+        private readonly MethodInfo _createDefaultCollectionMethod;
+
+        public DefaultMetaFactory()
+        {
+            var typeInfo = GetType().GetTypeInfo();
+            _createDefaultCollectionMethod = typeInfo.GetDeclaredMethod(nameof(CreateDefaultCollection));
+            _createDefaultDictionaryMethod = typeInfo.GetDeclaredMethod(nameof(CreateDefaultDictionary));
+        }
+
         /// <summary>
         ///     Creates a new dictionary for the given dictionary type.
         /// </summary>
-        /// <param name="requestedDictionaryType">The dictioary abstraction or concrete type that should be instantiated.</param>
+        /// <param name="dictionaryTypeToConstruct">The dictioary abstraction or concrete type that should be instantiated.</param>
         /// <returns>An instance of the given concrete type, or a new instance of the default dictionary type when the requested type is a dictionary abstraction.</returns>
-        public IDictionary CreateDictionary(Type requestedDictionaryType)
+        public IDictionary CreateDictionary(Type dictionaryTypeToConstruct)
         {
-            var dictionary = TryToInstantiateWithDefaultConstructor(requestedDictionaryType);
+            var dictionary = TryToInstantiateWithDefaultConstructor<IDictionary>(dictionaryTypeToConstruct.GetTypeInfo());
             if (dictionary != null)
-                return (IDictionary) dictionary;
+                return dictionary;
 
-            var createDefaultDictionaryMethod = GetType().GetTypeInfo().GetDeclaredMethod(nameof(CreateDefaultDictionary));
-            var resolvedMethod = createDefaultDictionaryMethod.MakeGenericMethod(requestedDictionaryType.GenericTypeArguments);
+            if (dictionaryTypeToConstruct.IsConstructedGenericType == false)
+                throw new ArgumentException("The specified type cannot be associated with a generic dictionary type and therefore, no dictionary can be created.");
+
+            var resolvedMethod = _createDefaultDictionaryMethod.MakeGenericMethod(dictionaryTypeToConstruct.GenericTypeArguments);
 
             return (IDictionary) resolvedMethod.Invoke(this, null);
         }
@@ -34,17 +46,18 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         /// <summary>
         ///     Creates a new collection for the given collection type.
         /// </summary>
-        /// <param name="requestedCollectionType">The collection abstraction or concrete type that should be instantiated.</param>
+        /// <param name="collectionTypeToConstruct">The collection abstraction or concrete type that should be instantiated.</param>
         /// <returns>An instance of the given concrete type, or a new instance of the default collection type when the requested type is a collection abstraction.</returns>
-        public IList CreateCollection(Type requestedCollectionType)
+        public IList CreateCollection(Type collectionTypeToConstruct)
         {
-            var collection = TryToInstantiateWithDefaultConstructor(requestedCollectionType);
-
+            var collection = TryToInstantiateWithDefaultConstructor<IList>(collectionTypeToConstruct.GetTypeInfo());
             if (collection != null)
-                return (IList) collection;
+                return collection;
 
-            var createDefaultCollectionMethod = GetType().GetTypeInfo().GetDeclaredMethod(nameof(CreateDefaultCollection));
-            var resolvedMethod = createDefaultCollectionMethod.MakeGenericMethod(requestedCollectionType.GenericTypeArguments);
+            if (collectionTypeToConstruct.IsConstructedGenericType == false)
+                throw new ArgumentException("The specified type cannot be associated with a generic collection type and therefore, no collection can be created.");
+
+            var resolvedMethod = _createDefaultCollectionMethod.MakeGenericMethod(collectionTypeToConstruct.GenericTypeArguments);
 
             return (IList) resolvedMethod.Invoke(this, null);
         }
@@ -96,22 +109,21 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
             return newObject;
         }
 
-        private static object TryToInstantiateWithDefaultConstructor(Type type)
+        private static T TryToInstantiateWithDefaultConstructor<T>(TypeInfo typeInfo) where T : class
         {
-            var typeInfo = type.GetTypeInfo();
             if (typeInfo.IsClass == false || typeInfo.IsAbstract)
                 return null;
 
-            var defaultConstructor = typeInfo.DeclaredConstructors.First(c => c.GetParameters().Length == 0);
-            return defaultConstructor?.Invoke(null);
+            var defaultConstructor = typeInfo.DeclaredConstructors.FirstOrDefault(c => c.GetParameters().Length == 0);
+            return (T) defaultConstructor?.Invoke(null);
         }
 
-        protected virtual IDictionary<TKey, TValue> CreateDefaultDictionary<TKey, TValue>()
+        protected virtual IDictionary CreateDefaultDictionary<TKey, TValue>()
         {
             return new Dictionary<TKey, TValue>();
         }
 
-        protected virtual ICollection<T> CreateDefaultCollection<T>()
+        protected virtual IList CreateDefaultCollection<T>()
         {
             return new List<T>();
         }
