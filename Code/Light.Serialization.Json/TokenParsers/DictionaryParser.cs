@@ -61,8 +61,7 @@ namespace Light.Serialization.Json.TokenParsers
                 return ParseResult.FromParsedValue(_metaFactory.CreateDictionary(context.RequestedType));
 
             // If not, then there must be a JSON string as the first key of the object
-            if (currentToken.JsonType != JsonTokenType.String)
-                throw new JsonDocumentException($"Expected JSON string or end of complex JSON object, but found {currentToken}.", currentToken);
+            currentToken.MustBeComplexObjectKey();
 
             var metadataParseResult = _metadataParser.ParseMetadataSection(ref currentToken, context);
 
@@ -87,8 +86,7 @@ namespace Light.Serialization.Json.TokenParsers
         {
             while (true)
             {
-                if (currentToken.JsonType != JsonTokenType.String)
-                    throw new JsonDocumentException($"Expected key in complex JSON object, but found {currentToken}.", currentToken);
+                currentToken.MustBeComplexObjectKey();
 
                 var key = context.DeserializeToken(currentToken, keyType);
 

@@ -55,6 +55,7 @@
     <Compile Include="ComplexTypeConstruction\InjectableValueDescription.cs" />
     <Compile Include="ComplexTypeConstruction\InjectableValueKind.cs" />
     <Compile Include="ComplexTypeConstruction\ITypeDescriptionProvider.cs" />
+    <Compile Include="LowLevelReading\JsonTokenExtensions.cs" />
     <Compile Include="ObjectMetadata\BaseMetadataInstructor.cs" />
     <Compile Include="ObjectMetadata\ComplexObjectMetadataParser.cs" />
     <Compile Include="ObjectMetadata\MetadataParseResult.cs" />

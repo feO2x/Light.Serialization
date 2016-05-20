@@ -1,4 +1,5 @@
 ﻿using System;
+using Light.GuardClauses;
 
 namespace Light.Serialization.Json.ObjectMetadata
 {
@@ -41,6 +42,19 @@ namespace Light.Serialization.Json.ObjectMetadata
         public static MetadataParseResult FromDeferredReference(int refId)
         {
             return new MetadataParseResult(null, ReferencePreservationInfo.FromDeferredReference(refId));
+        }
+
+        /// <summary>
+        ///     Creates a new instance of MetadataParseResult from deserialized JSON metadata information.
+        /// </summary>
+        /// <param name="typeToConstruct">The type that should be instantiated and populated.</param>
+        /// <param name="referencePreservationInfo">Information about Object Reference Preservation.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeToConstruct" /> is null.</exception>
+        public static MetadataParseResult FromMetadata(Type typeToConstruct, ReferencePreservationInfo referencePreservationInfo)
+        {
+            typeToConstruct.MustNotBeNull(nameof(typeToConstruct));
+
+            return new MetadataParseResult(typeToConstruct, referencePreservationInfo);
         }
     }
 }

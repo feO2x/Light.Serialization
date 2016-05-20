@@ -44,6 +44,7 @@ namespace Light.Serialization.Json.FrameworkExtensions
         /// <summary>
         ///     Checks if the specified type is in the same inheritance hierarchy as IDictionary or IDictionary of TKey, TValue.
         /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="type" /> is null.</exception>
         public static bool IsDictionaryType(this Type type)
         {
             type.MustNotBeNull(nameof(type));
@@ -61,10 +62,39 @@ namespace Light.Serialization.Json.FrameworkExtensions
 
         private static bool IsDictionaryTypeInternal(Type type)
         {
-            if (type == typeof(IDictionary))
+            return IsType(type, typeof(IDictionary), typeof(IDictionary<,>));
+        }
+
+        /// <summary>
+        ///     Checks if the specified type is in the same inheritance hierarchy as IList or IList of T.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="type" /> is null.</exception>
+        public static bool IsCollectionType(this Type type)
+        {
+            type.MustNotBeNull(nameof(type));
+
+            if (IsCollectionTypeInternal(type))
                 return true;
 
-            return type.IsConstructedGenericType && type.GetTypeInfo().GetGenericTypeDefinition() == typeof(IDictionary<,>);
+            foreach (var implementedInterface in type.GetTypeInfo().ImplementedInterfaces)
+            {
+                if (IsCollectionTypeInternal(implementedInterface))
+                    return true;
+            }
+            return false;
+        }
+
+        private static bool IsCollectionTypeInternal(Type type)
+        {
+            return IsType(type, typeof(IList), typeof(IList<>));
+        }
+
+        private static bool IsType(Type typeToBeChecked, Type nonGenericType, Type genericType)
+        {
+            if (typeToBeChecked == nonGenericType)
+                return true;
+
+            return typeToBeChecked.IsConstructedGenericType && typeToBeChecked.GetTypeInfo().GetGenericTypeDefinition() == genericType;
         }
 
         /// <summary>

@@ -202,7 +202,7 @@ namespace Light.Serialization.Json.ObjectMetadata
 
         /// <summary>
         ///     Serializes the specified type as a JSON string if it is a non-generic type, or as a
-        ///     complex JSON object if it is a generic type.
+        ///     complex JSON object if it is a generic type without a simple name.
         /// </summary>
         /// <param name="currentType">The type to be written to the metadata section.</param>
         /// <param name="writer">The object that writes the JSON document.</param>
@@ -216,6 +216,13 @@ namespace Light.Serialization.Json.ObjectMetadata
 
             if (currentType.IsConstructedGenericType)
             {
+                var jsonNameForResolvedGenericType = _typeToNameMapping.TryMap(currentType);
+                if (jsonNameForResolvedGenericType != null)
+                {
+                    writer.WriteString(jsonNameForResolvedGenericType);
+                    return;
+                }
+
                 WriteGenericTypeInformation(currentType, writer);
                 return;
             }

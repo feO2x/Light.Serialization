@@ -46,6 +46,7 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// </summary>
         /// <param name="typeName">The JSON name to be mapped.</param>
         /// <returns>The type that corresponds to the JSON name.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeName" /> is null.</exception>
         /// <exception cref="KeyNotFoundException">Thrown when <paramref name="typeName" /> is not a known JSON name.</exception>
         public Type Map(string typeName)
         {
@@ -57,10 +58,25 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// </summary>
         /// <param name="type">The .NET type to be mapped.</param>
         /// <returns>The JSON name that corresponds to the specified type.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="type" /> is null.</exception>
         /// <exception cref="KeyNotFoundException">Thrown when the <paramref name="type" /> is unknown to the mapping.</exception>
         public string Map(Type type)
         {
             return _typeToNameMappings[type];
+        }
+
+        /// <summary>
+        ///     Tries to map the specified type to a string that can be used in the JSON document.
+        /// </summary>
+        /// <param name="type">The type whose JSON name should be returned.</param>
+        /// <returns>The JSON name of the specified type or null.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="type" /> is null.</exception>
+        public string TryMap(Type type)
+        {
+            type.MustNotBeNull(nameof(type));
+
+            string jsonName;
+            return _typeToNameMappings.TryGetValue(type, out jsonName) ? jsonName : null;
         }
 
         /// <summary>
