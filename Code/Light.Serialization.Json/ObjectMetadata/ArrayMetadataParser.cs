@@ -49,7 +49,7 @@ namespace Light.Serialization.Json.ObjectMetadata
                     jsonReader.ReadAndExpectedEndOfArray("A reference to another collection must be the only value in a JSON array.");
                     objectId = context.DeserializeToken<int>(numberToken);
                     object retrievedObject;
-                    if (context.DeserializedObjects.TryGetValue(objectId, out retrievedObject))
+                    if (context.ObjectReferencePreserver.TryGetDeserializedObject(objectId, out retrievedObject))
                         return MetadataParseResult.FromRetrievedObject(objectId, retrievedObject);
 
                     return MetadataParseResult.FromDeferredReference(objectId);

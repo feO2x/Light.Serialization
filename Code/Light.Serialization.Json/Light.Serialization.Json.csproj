@@ -61,6 +61,7 @@
     <Compile Include="ObjectMetadata\BaseMetadataInstructor.cs" />
     <Compile Include="ObjectMetadata\BaseMetadataParser.cs" />
     <Compile Include="ObjectMetadata\ComplexObjectMetadataParser.cs" />
+    <Compile Include="ObjectMetadata\DeferredReferenceInfo.cs" />
     <Compile Include="ObjectMetadata\MetadataParseResult.cs" />
     <Compile Include="ComplexTypeConstruction\ToLowerWithoutSpecialCharactersNormalizer.cs" />
     <Compile Include="ComplexTypeConstruction\TypeCreationDescription.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="BuilderInterfaces\ISetTypeInfoSerializationStatus.cs" />
     <Compile Include="ObjectMetadata\ITypeToNameMapping.cs" />
     <Compile Include="ObjectMetadata\ListExtensions.cs" />
+    <Compile Include="ObjectMetadata\ObjectReferencePreserver.cs" />
     <Compile Include="ObjectMetadata\ReferencePreservationInfo.cs" />
     <Compile Include="ObjectMetadata\TypeNameToJsonNameScanner.cs" />
     <Compile Include="ObjectMetadata\SimpleNameToTypeMapping.cs" />

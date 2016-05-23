@@ -48,7 +48,7 @@ namespace Light.Serialization.Json.ObjectMetadata
                     jsonReader.ReadAndExpectEndOfObject("A reference to another object must be the only Key-Value-Pair in a complex JSON object.");
                     objectId = context.DeserializeToken<int>(numberToken);
                     object retrievedObject;
-                    if (context.DeserializedObjects.TryGetValue(objectId, out retrievedObject))
+                    if (context.ObjectReferencePreserver.TryGetDeserializedObject(objectId, out retrievedObject))
                         return MetadataParseResult.FromRetrievedObject(objectId, retrievedObject);
 
                     return MetadataParseResult.FromDeferredReference(objectId);

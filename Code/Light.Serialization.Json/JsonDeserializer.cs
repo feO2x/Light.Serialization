@@ -4,6 +4,7 @@ using Light.GuardClauses;
 using Light.Serialization.Abstractions;
 using Light.Serialization.Json.Caching;
 using Light.Serialization.Json.LowLevelReading;
+using Light.Serialization.Json.ObjectMetadata;
 using Light.Serialization.Json.TokenParsers;
 
 namespace Light.Serialization.Json
@@ -16,7 +17,7 @@ namespace Light.Serialization.Json
         private readonly Dictionary<JsonTokenTypeCombination, IJsonTokenParser> _cache;
         private readonly IJsonReaderFactory _jsonReaderFactory;
         private readonly IReadOnlyList<IJsonTokenParser> _tokenParsers;
-        private Dictionary<int, object> _deserializedObjects;
+        private ObjectReferencePreserver _objectReferencePreserver;
         private IJsonReader _jsonReader;
 
         /// <summary>
@@ -67,10 +68,10 @@ namespace Light.Serialization.Json
             requestedType.MustNotBeNull(nameof(requestedType));
 
             _jsonReader = _jsonReaderFactory.CreateFromString(json);
-            _deserializedObjects = new Dictionary<int, object>();
+            _objectReferencePreserver = new ObjectReferencePreserver();
             var returnValue = DeserializeDocument(requestedType);
             _jsonReader = null;
-            _deserializedObjects = null;
+            _objectReferencePreserver = null;
             return returnValue;
         }
 
@@ -84,7 +85,7 @@ namespace Light.Serialization.Json
         {
             IJsonTokenParser parser;
             var tokenTypeCombination = new JsonTokenTypeCombination(token.JsonType, requestedType);
-            var deserializationContext = new JsonDeserializationContext(token, requestedType, _jsonReader, DeserializeJsonToken, _deserializedObjects);
+            var deserializationContext = new JsonDeserializationContext(token, requestedType, _jsonReader, DeserializeJsonToken, _objectReferencePreserver);
 
             if (_cache.TryGetValue(tokenTypeCombination, out parser) == false)
             {
