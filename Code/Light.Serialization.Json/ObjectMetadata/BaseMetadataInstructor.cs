@@ -1,6 +1,5 @@
 using System;
 using Light.GuardClauses;
-using Light.GuardClauses.Exceptions;
 using Light.Serialization.Json.BuilderInterfaces;
 using Light.Serialization.Json.LowLevelWriting;
 
@@ -10,8 +9,14 @@ namespace Light.Serialization.Json.ObjectMetadata
     ///     Represents the base class for metadata instructors that handle object reference preservation and
     ///     type information.
     /// </summary>
-    public abstract class BaseMetadataInstructor : IMetadataInstructor, ISetObjectReferencePreservationStatus, ISetTypeInfoSerializationStatus, ISetTypeToNameMapping
+    public abstract class BaseMetadataInstructor : BaseMetadata, IMetadataInstructor, ISetObjectReferencePreservationStatus, ISetTypeInfoSerializationStatus, ISetTypeToNameMapping
     {
+        private bool _isSerializingObjectIds = true;
+        private bool _isSerializingTypeInfo = true;
+
+        // ReSharper disable once InconsistentNaming
+        protected ITypeToNameMapping _typeToNameMapping;
+
         /// <summary>
         ///     Creates a new instance of <see cref="BaseMetadataInstructor" />.
         /// </summary>
@@ -23,103 +28,6 @@ namespace Light.Serialization.Json.ObjectMetadata
 
             _typeToNameMapping = typeToNameMapping;
         }
-
-        /// <summary>
-        ///     Gets or sets the symbol that is used to mark the JSON document ID for a complex object.
-        ///     This value defaults to to "$id".
-        /// </summary>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
-        /// <exception cref="EmptyStringException">Thrown when <paramref name="value" /> is an empty string.</exception>
-        /// <exception cref="StringIsOnlyWhiteSpaceException">Thrown when <paramref name="value" /> contains only whitespace.</exception>
-        public string IdSymbol
-        {
-            get { return _idSymbol; }
-            set
-            {
-                value.MustNotBeNullOrWhiteSpace(nameof(value));
-                _idSymbol = value;
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the symbol that is used to mark a reference to another complex JSON object within the document.
-        ///     This value defaults to "$ref".
-        /// </summary>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
-        /// <exception cref="EmptyStringException">Thrown when <paramref name="value" /> is an empty string.</exception>
-        /// <exception cref="StringIsOnlyWhiteSpaceException">Thrown when <paramref name="value" /> contains only whitespace.</exception>
-        public string ReferenceSymbol
-        {
-            get { return _referenceSymbol; }
-            set
-            {
-                value.MustNotBeNullOrWhiteSpace(nameof(value));
-                _referenceSymbol = value;
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the symbol that is used to mark the type of a complex JSON object.
-        ///     This value defaults to "$type".
-        /// </summary>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
-        /// <exception cref="EmptyStringException">Thrown when <paramref name="value" /> is an empty string.</exception>
-        /// <exception cref="StringIsOnlyWhiteSpaceException">Thrown when <paramref name="value" /> contains only whitespace.</exception>
-        public string ConcreteTypeSymbol
-        {
-            get { return _concreteTypeSymbol; }
-            set
-            {
-                value.MustNotBeNullOrWhiteSpace(nameof(value));
-                _concreteTypeSymbol = value;
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the symbol that is used to mark the name of a generic type.
-        /// </summary>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
-        /// <exception cref="EmptyStringException">Thrown when <paramref name="value" /> is an empty string.</exception>
-        /// <exception cref="StringIsOnlyWhiteSpaceException">Thrown when <paramref name="value" /> contains only whitespace.</exception>
-        public string GenericTypeNameSymbol
-        {
-            get { return _genericTypeNameSymbol; }
-            set
-            {
-                value.MustNotBeNullOrWhiteSpace(nameof(value));
-                _genericTypeNameSymbol = value;
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the symbol that is used to mark the collection of type arguments for a generic type.
-        /// </summary>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
-        /// <exception cref="EmptyStringException">Thrown when <paramref name="value" /> is an empty string.</exception>
-        /// <exception cref="StringIsOnlyWhiteSpaceException">Thrown when <paramref name="value" /> contains only whitespace.</exception>
-        public string GenericTypeArgumentsSymbol
-        {
-            get { return _genericTypeArgumentsSymbol; }
-            set
-            {
-                value.MustNotBeNullOrWhiteSpace(nameof(value));
-                _genericTypeArgumentsSymbol = value;
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the symbol that is used to mark the JSON string containing the actual type of a .NET array.
-        /// </summary>
-        public string ArrayTypeSymbol
-        {
-            get { return _arrayTypeSymbol; }
-            set
-            {
-                value.MustNotBeNullOrWhiteSpace(nameof(value));
-                _arrayTypeSymbol = value;
-            }
-        }
-
 
         /// <summary>
         ///     Serializes the JSON object ID and the type name of the specified object.
@@ -269,24 +177,11 @@ namespace Light.Serialization.Json.ObjectMetadata
             if (arrayRank > 1)
             {
                 writer.WriteDelimiter()
-                      .WriteKey(_arrayRankSymbol, false)
+                      .WriteKey(ArrayRankSymbol, false)
                       .WritePrimitiveValue(arrayType.GetArrayRank().ToString());
             }
 
             writer.EndObject();
         }
-
-        // ReSharper disable InconsistentNaming
-        protected string _concreteTypeSymbol = JsonSymbols.DefaultConcreteTypeSymbol;
-        protected string _genericTypeArgumentsSymbol = JsonSymbols.DefaultGenericTypeArgumentsSymbol;
-        protected string _genericTypeNameSymbol = JsonSymbols.DefaultGenericTypeNameSymbol;
-        protected string _idSymbol = JsonSymbols.DefaultIdSymbol;
-        private bool _isSerializingObjectIds = true;
-        private bool _isSerializingTypeInfo = true;
-        protected string _referenceSymbol = JsonSymbols.DefaultReferenceSymbol;
-        protected string _arrayTypeSymbol = JsonSymbols.DefaultArrayTypeSymbol;
-        protected string _arrayRankSymbol = JsonSymbols.DefaultArrayRankSymbol;
-        protected ITypeToNameMapping _typeToNameMapping;
-        // ReSharper restore InconsistentNaming
     }
 }

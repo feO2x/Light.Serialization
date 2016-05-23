@@ -3,7 +3,7 @@ using System;
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents an IObjectMetadataInstructor that serializes ids and type information in the metadata section of a complex JSON object.
+    ///     Represents an Metadata Instructor that serializes ids and type information in the metadata section of a complex JSON object.
     /// </summary>
     public sealed class ComplexObjectMetadataInstructor : BaseMetadataInstructor
     {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using Light.GuardClauses;
-using Light.GuardClauses.Exceptions;
 using Light.Serialization.Json.LowLevelReading;
 
 namespace Light.Serialization.Json.ObjectMetadata
@@ -9,16 +8,14 @@ namespace Light.Serialization.Json.ObjectMetadata
     /// <summary>
     ///     Represents an object that parses the metadata section of complex JSON objects.
     /// </summary>
-    public sealed class ComplexObjectMetadataParser : IMetadataParser
+    public sealed class ComplexObjectMetadataParser : BaseMetadata, IMetadataParser
     {
         private readonly INameToTypeMapping _nameToTypeMapping;
-        private string _concreteTypeSymbol = JsonSymbols.DefaultConcreteTypeSymbol;
-        private string _genericTypeArgumentsSymbol = JsonSymbols.DefaultGenericTypeArgumentsSymbol;
-        private string _genericTypeNameSymbol = JsonSymbols.DefaultGenericTypeNameSymbol;
-        private string _idSymbol = JsonSymbols.DefaultIdSymbol;
-        private string _referenceSymbol = JsonSymbols.DefaultReferenceSymbol;
 
-
+        /// <summary>
+        ///     Creates a new instance of ComplexObjectMetadataParser.
+        /// </summary>
+        /// <param name="nameToTypeMapping">The object that can map JSON type names to .NET types.</param>
         public ComplexObjectMetadataParser(INameToTypeMapping nameToTypeMapping)
         {
             nameToTypeMapping.MustNotBeNull(nameof(nameToTypeMapping));
@@ -27,96 +24,20 @@ namespace Light.Serialization.Json.ObjectMetadata
         }
 
         /// <summary>
-        ///     Gets or sets the symbol that is used to mark a reference to another complex JSON object within the document.
-        ///     This value defaults to "$ref".
+        ///     Parses the metadata section of a complex JSON object given the first label token and the deserialization context.
         /// </summary>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
-        /// <exception cref="EmptyStringException">Thrown when <paramref name="value" /> is an empty string.</exception>
-        /// <exception cref="StringIsOnlyWhiteSpaceException">Thrown when <paramref name="value" /> contains only whitespace.</exception>
-        public string ReferenceSymbol
-        {
-            get { return _referenceSymbol; }
-            set
-            {
-                value.MustNotBeNullOrWhiteSpace(nameof(value));
-                _referenceSymbol = value;
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the symbol that is used to mark the JSON document ID for a complex object.
-        ///     This value defaults to to "$id".
-        /// </summary>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
-        /// <exception cref="EmptyStringException">Thrown when <paramref name="value" /> is an empty string.</exception>
-        /// <exception cref="StringIsOnlyWhiteSpaceException">Thrown when <paramref name="value" /> contains only whitespace.</exception>
-        public string IdSymbol
-        {
-            get { return _idSymbol; }
-            set
-            {
-                value.MustNotBeNullOrWhiteSpace(nameof(value));
-                _idSymbol = value;
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the symbol that is used to mark the type of a complex JSON object.
-        ///     This value defaults to "$type".
-        /// </summary>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
-        /// <exception cref="EmptyStringException">Thrown when <paramref name="value" /> is an empty string.</exception>
-        /// <exception cref="StringIsOnlyWhiteSpaceException">Thrown when <paramref name="value" /> contains only whitespace.</exception>
-        public string ConcreteTypeSymbol
-        {
-            get { return _concreteTypeSymbol; }
-            set
-            {
-                value.MustNotBeNullOrWhiteSpace(nameof(value));
-                _concreteTypeSymbol = value;
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the symbol that is used to mark the name of a generic type.
-        /// </summary>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
-        /// <exception cref="EmptyStringException">Thrown when <paramref name="value" /> is an empty string.</exception>
-        /// <exception cref="StringIsOnlyWhiteSpaceException">Thrown when <paramref name="value" /> contains only whitespace.</exception>
-        public string GenericTypeNameSymbol
-        {
-            get { return _genericTypeNameSymbol; }
-            set
-            {
-                value.MustNotBeNullOrWhiteSpace(nameof(value));
-                _genericTypeNameSymbol = value;
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the symbol that is used to mark the collection of type arguments for a generic type.
-        /// </summary>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
-        /// <exception cref="EmptyStringException">Thrown when <paramref name="value" /> is an empty string.</exception>
-        /// <exception cref="StringIsOnlyWhiteSpaceException">Thrown when <paramref name="value" /> contains only whitespace.</exception>
-        public string GenericTypeArgumentsSymbol
-        {
-            get { return _genericTypeArgumentsSymbol; }
-            set
-            {
-                value.MustNotBeNullOrWhiteSpace(nameof(value));
-                _genericTypeArgumentsSymbol = value;
-            }
-        }
-
+        /// <param name="currentToken">The JSON token that represents the first label in a complex JSON object.</param>
+        /// <param name="context">The deserialization context for the complex JSON object.</param>
+        /// <returns>The metadata parse result.</returns>
         public MetadataParseResult ParseMetadataSection(ref JsonToken currentToken, JsonDeserializationContext context)
         {
             currentToken.JsonType.MustBe(JsonTokenType.String, $"The {nameof(currentToken)} is not a JSON string.");
 
             var jsonReader = context.JsonReader;
-            var targetType = context.RequestedType;
+            var typeToConstruct = context.RequestedType;
             var objectId = -1;
 
+            // Loop through the metadata section of the complex JSON object
             for (var i = 0;; i++)
             {
                 currentToken.MustBeComplexObjectKey();
@@ -152,22 +73,30 @@ namespace Light.Serialization.Json.ObjectMetadata
                 else if (tokenString == _concreteTypeSymbol)
                 {
                     jsonReader.ReadAndExpectPairDelimiterToken();
-                    targetType = ParseType(context);
+                    typeToConstruct = ParseType(context);
                 }
 
-                // TODO: update currentToken for next loop cycle
+                // No metadata token found - this means the end of the metadata section in the complex JSON object was reached
+                else
+                {
+                    var referencePreservationInfo = objectId == -1 ? ReferencePreservationInfo.Empty : ReferencePreservationInfo.FromNewObjectInJsonDocument(objectId);
+                    return MetadataParseResult.FromMetadata(typeToConstruct, referencePreservationInfo);
+                }
+
+                // Update currentToken for next loop cycle
                 currentToken = jsonReader.ReadNextToken();
                 if (currentToken.JsonType == JsonTokenType.EndOfObject)
-                    return MetadataParseResult.FromMetadata(targetType, ReferencePreservationInfo.FromNewObjectInJsonDocument(objectId));
+                    return MetadataParseResult.FromMetadata(typeToConstruct, ReferencePreservationInfo.FromNewObjectInJsonDocument(objectId));
 
                 currentToken.MustBeValueDelimiterInObject();
+
+                currentToken = jsonReader.ReadNextToken();
             }
         }
 
         private Type ParseType(JsonDeserializationContext context)
         {
             var jsonReader = context.JsonReader;
-
             var currentToken = jsonReader.ReadNextToken();
 
             if (currentToken.JsonType == JsonTokenType.String)
