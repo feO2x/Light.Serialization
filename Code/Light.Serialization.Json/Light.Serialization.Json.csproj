@@ -110,6 +110,7 @@
     <Compile Include="ObjectMetadata\ComplexObjectMetadataInstructor.cs" />
     <Compile Include="TokenParsers\CollectionParser.cs" />
     <Compile Include="TokenParsers\BaseIso8601DateTimeParser.cs" />
+    <Compile Include="TokenParsers\ComplexObjectParser.cs" />
     <Compile Include="TokenParsers\DateTimeOffsetParser.cs" />
     <Compile Include="TokenParsers\DateTimeParser.cs" />
     <Compile Include="TokenParsers\DictionaryParser.cs" />

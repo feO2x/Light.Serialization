@@ -74,7 +74,7 @@ namespace Light.Serialization.Json.TokenParsers
         {
             while (true)
             {
-                currentToken.ExpectBeginOfValue();
+                currentToken.MustBeBeginOfValue();
                 var nextValue = context.DeserializeToken(currentToken, itemType);
                 collection.Add(nextValue);
 

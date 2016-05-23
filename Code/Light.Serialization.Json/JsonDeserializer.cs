@@ -80,7 +80,7 @@ namespace Light.Serialization.Json
             return DeserializeJsonToken(token, requestedType);
         }
 
-        private object DeserializeJsonToken(JsonToken token, Type requestedType)
+        private ParseResult DeserializeJsonToken(JsonToken token, Type requestedType)
         {
             IJsonTokenParser parser;
             var tokenTypeCombination = new JsonTokenTypeCombination(token.JsonType, requestedType);

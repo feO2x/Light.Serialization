@@ -93,7 +93,7 @@ namespace Light.Serialization.Json.TokenParsers
                 context.JsonReader.ReadAndExpectPairDelimiterToken();
 
                 currentToken = context.JsonReader.ReadNextToken();
-                currentToken.ExpectBeginOfValue();
+                currentToken.MustBeBeginOfValue();
 
                 var value = context.DeserializeToken(currentToken, valueType);
 

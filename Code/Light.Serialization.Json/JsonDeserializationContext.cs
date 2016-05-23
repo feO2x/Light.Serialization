@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Light.GuardClauses;
 using Light.Serialization.Json.LowLevelReading;
+using Light.Serialization.Json.TokenParsers;
 
 namespace Light.Serialization.Json
 {
@@ -28,7 +30,7 @@ namespace Light.Serialization.Json
         /// <summary>
         ///     Gets the delegate that can be used to deserialize a JSON token.
         /// </summary>
-        private readonly Func<JsonToken, Type, object> _deserializeToken;
+        private readonly Func<JsonToken, Type, ParseResult> _deserializeToken;
 
         /// <summary>
         ///     Gets the list containing all deserialized objects if Object Reference Preservation is turned on.
@@ -47,7 +49,7 @@ namespace Light.Serialization.Json
         public JsonDeserializationContext(JsonToken token,
                                           Type requestedType,
                                           IJsonReader jsonReader,
-                                          Func<JsonToken, Type, object> deserializeToken,
+                                          Func<JsonToken, Type, ParseResult> deserializeToken,
                                           Dictionary<int, object> deserializedObjects)
         {
             requestedType.MustNotBeNull(nameof(requestedType));
@@ -67,9 +69,20 @@ namespace Light.Serialization.Json
         /// </summary>
         /// <typeparam name="T">The requested .NET type of the JSON token.</typeparam>
         /// <param name="token">The token to be deserialized.</param>
+        /// <exception cref="InvalidOperationException">Thrown when the deserialized value is a deferred reference.</exception>
         public T DeserializeToken<T>(JsonToken token)
         {
-            return (T) _deserializeToken(token, typeof(T));
+            var parseResult = _deserializeToken(token, typeof(T));
+            CheckForDeferredReference(token, parseResult);
+
+            return (T) parseResult.ParsedValue;
+        }
+
+        [Conditional(Check.CompileAssertionsSymbol)]
+        private static void CheckForDeferredReference(JsonToken token, ParseResult parseResult)
+        {
+            if (parseResult.ParsedValue == null)
+                throw new InvalidOperationException($"The token \"{token}\" could not be completely deserialized because it is a deferred reference.");
         }
 
         /// <summary>
@@ -77,7 +90,7 @@ namespace Light.Serialization.Json
         /// </summary>
         /// <param name="token">The token to be deserialized.</param>
         /// <param name="requestedType">The .NET type the token should be deserialized to.</param>
-        public object DeserializeToken(JsonToken token, Type requestedType)
+        public ParseResult DeserializeToken(JsonToken token, Type requestedType)
         {
             return _deserializeToken(token, requestedType);
         }

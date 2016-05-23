@@ -68,7 +68,7 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         /// <param name="typeCreationDescription">The concrete type to be instantiated.</param>
         /// <param name="deserializedChildValues">The dictionary containing all deserialized values for the object to be created.</param>
         /// <returns>The instantiated object.</returns>
-        public object Create(TypeCreationDescription typeCreationDescription, Dictionary<InjectableValueDescription, object> deserializedChildValues)
+        public object CreateObject(TypeCreationDescription typeCreationDescription, Dictionary<InjectableValueDescription, object> deserializedChildValues)
         {
             typeCreationDescription.MustNotBeNull(nameof(typeCreationDescription));
 

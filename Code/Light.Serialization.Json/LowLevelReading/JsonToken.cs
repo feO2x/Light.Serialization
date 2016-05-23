@@ -132,7 +132,7 @@ namespace Light.Serialization.Json.LowLevelReading
         /// <summary>
         ///     Checks if this token is the beginning of a JSON value, else throws a JsonDocumentException.
         /// </summary>
-        public void ExpectBeginOfValue()
+        public void MustBeBeginOfValue()
         {
             if (IsBeginOfValue == false)
                 throw new JsonDocumentException($"Expected begin of JSON value, but found {this}.", this);
