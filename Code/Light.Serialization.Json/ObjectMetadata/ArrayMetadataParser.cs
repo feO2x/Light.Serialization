@@ -5,23 +5,22 @@ using Light.Serialization.Json.LowLevelReading;
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents an object that parses the metadata section of complex JSON objects.
+    /// Represents a metadata parser for parsing JSON array metadata.
     /// </summary>
-    public sealed class ComplexObjectMetadataParser : BaseMetadataParser, IMetadataParser
+    public sealed class ArrayMetadataParser : BaseMetadataParser, IMetadataParser
     {
         /// <summary>
-        ///     Creates a new instance of ComplexObjectMetadataParser.
+        ///     Creates a new instance of ArrayMetadataParser.
         /// </summary>
         /// <param name="nameToTypeMapping">The object that can map JSON type names to .NET types.</param>
         /// <exception cref="ArgumentNullException">Thrown when <see cref="nameToTypeMapping" /> is null.</exception>
-        public ComplexObjectMetadataParser(INameToTypeMapping nameToTypeMapping)
-            : base(nameToTypeMapping) { }
+        public ArrayMetadataParser(INameToTypeMapping nameToTypeMapping) : base(nameToTypeMapping) { }
 
         /// <summary>
-        ///     Parses the metadata section of a complex JSON object given the first label token and the deserialization context.
+        ///     Parses the metadata section of a complex JSON object or JSON array given the first token and the deserialization context.
         /// </summary>
-        /// <param name="currentToken">The JSON token that represents the first label in a complex JSON object.</param>
-        /// <param name="context">The deserialization context for the complex JSON object.</param>
+        /// <param name="currentToken">The JSON token that represents the first token in a complex JSON object or JSON array.</param>
+        /// <param name="context">The deserialization context for the object to be deserialized.</param>
         /// <returns>The metadata parse result.</returns>
         public MetadataParseResult ParseMetadataSection(ref JsonToken currentToken, JsonDeserializationContext context)
         {
@@ -31,21 +30,23 @@ namespace Light.Serialization.Json.ObjectMetadata
             var typeToConstruct = context.RequestedType;
             var objectId = -1;
 
-            // Loop through the metadata section of the complex JSON object
+            // Loop through the metadata section of the JSON array
             for (var i = 0;; i++)
             {
-                currentToken.MustBeComplexObjectKey();
+                if (currentToken.JsonType != JsonTokenType.String)
+                    break;
+
                 var tokenString = context.DeserializeToken<string>(currentToken);
 
                 // $ref - refernce to another object in the JSON document
                 if (tokenString == _referenceSymbol)
                 {
                     if (i > 0)
-                        throw new JsonDocumentException($"The {_referenceSymbol} is used in a wrong fashion: it should be the only metadata symbol when an object points to another one.", currentToken);
+                        throw new JsonDocumentException($"The {_referenceSymbol} is used in a wrong fashion: it should be the only metadata symbol when a JSON array points to another one.", currentToken);
 
-                    var numberToken = jsonReader.ReadAndExpectPairDelimiterToken()
+                    var numberToken = jsonReader.ReadAndExpectValueDelimiterToken()
                                                 .ReadAndExpectNumber();
-                    jsonReader.ReadAndExpectEndOfObject("A reference to another object must be the only Key-Value-Pair in a complex JSON object.");
+                    jsonReader.ReadAndExpectedEndOfArray("A reference to another collection must be the only value in a JSON array.");
                     objectId = context.DeserializeToken<int>(numberToken);
                     object retrievedObject;
                     if (context.DeserializedObjects.TryGetValue(objectId, out retrievedObject))
@@ -57,7 +58,7 @@ namespace Light.Serialization.Json.ObjectMetadata
                 // $id - defining an id for this complex JSON object
                 if (tokenString == _idSymbol)
                 {
-                    var numberToken = jsonReader.ReadAndExpectPairDelimiterToken()
+                    var numberToken = jsonReader.ReadAndExpectValueDelimiterToken()
                                                 .ReadAndExpectNumber();
 
                     objectId = context.DeserializeToken<int>(numberToken);
@@ -66,26 +67,26 @@ namespace Light.Serialization.Json.ObjectMetadata
                 // $type - type information for this complex JSON object
                 else if (tokenString == _concreteTypeSymbol)
                 {
-                    jsonReader.ReadAndExpectPairDelimiterToken();
+                    jsonReader.ReadAndExpectValueDelimiterToken();
                     typeToConstruct = ParseType(context);
                 }
 
                 // No metadata token found - this means the end of the metadata section in the complex JSON object was reached
                 else
-                {
-                    var referencePreservationInfo = objectId == -1 ? ReferencePreservationInfo.Empty : ReferencePreservationInfo.FromNewObjectInJsonDocument(objectId);
-                    return MetadataParseResult.FromMetadata(typeToConstruct, referencePreservationInfo);
-                }
+                    break;
 
                 // Update currentToken for next loop cycle
                 currentToken = jsonReader.ReadNextToken();
-                if (currentToken.JsonType == JsonTokenType.EndOfObject)
-                    return MetadataParseResult.FromMetadata(typeToConstruct, ReferencePreservationInfo.FromNewObjectInJsonDocument(objectId));
+                if (currentToken.JsonType == JsonTokenType.EndOfArray)
+                    break;
 
-                currentToken.MustBeValueDelimiterInObject();
+                currentToken.MustBeValueDelimiterInArray();
 
                 currentToken = jsonReader.ReadNextToken();
             }
+
+            var referencePreservationInfo = objectId == -1 ? ReferencePreservationInfo.Empty : ReferencePreservationInfo.FromNewObjectInJsonDocument(objectId);
+            return MetadataParseResult.FromMetadata(typeToConstruct, referencePreservationInfo);
         }
     }
 }

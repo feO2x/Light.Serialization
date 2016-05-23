@@ -56,8 +56,10 @@
     <Compile Include="ComplexTypeConstruction\InjectableValueKind.cs" />
     <Compile Include="ComplexTypeConstruction\ITypeDescriptionProvider.cs" />
     <Compile Include="LowLevelReading\JsonTokenExtensions.cs" />
+    <Compile Include="ObjectMetadata\ArrayMetadataParser.cs" />
     <Compile Include="ObjectMetadata\BaseMetadata.cs" />
     <Compile Include="ObjectMetadata\BaseMetadataInstructor.cs" />
+    <Compile Include="ObjectMetadata\BaseMetadataParser.cs" />
     <Compile Include="ObjectMetadata\ComplexObjectMetadataParser.cs" />
     <Compile Include="ObjectMetadata\MetadataParseResult.cs" />
     <Compile Include="ComplexTypeConstruction\ToLowerWithoutSpecialCharactersNormalizer.cs" />
