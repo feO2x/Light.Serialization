@@ -15,7 +15,7 @@ namespace Light.Serialization.Json.TokenParsers
     {
         private readonly IMetadataParser _metadataParser;
         private readonly IMetaFactory _metaFactory;
-        private readonly IInjectableValueNameNormalizer _nameNormalizer;
+        private readonly INameNormalizer _nameNormalizer;
         private readonly ITypeDescriptionProvider _typeDescriptionProvider;
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Light.Serialization.Json.TokenParsers
         /// <param name="typeDescriptionProvider">The object that holds creation descriptions for specific types.</param>
         /// <param name="metadataParser">The parser that is used for the metadata section of an complex JSON object.</param>
         public ComplexObjectParser(IMetaFactory metaFactory,
-                                   IInjectableValueNameNormalizer nameNormalizer,
+                                   INameNormalizer nameNormalizer,
                                    ITypeDescriptionProvider typeDescriptionProvider,
                                    IMetadataParser metadataParser)
         {
@@ -55,7 +55,7 @@ namespace Light.Serialization.Json.TokenParsers
         }
 
         /// <summary>
-        ///     Parses the specified complex JSON object to a complex .NET type.
+        ///     Parses the specified complex JSON object to an instance of a complex .NET type.
         ///     This method must only be called when <see cref="IsSuitableFor" /> would return true.
         /// </summary>
         public ParseResult ParseValue(JsonDeserializationContext context)

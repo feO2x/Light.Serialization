@@ -57,11 +57,9 @@ namespace Light.Serialization.Json.TokenParsers
             var jsonReader = context.JsonReader;
             var currentToken = jsonReader.ReadNextToken();
 
-            // Check if it is an empty JSON object
             if (currentToken.JsonType == JsonTokenType.EndOfObject)
                 return ParseResult.FromParsedValue(_metaFactory.CreateDictionary(context.RequestedType));
 
-            // If not, then there must be a JSON string as the first key of the object
             currentToken.MustBeComplexObjectKey();
 
             var metadataParseResult = _metadataParser.ParseMetadataSection(ref currentToken, context);

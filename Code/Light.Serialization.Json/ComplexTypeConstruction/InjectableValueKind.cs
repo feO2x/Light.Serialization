@@ -2,6 +2,9 @@
 
 namespace Light.Serialization.Json.ComplexTypeConstruction
 {
+    /// <summary>
+    ///     Represents the different kinds of injection an Injectable Value Description can have.
+    /// </summary>
     [Flags]
     public enum InjectableValueKind
     {

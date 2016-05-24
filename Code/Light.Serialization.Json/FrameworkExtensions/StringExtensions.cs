@@ -121,6 +121,11 @@ namespace Light.Serialization.Json.FrameworkExtensions
             return char.ToLowerInvariant(@string[0]) + @string.Substring(1);
         }
 
+        /// <summary>
+        ///     Removes all special characters and lowers the remaining ones.
+        /// </summary>
+        /// <param name="string">The string to be checked.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="string" /> is null.</exception>
         public static string ToLowerAndRemoveAllSpecialCharacters(this string @string)
         {
             @string.MustNotBeNull(nameof(@string));

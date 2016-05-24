@@ -1,41 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using Light.GuardClauses;
+using Light.Serialization.Abstractions;
 
 namespace Light.Serialization.Json.ComplexTypeConstruction
 {
+    /// <summary>
+    ///     Represents a Type Description Provider that includes all constructors, settable instance properties, and settable instance fields in a type creation description.
+    /// </summary>
     public sealed class DefaultTypeDescriptionProvider : ITypeDescriptionProvider
     {
-        private IInjectableValueNameNormalizer _injectableValueNameNormalizer;
+        private INameNormalizer _nameNormalizer;
 
-        public DefaultTypeDescriptionProvider(IInjectableValueNameNormalizer injectableValueNameNormalizer)
+        /// <summary>
+        ///     Creates a new intance of DefaultTypeDescriptionProvider.
+        /// </summary>
+        /// <param name="nameNormalizer">The object used to normalize member and parameter names.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="nameNormalizer" /> is null.</exception>
+        public DefaultTypeDescriptionProvider(INameNormalizer nameNormalizer)
         {
-            injectableValueNameNormalizer.MustNotBeNull(nameof(injectableValueNameNormalizer));
-
-            _injectableValueNameNormalizer = injectableValueNameNormalizer;
+            NameNormalizer = nameNormalizer;
         }
 
-        public IInjectableValueNameNormalizer InjectableValueNameNormalizer
+        /// <summary>
+        ///     Gets or sets the object used to normalize member and parameter names.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
+        public INameNormalizer NameNormalizer
         {
-            get { return _injectableValueNameNormalizer; }
+            get { return _nameNormalizer; }
             set
             {
                 value.MustNotBeNull(nameof(value));
-                _injectableValueNameNormalizer = value;
+                _nameNormalizer = value;
             }
         }
 
-        public TypeCreationDescription GetTypeCreationDescription(Type typeToAnalyze)
+        /// <summary>
+        ///     Analyzes the specified type and creates a creation description for it containing information about all constructors
+        ///     and settable instance properties and fields.
+        /// </summary>
+        /// <param name="type">The type to be analyzed.</param>
+        /// <returns>The type creation description.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="type" /> is null.</exception>
+        public TypeCreationDescription GetTypeCreationDescription(Type type)
         {
-            typeToAnalyze.MustNotBeNull(nameof(typeToAnalyze));
+            type.MustNotBeNull(nameof(type));
 
-            var typeInfo = typeToAnalyze.GetTypeInfo();
+            var typeInfo = type.GetTypeInfo();
+            CheckIfTypeIsInstantiatable(typeInfo);
 
             if (typeInfo.IsAbstract || typeInfo.IsInterface)
-                throw new ArgumentException($"The specified type {typeToAnalyze.FullName} is abstract and cannot be deserialized", nameof(typeToAnalyze));
+                throw new DeserializationException($"The specified type {type.FullName} is abstract and cannot be deserialized");
 
-            var typeCreationDescription = new TypeCreationDescription(typeToAnalyze);
+            var typeCreationDescription = new TypeCreationDescription(type);
             foreach (var constructorInfo in typeInfo.DeclaredConstructors)
             {
                 if (constructorInfo.IsStatic || constructorInfo.IsPublic == false)
@@ -44,7 +64,7 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
                 var parameterDescriptions = new List<InjectableValueDescription>();
                 foreach (var parameterInfo in constructorInfo.GetParameters())
                 {
-                    var normalizedParameterName = _injectableValueNameNormalizer.Normalize(parameterInfo.Name);
+                    var normalizedParameterName = _nameNormalizer.Normalize(parameterInfo.Name);
 
                     var parameterDescription = typeCreationDescription.GetInjectableValueDescriptionFromNormalizedName(normalizedParameterName);
                     if (parameterDescription == null)
@@ -57,13 +77,13 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
                 typeCreationDescription.AddConstructorDescription(new ConstructorDescription(constructorInfo, parameterDescriptions));
             }
 
-            foreach (var propertyInfo in typeToAnalyze.GetRuntimeProperties())
+            foreach (var propertyInfo in type.GetRuntimeProperties())
             {
                 var setMethodInfo = propertyInfo.SetMethod;
                 if (setMethodInfo == null || setMethodInfo.IsPublic == false || setMethodInfo.IsStatic)
                     continue;
 
-                var normalizedPropertyName = _injectableValueNameNormalizer.Normalize(propertyInfo.Name);
+                var normalizedPropertyName = _nameNormalizer.Normalize(propertyInfo.Name);
                 var targetDescription = typeCreationDescription.GetInjectableValueDescriptionFromNormalizedName(normalizedPropertyName);
                 if (targetDescription == null)
                 {
@@ -74,12 +94,12 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
                     targetDescription.AddPropertyName(propertyInfo);
             }
 
-            foreach (var fieldInfo in typeToAnalyze.GetRuntimeFields())
+            foreach (var fieldInfo in type.GetRuntimeFields())
             {
                 if (fieldInfo.IsStatic || fieldInfo.IsPublic == false || fieldInfo.IsInitOnly)
                     continue;
 
-                var normalizedFieldName = _injectableValueNameNormalizer.Normalize(fieldInfo.Name);
+                var normalizedFieldName = _nameNormalizer.Normalize(fieldInfo.Name);
                 var targetDescription = typeCreationDescription.GetInjectableValueDescriptionFromNormalizedName(normalizedFieldName);
                 if (targetDescription == null)
                 {
@@ -91,6 +111,13 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
             }
 
             return typeCreationDescription;
+        }
+
+        [Conditional(Check.CompileAssertionsSymbol)]
+        private static void CheckIfTypeIsInstantiatable(TypeInfo typeInfo)
+        {
+            if (typeInfo.IsAbstract || typeInfo.IsInterface)
+                throw new DeserializationException($"The specified type {typeInfo.FullName} is abstract and cannot be deserialized");
         }
     }
 }

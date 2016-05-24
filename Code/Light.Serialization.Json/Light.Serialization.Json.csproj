@@ -46,12 +46,13 @@
     <Compile Include="BuilderInterfaces\ISetPrimitiveTypeFormatters.cs" />
     <Compile Include="BuilderInterfaces\ISetTypeAnalyzer.cs" />
     <Compile Include="BuilderInterfaces\ISetTypeToNameMapping.cs" />
+    <Compile Include="Caching\CreationDescriptionCacheDecorator.cs" />
     <Compile Include="Caching\ValueProvidersCacheDecorator.cs" />
     <Compile Include="ComplexTypeConstruction\ConstructorDescription.cs" />
     <Compile Include="ComplexTypeConstruction\DefaultMetaFactory.cs" />
     <Compile Include="ComplexTypeConstruction\DefaultTypeDescriptionProvider.cs" />
     <Compile Include="ComplexTypeConstruction\IMetaFactory.cs" />
-    <Compile Include="ComplexTypeConstruction\IInjectableValueNameNormalizer.cs" />
+    <Compile Include="ComplexTypeConstruction\INameNormalizer.cs" />
     <Compile Include="ComplexTypeConstruction\InjectableValueDescription.cs" />
     <Compile Include="ComplexTypeConstruction\InjectableValueKind.cs" />
     <Compile Include="ComplexTypeConstruction\ITypeDescriptionProvider.cs" />
