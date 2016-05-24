@@ -132,7 +132,7 @@ namespace Light.Serialization.Json.TokenParsers
             {
                 foreach (var deferredReference in deferredReferences)
                 {
-                    context.ObjectReferencePreserver.AddDeferredReference(new DeferredReferenceForComplexObject(deferredReference.Item2, deferredReference.Item1, createdObject));
+                    context.ObjectReferencePreserver.AddDeferredReference(new DeferredReferenceForObject(deferredReference.Item2, deferredReference.Item1, createdObject));
                 }
             }
 

@@ -72,17 +72,23 @@ namespace Light.Serialization.Json.TokenParsers
 
         private static void PopulateCollection(JsonToken currentToken, IList collection, JsonDeserializationContext context, Type itemType)
         {
+            var currentIndex = 0;
             while (true)
             {
                 currentToken.MustBeBeginOfValue();
-                var nextValue = context.DeserializeToken(currentToken, itemType);
-                collection.Add(nextValue);
+                var parseResult = context.DeserializeToken(currentToken, itemType);
+
+                if (parseResult.IsDeferredReference)
+                    context.ObjectReferencePreserver.AddDeferredReference(new DeferredReferenceForCollection(parseResult.RefId, currentIndex, collection));
+                else
+                    collection.Add(parseResult.ParsedValue);
 
                 currentToken = context.JsonReader.ReadNextToken();
                 switch (currentToken.JsonType)
                 {
                     case JsonTokenType.ValueDelimiter:
                         currentToken = context.JsonReader.ReadNextToken();
+                        currentIndex++;
                         continue;
                     case JsonTokenType.EndOfArray:
                         return;

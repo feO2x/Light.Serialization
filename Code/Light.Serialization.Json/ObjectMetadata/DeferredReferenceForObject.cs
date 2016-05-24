@@ -7,15 +7,15 @@ using Light.Serialization.Json.ComplexTypeConstruction;
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents the structure containing all infos to set a deferred reference on a target object.
+    ///     Represents a deferred reference that sets a value on a .NET object via property or field injection.
     /// </summary>
-    public sealed class DeferredReferenceForComplexObject : IDeferredReference
+    public sealed class DeferredReferenceForObject : IDeferredReference
     {
         private readonly InjectableValueDescription _injectableValueDescription;
         private readonly object _targetObject;
 
         /// <summary>
-        ///     Creates a new instance of DeferredReferenceInfo.
+        ///     Creates a new instance of DeferredReferenceForObject.
         /// </summary>
         /// <param name="referenceId">The id of the deferred reference.</param>
         /// <param name="injectableValueDescription">The injectable value description used to set the value later.</param>
@@ -23,7 +23,7 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="referenceId" /> is less than zero.</exception>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="injectableValueDescription" /> or <paramref name="targetObject" /> is null.</exception>
         /// <exception cref="DeserializationException">Thrown when the <paramref name="injectableValueDescription" /> does not allow Property or Field injection.</exception>
-        public DeferredReferenceForComplexObject(int referenceId, InjectableValueDescription injectableValueDescription, object targetObject)
+        public DeferredReferenceForObject(int referenceId, InjectableValueDescription injectableValueDescription, object targetObject)
         {
             referenceId.MustNotBeLessThan(0, nameof(referenceId));
             injectableValueDescription.MustNotBeNull(nameof(injectableValueDescription));
