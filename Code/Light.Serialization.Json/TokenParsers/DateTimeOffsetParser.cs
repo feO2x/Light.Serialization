@@ -30,16 +30,10 @@ namespace Light.Serialization.Json.TokenParsers
         /// <summary>
         ///     Tries to parse the given JSON token as a .NET DateTimeOffset value.
         /// </summary>
-        public JsonStringParseResult TryParse(JsonToken token)
+        public JsonStringParseResult TryParse(JsonDeserializationContext context, string deserializedString)
         {
-            try
-            {
-                return new JsonStringParseResult(true, Parse(token));
-            }
-            catch (JsonDocumentException)
-            {
-                return new JsonStringParseResult(false);
-            }
+            DateTimeOffset dateTimeOffset;
+            return DateTimeOffset.TryParse(deserializedString, out dateTimeOffset) ? new JsonStringParseResult(true, dateTimeOffset) : new JsonStringParseResult(false);
         }
 
         private DateTimeOffset Parse(JsonToken token)

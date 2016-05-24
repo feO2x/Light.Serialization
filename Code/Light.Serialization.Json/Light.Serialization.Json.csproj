@@ -56,6 +56,7 @@
     <Compile Include="ComplexTypeConstruction\InjectableValueDescription.cs" />
     <Compile Include="ComplexTypeConstruction\InjectableValueKind.cs" />
     <Compile Include="ComplexTypeConstruction\ITypeDescriptionProvider.cs" />
+    <Compile Include="JsonDeserializerBuilder.cs" />
     <Compile Include="LowLevelReading\JsonTokenExtensions.cs" />
     <Compile Include="ObjectMetadata\ArrayMetadataParser.cs" />
     <Compile Include="ObjectMetadata\BaseMetadata.cs" />
@@ -123,6 +124,7 @@
     <Compile Include="TokenParsers\DateTimeParser.cs" />
     <Compile Include="TokenParsers\DictionaryParser.cs" />
     <Compile Include="TokenParsers\Iso8601DurationToTimeSpanParser.cs" />
+    <Compile Include="TokenParsers\JsonStringInheritanceParser.cs" />
     <Compile Include="TokenParsers\JsonStringParseResult.cs" />
     <Compile Include="SerializationRules\IAndBlackListRule.cs" />
     <Compile Include="SerializationRules\IAndWhiteListRule.cs" />

@@ -30,16 +30,10 @@ namespace Light.Serialization.Json.TokenParsers
         /// <summary>
         ///     Tries to parse the given JSON string to a .NET DateTime.
         /// </summary>
-        public JsonStringParseResult TryParse(JsonToken token)
+        public JsonStringParseResult TryParse(JsonDeserializationContext context, string deserializedString)
         {
-            try
-            {
-                return new JsonStringParseResult(true, Parse(token));
-            }
-            catch (JsonDocumentException)
-            {
-                return new JsonStringParseResult(false);
-            }
+            DateTime dateTime;
+            return DateTime.TryParse(deserializedString, out dateTime) ? new JsonStringParseResult(true, dateTime) : new JsonStringParseResult(false);
         }
 
         private DateTime Parse(JsonToken token)

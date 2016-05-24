@@ -41,12 +41,10 @@ namespace Light.Serialization.Json.TokenParsers
         /// <summary>
         ///     Tries to parse the specified JSON token as a GUID.
         /// </summary>
-        public JsonStringParseResult TryParse(JsonToken token)
+        public JsonStringParseResult TryParse(JsonDeserializationContext context, string deserializedString)
         {
-            var guidString = token.ToStringWithoutQuotationMarks();
-
             Guid parsedGuid;
-            return Guid.TryParse(guidString, out parsedGuid) == false ? new JsonStringParseResult(false) : new JsonStringParseResult(true, parsedGuid);
+            return Guid.TryParse(deserializedString, out parsedGuid) == false ? new JsonStringParseResult(false) : new JsonStringParseResult(true, parsedGuid);
         }
     }
 }
