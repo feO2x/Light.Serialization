@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Light.GuardClauses;
-using Light.Serialization.Json.ComplexTypeConstruction;
 
 namespace Light.Serialization.Json.ObjectMetadata
 {
@@ -10,7 +9,7 @@ namespace Light.Serialization.Json.ObjectMetadata
     /// </summary>
     public sealed class ObjectReferencePreserver
     {
-        private readonly Dictionary<int, List<DeferredReferenceInfo>> _deferredReferences = new Dictionary<int, List<DeferredReferenceInfo>>();
+        private readonly Dictionary<int, List<IDeferredReference>> _deferredReferences = new Dictionary<int, List<IDeferredReference>>();
         private readonly Dictionary<int, object> _deserializedObjects = new Dictionary<int, object>();
 
         /// <summary>
@@ -26,6 +25,17 @@ namespace Light.Serialization.Json.ObjectMetadata
             @object.MustNotBeNull(nameof(@object));
 
             _deserializedObjects.Add(id, @object);
+
+            List<IDeferredReference> deferredReferences;
+            if (_deferredReferences.TryGetValue(id, out deferredReferences) == false)
+                return;
+
+            foreach (var deferredReference in deferredReferences)
+            {
+                deferredReference.SetDeferredReference(@object);
+            }
+
+            _deferredReferences.Remove(id);
         }
 
         /// <summary>
@@ -42,20 +52,19 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// <summary>
         ///     Adds a deferred reference that will be resolved as soon as the corresponding object is added to the ObjectReferencePreserver.
         /// </summary>
-        /// <param name="referenceId">The id of the deferred reference.</param>
-        /// <param name="injectableValueDescription">The injectable value description that allows Field and / or Property Injection on the target object, when the deferred reference is available.</param>
-        /// <param name="targetObject">The object the deferred reference will be set on.</param>
-        public void AddDeferredReference(int referenceId, InjectableValueDescription injectableValueDescription, object targetObject)
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="deferredReference" /> is null.</exception>
+        public void AddDeferredReference(IDeferredReference deferredReference)
         {
-            List<DeferredReferenceInfo> targetList;
-            var deferredReferenceInfo = new DeferredReferenceInfo(referenceId, injectableValueDescription, targetObject);
-            if (_deferredReferences.TryGetValue(referenceId, out targetList) == false)
+            deferredReference.MustNotBeNull(nameof(deferredReference));
+
+            List<IDeferredReference> targetList;
+            if (_deferredReferences.TryGetValue(deferredReference.ReferenceId, out targetList) == false)
             {
-                targetList = new List<DeferredReferenceInfo>();
-                _deferredReferences.Add(referenceId, targetList);
+                targetList = new List<IDeferredReference>();
+                _deferredReferences.Add(deferredReference.ReferenceId, targetList);
             }
 
-            targetList.Add(deferredReferenceInfo);
+            targetList.Add(deferredReference);
         }
     }
 }

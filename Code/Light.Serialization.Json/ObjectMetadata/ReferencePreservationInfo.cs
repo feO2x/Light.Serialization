@@ -32,7 +32,7 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// <summary>
         ///     Gets the value indicating that no Object Reference Preservation metadata is available.
         /// </summary>
-        public bool IsNotContainingObjectReferencePreservationInfos => Id == -1;
+        public bool IsEmpty => Id == -1;
 
         private ReferencePreservationInfo(int id, object retrievedObject, bool isDeferredReference)
         {

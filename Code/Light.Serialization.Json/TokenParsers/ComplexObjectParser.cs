@@ -67,9 +67,12 @@ namespace Light.Serialization.Json.TokenParsers
             if (currentToken.JsonType == JsonTokenType.EndOfObject)
                 return ParseResult.FromParsedValue(_metaFactory.CreateObject(_typeDescriptionProvider.GetTypeCreationDescription(context.RequestedType), null));
 
+            // Else parse the metadata section
             var metadataParseResult = _metadataParser.ParseMetadataSection(ref currentToken, context);
+            // Check if this JSON object is a $ref and the object could be retrieved
             if (metadataParseResult.ReferencePreservationInfo.WasObjectRetrieved)
                 return ParseResult.FromParsedValue(metadataParseResult.ReferencePreservationInfo.RetrievedObject);
+            // Else check if this object is a deferred reference
             if (metadataParseResult.ReferencePreservationInfo.IsDeferredReference)
                 return ParseResult.FromDeferredReference(metadataParseResult.ReferencePreservationInfo.Id);
 
@@ -77,13 +80,17 @@ namespace Light.Serialization.Json.TokenParsers
             if (metadataParseResult.TypeToConstruct.IsDictionaryType())
                 throw new NotImplementedException("We have to switch to the DictionaryParser here");
 
+            // Get the type creation description for the type that should be constructed.
             var typeCreationDescription = _typeDescriptionProvider.GetTypeCreationDescription(metadataParseResult.TypeToConstruct);
 
+            // Check if there is any data left to deserialized
             if (currentToken.JsonType == JsonTokenType.EndOfObject)
                 return ParseResult.FromParsedValue(_metaFactory.CreateObject(typeCreationDescription, null));
+            currentToken.MustBeComplexObjectKey();
 
             var deserializedChildValues = new Dictionary<InjectableValueDescription, object>();
-
+            List<Tuple<InjectableValueDescription, int>> deferredReferences = null;
+            // Run through the remaining key-value pairs of the complex JSON object and deserialize them
             while (true)
             {
                 var key = context.DeserializeToken<string>(currentToken);
@@ -96,17 +103,41 @@ namespace Light.Serialization.Json.TokenParsers
                                          .ReadNextToken();
                 currentToken.MustBeBeginOfValue();
                 var parseResult = context.DeserializeToken(currentToken, injectableValueInfo.Type);
-                // TODO: enqueue value if it is a deferred reference
                 if (parseResult.IsDeferredReference)
-                    throw new NotImplementedException("Here we have to enqueue the value for the object.");
+                {
+                    if (deferredReferences == null)
+                        deferredReferences = new List<Tuple<InjectableValueDescription, int>>();
+
+                    deferredReferences.Add(new Tuple<InjectableValueDescription, int>(injectableValueInfo, parseResult.RefId));
+                }
 
                 deserializedChildValues.Add(injectableValueInfo, parseResult.ParsedValue);
 
                 if (jsonReader.ReadAndExpectEndOfObjectOrValueDelimiter() == JsonTokenType.EndOfObject)
-                    return ParseResult.FromParsedValue(_metaFactory.CreateObject(typeCreationDescription, deserializedChildValues));
+                    break;
 
                 currentToken = jsonReader.ReadNextToken();
+                currentToken.MustBeComplexObjectKey();
             }
+
+            // Create the object from the type creation description and the deserialized child values
+            var createdObject = _metaFactory.CreateObject(typeCreationDescription, deserializedChildValues);
+
+            // Add this object to the object reference preserver if there was a $id entry in the metadata section
+            if (metadataParseResult.ReferencePreservationInfo.IsEmpty == false)
+                context.ObjectReferencePreserver.AddDeserializedObject(metadataParseResult.ReferencePreservationInfo.Id, createdObject);
+
+            // Register all deferred references with the Object Reference Preserver if necessary
+            if (deferredReferences != null)
+            {
+                foreach (var deferredReference in deferredReferences)
+                {
+                    context.ObjectReferencePreserver.AddDeferredReference(new DeferredReferenceForComplexObject(deferredReference.Item2, deferredReference.Item1, createdObject));
+                }
+            }
+
+            // return the deserialized object
+            return ParseResult.FromParsedValue(createdObject);
         }
     }
 }

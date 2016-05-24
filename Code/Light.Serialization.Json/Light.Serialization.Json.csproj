@@ -61,7 +61,8 @@
     <Compile Include="ObjectMetadata\BaseMetadataInstructor.cs" />
     <Compile Include="ObjectMetadata\BaseMetadataParser.cs" />
     <Compile Include="ObjectMetadata\ComplexObjectMetadataParser.cs" />
-    <Compile Include="ObjectMetadata\DeferredReferenceInfo.cs" />
+    <Compile Include="ObjectMetadata\DeferredReferenceForComplexObject.cs" />
+    <Compile Include="ObjectMetadata\IDeferredReference.cs" />
     <Compile Include="ObjectMetadata\MetadataParseResult.cs" />
     <Compile Include="ComplexTypeConstruction\ToLowerWithoutSpecialCharactersNormalizer.cs" />
     <Compile Include="ComplexTypeConstruction\TypeCreationDescription.cs" />
