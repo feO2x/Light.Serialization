@@ -13,18 +13,19 @@ namespace Light.Serialization.Json.TokenParsers
         /// </summary>
         public readonly object ParsedValue;
 
+        /// <summary>
+        ///     Gets the value indicating whether the object could not be parsed because it is a deferred reference.
+        /// </summary>
+        public readonly bool IsDeferredReference;
+
         private readonly int? _refId;
 
         private ParseResult(object parsedValue, int? refId)
         {
             ParsedValue = parsedValue;
             _refId = refId;
+            IsDeferredReference = _refId.HasValue;
         }
-
-        /// <summary>
-        ///     Gets the value indicating whether the object could not be parsed because it is a deferred reference.
-        /// </summary>
-        public bool IsDeferredReference => _refId.HasValue;
 
         /// <summary>
         ///     Gets the id of the deferred reference.

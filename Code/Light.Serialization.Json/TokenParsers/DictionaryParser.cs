@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using Light.GuardClauses;
+using Light.Serialization.Abstractions;
 using Light.Serialization.Json.ComplexTypeConstruction;
 using Light.Serialization.Json.FrameworkExtensions;
 using Light.Serialization.Json.LowLevelReading;
@@ -88,16 +89,20 @@ namespace Light.Serialization.Json.TokenParsers
             {
                 currentToken.MustBeComplexObjectKey();
 
-                var key = context.DeserializeToken(currentToken, keyType);
+                var parseResult = context.DeserializeToken(currentToken, keyType);
+                parseResult.IsDeferredReference.MustBe(false, exception: () => new DeserializationException("The key of complex JSON object must not be a deferred reference"));
+                var key = parseResult.ParsedValue;
 
-                context.JsonReader.ReadAndExpectPairDelimiterToken();
-
-                currentToken = context.JsonReader.ReadNextToken();
+                currentToken = context.JsonReader
+                                      .ReadAndExpectPairDelimiterToken()
+                                      .ReadNextToken();
                 currentToken.MustBeBeginOfValue();
 
-                var value = context.DeserializeToken(currentToken, valueType);
-
-                dictionary.Add(key, value);
+                parseResult = context.DeserializeToken(currentToken, valueType);
+                if (parseResult.IsDeferredReference)
+                    context.ObjectReferencePreserver.AddDeferredReference(new DeferredReferenceForDictionary(parseResult.RefId, key, dictionary));
+                else
+                    dictionary.Add(key, parseResult.ParsedValue);
 
                 if (context.JsonReader.ReadAndExpectEndOfObjectOrValueDelimiter() == JsonTokenType.EndOfObject)
                     return;

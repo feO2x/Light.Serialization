@@ -62,6 +62,7 @@
     <Compile Include="ObjectMetadata\BaseMetadataParser.cs" />
     <Compile Include="ObjectMetadata\ComplexObjectMetadataParser.cs" />
     <Compile Include="ObjectMetadata\DeferredReferenceForCollection.cs" />
+    <Compile Include="ObjectMetadata\DeferredReferenceForDictionary.cs" />
     <Compile Include="ObjectMetadata\DeferredReferenceForObject.cs" />
     <Compile Include="ObjectMetadata\IDeferredReference.cs" />
     <Compile Include="ObjectMetadata\MetadataParseResult.cs" />
