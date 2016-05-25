@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Light.Serialization.Json.Builders;
 using Light.Serialization.Json.ComplexTypeConstruction;
 using Light.Serialization.Json.ObjectMetadata;
+using Light.Serialization.Json.TokenParserFactories;
 using Light.Serialization.Json.TokenParsers;
 
 namespace Light.Serialization.Json
@@ -31,7 +31,7 @@ namespace Light.Serialization.Json
             collection.Add(new SingletonFactory(new EnumParser()));
             collection.Add(new SingletonFactory(new StringParser()));
             collection.Add(new SingletonFactory(new GuidParser()));
-            collection.Add(new SingletonFactory(new JsonStringInheritanceParser(collection.OfType<IJsonStringToPrimitiveParser>().ToList()))); // TODO: no singleton
+            collection.Add(new JsonStringInheritanceParserFactory(collection.OfType<IJsonStringToPrimitiveParser>().ToList()));
             collection.Add(new SingletonFactory(new CollectionParser(metaFactory, arrayMetadataParser)));
             collection.Add(new SingletonFactory(new DictionaryParser(metaFactory, complexObjectMetadataParser)));
             collection.Add(new SingletonFactory(new ComplexObjectParser(metaFactory, nameNormalizer, typeDescriptionProvider, complexObjectMetadataParser)));

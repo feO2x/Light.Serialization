@@ -46,8 +46,9 @@
     <Compile Include="BuilderInterfaces\ISetPrimitiveTypeFormatters.cs" />
     <Compile Include="BuilderInterfaces\ISetTypeAnalyzer.cs" />
     <Compile Include="BuilderInterfaces\ISetTypeToNameMapping.cs" />
-    <Compile Include="Builders\IJsonTokenParserFactory.cs" />
-    <Compile Include="Builders\SingletonFactory.cs" />
+    <Compile Include="TokenParserFactories\IJsonTokenParserFactory.cs" />
+    <Compile Include="TokenParserFactories\JsonStringInheritanceParserFactory.cs" />
+    <Compile Include="TokenParserFactories\SingletonFactory.cs" />
     <Compile Include="Caching\CreationDescriptionCacheDecorator.cs" />
     <Compile Include="Caching\ValueProvidersCacheDecorator.cs" />
     <Compile Include="ComplexTypeConstruction\ConstructorDescription.cs" />

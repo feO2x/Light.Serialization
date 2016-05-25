@@ -1,7 +1,7 @@
 ﻿using System;
 using Light.Serialization.Json.TokenParsers;
 
-namespace Light.Serialization.Json.Builders
+namespace Light.Serialization.Json.TokenParserFactories
 {
     public interface IJsonTokenParserFactory
     {
