@@ -5,10 +5,13 @@ using Light.GuardClauses;
 using Light.Serialization.Abstractions;
 using Light.Serialization.Json.BuilderInterfaces;
 using Light.Serialization.Json.Caching;
+using Light.Serialization.Json.ComplexTypeConstruction;
 using Light.Serialization.Json.ComplexTypeDecomposition;
+using Light.Serialization.Json.LowLevelReading;
 using Light.Serialization.Json.LowLevelWriting;
 using Light.Serialization.Json.ObjectMetadata;
 using Light.Serialization.Json.PrimitiveTypeFormatters;
+using Light.Serialization.Json.TokenParsers;
 using Light.Serialization.Json.WriterInstructors;
 using Microsoft.Practices.Unity;
 
@@ -111,6 +114,75 @@ namespace Light.Serialization.Json.Unity
                 // Type to name mapping
                 .RegisterType<ITypeToNameMapping, SimpleNameToTypeMapping>(new ContainerControlledLifetimeManager())
                 .RegisterType<INameToTypeMapping, SimpleNameToTypeMapping>(new ContainerControlledLifetimeManager());
+        }
+
+        public static IUnityContainer RegisterDefaultDeserializationTypes(this IUnityContainer container)
+        {
+            container.MustNotBeNull(nameof(container));
+
+            return container
+                // JSON Deserializer
+                .RegisterType<IDeserializer, JsonDeserializer>()
+
+                // JSON Reader Factory
+                .RegisterType<IJsonReaderFactory, SingleBufferJsonReaderFactory>(new ContainerControlledLifetimeManager())
+
+                // Token Parser Cache
+                .RegisterType<Dictionary<JsonTokenTypeCombination, IJsonTokenParser>>(new ContainerControlledLifetimeManager(),
+                                                                                      new InjectionFactory(c => new Dictionary<JsonTokenTypeCombination, IJsonTokenParser>()))
+
+                // Token Parsers
+                .RegisterType<IReadOnlyList<IJsonTokenParser>, IJsonTokenParser[]>()
+                .RegisterType<IReadOnlyList<IJsonStringToPrimitiveParser>, IJsonStringToPrimitiveParser[]>()
+                .RegisterTypeWithTypeName<IJsonTokenParser, UnsignedIntegerParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, DoubleParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, BooleanParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, NullParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, DateTimeParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonStringToPrimitiveParser, DateTimeParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, DateTimeOffsetParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonStringToPrimitiveParser, DateTimeOffsetParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, TimeSpanParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonStringToPrimitiveParser, TimeSpanParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, SignedIntegerParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, FloatParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, DecimalParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, CharacterParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, EnumParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, StringParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, GuidParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonStringToPrimitiveParser, GuidParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, JsonStringInheritanceParser>()
+
+                // TODO: these registrations can be simplified when the ArrayMetadataParser gets its own interface
+                .RegisterTypeWithTypeName<IJsonTokenParser, CollectionParser>(new InjectionFactory(c => new CollectionParser(c.Resolve<IMetaFactory>(),
+                                                                                                                             c.Resolve<IMetadataParser>(nameof(ArrayMetadataParser)))),
+                                                                              new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, DictionaryParser>(new InjectionFactory(c => new DictionaryParser(c.Resolve<IMetaFactory>(),
+                                                                                                                             c.Resolve<IMetadataParser>(nameof(ComplexObjectMetadataParser)))),
+                                                                              new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, ComplexObjectParser>(new InjectionFactory(c => new ComplexObjectParser(c.Resolve<IMetaFactory>(),
+                                                                                                                                   c.Resolve<INameNormalizer>(),
+                                                                                                                                   c.Resolve<ITypeDescriptionProvider>(),
+                                                                                                                                   c.Resolve<IMetadataParser>(nameof(ComplexObjectMetadataParser)))),
+                                                                                 new ContainerControlledLifetimeManager())
+
+                // Meta Factory
+                .RegisterType<IMetaFactory, UnityMetaFactoryAdapter>(new ContainerControlledLifetimeManager())
+
+                // Metadata parsers
+                .RegisterTypeWithTypeName<IMetadataParser, ComplexObjectMetadataParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IMetadataParser, ArrayMetadataParser>(new ContainerControlledLifetimeManager())
+
+                // Name normalizer
+                .RegisterType<INameNormalizer, ToLowerWithoutSpecialCharactersNormalizer>(new ContainerControlledLifetimeManager())
+
+                // Type description provider
+                .RegisterTypeWithTypeName<ITypeDescriptionProvider, DefaultTypeDescriptionProvider>(new ContainerControlledLifetimeManager())
+                .RegisterType<ITypeDescriptionProvider, CreationDescriptionCacheDecorator>(new ContainerControlledLifetimeManager(),
+                                                                                           new InjectionFactory(c => new CreationDescriptionCacheDecorator(c.Resolve<Dictionary<Type, TypeCreationDescription>>(),
+                                                                                                                                                           c.Resolve<ITypeDescriptionProvider>(nameof(DefaultTypeDescriptionProvider)))))
+                .RegisterType<Dictionary<Type, TypeCreationDescription>>(new ContainerControlledLifetimeManager());
         }
 
         /// <summary>
@@ -253,7 +325,7 @@ namespace Light.Serialization.Json.Unity
             container.MustNotBeNull(nameof(container));
 
             lifetimeManager = lifetimeManager ?? new TransientLifetimeManager();
-            return container.RegisterType<TFrom, TTo>(typeof (TTo).Name, lifetimeManager);
+            return container.RegisterType<TFrom, TTo>(typeof(TTo).Name, lifetimeManager);
         }
 
 
@@ -275,7 +347,7 @@ namespace Light.Serialization.Json.Unity
             injectionFactory.MustNotBeNull(nameof(injectionFactory));
 
             lifetimeManager = lifetimeManager ?? new TransientLifetimeManager();
-            return container.RegisterType<TFrom, TTo>(typeof (TTo).Name, lifetimeManager, injectionFactory);
+            return container.RegisterType<TFrom, TTo>(typeof(TTo).Name, lifetimeManager, injectionFactory);
         }
     }
 }

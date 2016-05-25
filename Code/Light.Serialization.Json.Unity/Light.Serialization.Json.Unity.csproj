@@ -38,6 +38,7 @@
     <Compile Include="LightSerializationModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RulesSupport.cs" />
+    <Compile Include="UnityMetaFactoryAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Light.GuardClauses, Version=0.2.0.0, Culture=neutral, PublicKeyToken=573727035c45e5b3, processorArchitecture=MSIL">

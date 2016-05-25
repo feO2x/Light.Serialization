@@ -76,7 +76,7 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
             {
                 var defaultConstructorDescription = typeCreationDescription.ConstructorDescriptions.FirstOrDefault(c => c.ConstructorParameters.Count == 0);
                 if (defaultConstructorDescription == null)
-                    throw new DeserializationException($"Could not create instance of type {typeCreationDescription.TargetType.FullName} because there was not any JSON data and no default constructor."); // TODO: maybe we can express this a little bit clearer
+                    throw new DeserializationException($"Could not create instance of type {typeCreationDescription.TargetType.FullName} because there was no JSON data and no default constructor."); // TODO: maybe we can express this a little bit clearer
 
                 return defaultConstructorDescription.TryCallConstructor(null);
             }
