@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="BuilderInterfaces\ISetCharacterEscaper.cs" />
     <Compile Include="BuilderInterfaces\ISetCollectionMetadataInstructor.cs" />
+    <Compile Include="BuilderInterfaces\ISetNameToTypeMapping.cs" />
     <Compile Include="BuilderInterfaces\ISetPrimitiveTypeFormatters.cs" />
     <Compile Include="BuilderInterfaces\ISetTypeAnalyzer.cs" />
     <Compile Include="BuilderInterfaces\ISetTypeToNameMapping.cs" />

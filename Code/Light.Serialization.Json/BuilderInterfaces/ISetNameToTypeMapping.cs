@@ -4,14 +4,14 @@ using Light.Serialization.Json.ObjectMetadata;
 namespace Light.Serialization.Json.BuilderInterfaces
 {
     /// <summary>
-    ///     Represents the abstraction of setting a type to name mapping using property injection.
+    ///     Represents the abstraction of setting a name to type mapping using property injection.
     /// </summary>
-    public interface ISetTypeToNameMapping
+    public interface ISetNameToTypeMapping
     {
         /// <summary>
-        ///     Sets the specified type to name mapping.
+        ///     Sets the specified name to type mapping.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
-        ITypeToNameMapping TypeToNameMapping { set; }
+        INameToTypeMapping NameToTypeMapping { set; }
     }
 }

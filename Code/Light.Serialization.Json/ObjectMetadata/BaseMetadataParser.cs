@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Light.GuardClauses;
+using Light.Serialization.Json.BuilderInterfaces;
 using Light.Serialization.Json.LowLevelReading;
 
 namespace Light.Serialization.Json.ObjectMetadata
@@ -9,10 +10,10 @@ namespace Light.Serialization.Json.ObjectMetadata
     ///     Represents the base class for metadata parsers. Provides the <see cref="ParseType" /> method for parsing
     ///     JSON metadata to .NET types.
     /// </summary>
-    public abstract class BaseMetadataParser : BaseMetadata
+    public abstract class BaseMetadataParser : BaseMetadata, ISetNameToTypeMapping
     {
         // ReSharper disable once InconsistentNaming
-        protected readonly INameToTypeMapping _nameToTypeMapping;
+        protected INameToTypeMapping _nameToTypeMapping;
 
         /// <summary>
         ///     Initializes a new instance of BaseMetadataParser.
@@ -24,6 +25,20 @@ namespace Light.Serialization.Json.ObjectMetadata
             nameToTypeMapping.MustNotBeNull(nameof(nameToTypeMapping));
 
             _nameToTypeMapping = nameToTypeMapping;
+        }
+
+        /// <summary>
+        ///     Gets or sets the specified name to type mapping.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
+        public INameToTypeMapping NameToTypeMapping
+        {
+            get { return _nameToTypeMapping; }
+            set
+            {
+                value.MustNotBeNull(nameof(value));
+                _nameToTypeMapping = value;
+            }
         }
 
         /// <summary>
