@@ -188,16 +188,15 @@
     <Compile Include="WriterInstructors\PrimitiveValueInstructor.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Light.GuardClauses, Version=0.2.0.0, Culture=neutral, PublicKeyToken=573727035c45e5b3, processorArchitecture=MSIL">
-      <HintPath>..\packages\Light.GuardClauses.0.2.0\lib\portable-net45+wp80+win8+wpa81+dnxcore50\Light.GuardClauses.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
     <None Include="SerializationObjectGraph.vsdx" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="Light.GuardClauses, Version=1.0.0.0, Culture=neutral, PublicKeyToken=573727035c45e5b3, processorArchitecture=MSIL">
+      <HintPath>..\packages\Light.GuardClauses.1.0.0\lib\portable-net45+wp80+win8+wpa81+dnxcore50\Light.GuardClauses.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
