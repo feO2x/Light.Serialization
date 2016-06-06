@@ -83,6 +83,9 @@
     <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\BooleanTests.cs">
       <Link>DeserializationTests\BooleanTests.cs</Link>
     </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\CharacterTests.cs">
+      <Link>DeserializationTests\CharacterTests.cs</Link>
+    </Compile>
     <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\CollectionTests.cs">
       <Link>SerializationTests\CollectionTests.cs</Link>
     </Compile>
