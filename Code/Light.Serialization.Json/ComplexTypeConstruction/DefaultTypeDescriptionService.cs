@@ -3,41 +3,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using Light.GuardClauses;
+using Light.GuardClauses.Exceptions;
 using Light.Serialization.Abstractions;
+using Light.Serialization.Json.FrameworkExtensions;
 
 namespace Light.Serialization.Json.ComplexTypeConstruction
 {
     /// <summary>
     ///     Represents a Type Description Provider that includes all constructors, settable instance properties, and settable instance fields in a type creation description.
     /// </summary>
-    public sealed class DefaultTypeDescriptionProvider : ITypeDescriptionProvider
+    public class DefaultTypeDescriptionService : ITypeDescriptionService
     {
-        private INameNormalizer _nameNormalizer;
-
-        /// <summary>
-        ///     Creates a new intance of DefaultTypeDescriptionProvider.
-        /// </summary>
-        /// <param name="nameNormalizer">The object used to normalize member and parameter names.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="nameNormalizer" /> is null.</exception>
-        public DefaultTypeDescriptionProvider(INameNormalizer nameNormalizer)
-        {
-            NameNormalizer = nameNormalizer;
-        }
-
-        /// <summary>
-        ///     Gets or sets the object used to normalize member and parameter names.
-        /// </summary>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
-        public INameNormalizer NameNormalizer
-        {
-            get { return _nameNormalizer; }
-            set
-            {
-                value.MustNotBeNull(nameof(value));
-                _nameNormalizer = value;
-            }
-        }
-
         /// <summary>
         ///     Analyzes the specified type and creates a creation description for it containing information about all constructors
         ///     and settable instance properties and fields.
@@ -45,7 +21,7 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         /// <param name="type">The type to be analyzed.</param>
         /// <returns>The type creation description.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="type" /> is null.</exception>
-        public TypeCreationDescription GetTypeCreationDescription(Type type)
+        public virtual TypeCreationDescription GetTypeCreationDescription(Type type)
         {
             type.MustNotBeNull(nameof(type));
 
@@ -64,7 +40,7 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
                 var parameterDescriptions = new List<InjectableValueDescription>();
                 foreach (var parameterInfo in constructorInfo.GetParameters())
                 {
-                    var normalizedParameterName = _nameNormalizer.Normalize(parameterInfo.Name);
+                    var normalizedParameterName = NormalizeName(parameterInfo.Name);
 
                     var parameterDescription = typeCreationDescription.GetInjectableValueDescriptionFromNormalizedName(normalizedParameterName);
                     if (parameterDescription == null)
@@ -83,7 +59,7 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
                 if (setMethodInfo == null || setMethodInfo.IsPublic == false || setMethodInfo.IsStatic)
                     continue;
 
-                var normalizedPropertyName = _nameNormalizer.Normalize(propertyInfo.Name);
+                var normalizedPropertyName = NormalizeName(propertyInfo.Name);
                 var targetDescription = typeCreationDescription.GetInjectableValueDescriptionFromNormalizedName(normalizedPropertyName);
                 if (targetDescription == null)
                 {
@@ -99,7 +75,7 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
                 if (fieldInfo.IsStatic || fieldInfo.IsPublic == false || fieldInfo.IsInitOnly)
                     continue;
 
-                var normalizedFieldName = _nameNormalizer.Normalize(fieldInfo.Name);
+                var normalizedFieldName = NormalizeName(fieldInfo.Name);
                 var targetDescription = typeCreationDescription.GetInjectableValueDescriptionFromNormalizedName(normalizedFieldName);
                 if (targetDescription == null)
                 {
@@ -111,6 +87,19 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
             }
 
             return typeCreationDescription;
+        }
+
+        /// <summary>
+        ///     Normalizes the given JSON string so that it can be compared to the names of settable type members and constructor parameters (for <see cref="InjectableValueDescription" />).
+        /// </summary>
+        /// <param name="jsonName">The JSON string to be normalized.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="jsonName" /> is null.</exception>
+        /// <exception cref="EmptyStringException">Thrown when <paramref name="jsonName" /> is an empty string.</exception>
+        /// <exception cref="StringIsOnlyWhiteSpaceException">Thrown when <paramref name="jsonName" />contains only whitespace.</exception>
+        public virtual string NormalizeName(string jsonName)
+        {
+            return jsonName.ToLowerAndRemoveAllSpecialCharacters();
         }
 
         [Conditional(Check.CompileAssertionsSymbol)]

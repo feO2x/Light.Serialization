@@ -13,8 +13,7 @@ namespace Light.Serialization.Json
                                                                               IMetaFactory metaFactory,
                                                                               IMetadataParser complexObjectMetadataParser,
                                                                               IMetadataParser arrayMetadataParser,
-                                                                              INameNormalizer nameNormalizer,
-                                                                              ITypeDescriptionProvider typeDescriptionProvider)
+                                                                              ITypeDescriptionService typeDescriptionService)
             where TCollection : IList<IJsonTokenParserFactory>
         {
             collection.Add(new SingletonFactory(new UnsignedIntegerParser()));
@@ -34,7 +33,7 @@ namespace Light.Serialization.Json
             collection.Add(new JsonStringInheritanceParserFactory(collection.OfType<IJsonStringToPrimitiveParser>().ToList()));
             collection.Add(new SingletonFactory(new CollectionParser(metaFactory, arrayMetadataParser)));
             collection.Add(new SingletonFactory(new DictionaryParser(metaFactory, complexObjectMetadataParser)));
-            collection.Add(new SingletonFactory(new ComplexObjectParser(metaFactory, nameNormalizer, typeDescriptionProvider, complexObjectMetadataParser)));
+            collection.Add(new SingletonFactory(new ComplexObjectParser(metaFactory, typeDescriptionService, complexObjectMetadataParser)));
 
             return collection;
         }

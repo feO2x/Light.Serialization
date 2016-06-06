@@ -126,9 +126,11 @@ namespace Light.Serialization.Json.FrameworkExtensions
         /// </summary>
         /// <param name="string">The string to be checked.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="string" /> is null.</exception>
+        /// <exception cref="EmptyStringException">Thrown when <paramref name="string" /> is an empty string.</exception>
+        /// <exception cref="StringIsOnlyWhiteSpaceException">Thrown when <paramref name="string" />contains only whitespace.</exception>
         public static string ToLowerAndRemoveAllSpecialCharacters(this string @string)
         {
-            @string.MustNotBeNull(nameof(@string));
+            @string.MustNotBeNullOrWhiteSpace(nameof(@string));
 
             int i;
             char character;

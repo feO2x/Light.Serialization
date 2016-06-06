@@ -20,12 +20,11 @@ namespace Light.Serialization.Json
         private readonly IMetadataParser _arrayMetadataParser;
         private readonly IMetadataParser _complexObjectMetadataParser;
         private readonly IMetaFactory _metaFactory = new DefaultMetaFactory();
-        private readonly INameNormalizer _nameNormalizer;
         private readonly List<IJsonTokenParserFactory> _tokenParserFactories;
-        private readonly ITypeDescriptionProvider _typeDescriptionProvider;
         private INameToTypeMapping _nameToTypeMapping;
         private IJsonReaderFactory _readerFactory = new SingleBufferJsonReaderFactory();
         private Dictionary<JsonTokenTypeCombination, IJsonTokenParser> _tokenParserCache = new Dictionary<JsonTokenTypeCombination, IJsonTokenParser>();
+        private ITypeDescriptionService _typeDescriptionService;
 
         /// <summary>
         ///     Creates a new instance of JsonDeserializerBuilder.
@@ -35,10 +34,9 @@ namespace Light.Serialization.Json
             _nameToTypeMapping = new SimpleNameToTypeMapping();
             _complexObjectMetadataParser = new ComplexObjectMetadataParser(_nameToTypeMapping);
             _arrayMetadataParser = new ArrayMetadataParser(_nameToTypeMapping);
-            _nameNormalizer = new ToLowerWithoutSpecialCharactersNormalizer();
-            _typeDescriptionProvider = new CreationDescriptionCacheDecorator(new Dictionary<Type, TypeCreationDescription>(), new DefaultTypeDescriptionProvider(_nameNormalizer));
+            _typeDescriptionService = new DefaultTypeDescriptionServiceWithCaching(new Dictionary<Type, TypeCreationDescription>());
 
-            _tokenParserFactories = new List<IJsonTokenParserFactory>().AddDefaultTokenParserFactories(_metaFactory, _complexObjectMetadataParser, _arrayMetadataParser, _nameNormalizer, _typeDescriptionProvider);
+            _tokenParserFactories = new List<IJsonTokenParserFactory>().AddDefaultTokenParserFactories(_metaFactory, _complexObjectMetadataParser, _arrayMetadataParser, _typeDescriptionService);
         }
 
         /// <summary>
@@ -64,6 +62,43 @@ namespace Light.Serialization.Json
                 return;
 
             setNameToTypeMapping.NameToTypeMapping = mapping;
+        }
+
+        /// <summary>
+        ///     Configures the builder to use the specified type description service.
+        /// </summary>
+        /// <param name="typeDescriptionService">The type description service to be used.</param>
+        /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeDescriptionService" /> is null.</exception>
+        public JsonDeserializerBuilder TypeDescriptionService(ITypeDescriptionService typeDescriptionService)
+        {
+            typeDescriptionService.MustNotBeNull(nameof(typeDescriptionService));
+
+            _typeDescriptionService = typeDescriptionService;
+            ConfigureSingletonParser<ISetTypeDescriptionService>(parser => parser.TypeDescriptionService = typeDescriptionService); // TODO: this wouldn't work if the target parser is not a singleton
+
+            return this;
+        }
+
+        /// <summary>
+        ///     Configures the token parser with the specified type using the given delegate.
+        ///     The parser must be created using a singleton parser factory, i.e. a factory that implements <see cref="IGetSingletonInstance{T}" />
+        /// </summary>
+        /// <typeparam name="T">The type of the token parser.</typeparam>
+        /// <param name="configureParser">The delegate that is used to configure the parser.</param>
+        /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureParser" /> is null.</exception>
+        public JsonDeserializerBuilder ConfigureSingletonParser<T>(Action<T> configureParser)
+        {
+            configureParser.MustNotBeNull(nameof(configureParser));
+
+            var targetParserFactory = _tokenParserFactories.First(f => f.ParserType == typeof(T)) as IGetSingletonInstance<IJsonTokenParser>;
+            targetParserFactory.MustNotBeNull(exception: () => new ArgumentException($"The specified parser factory for type \"{typeof(T)}\" could not be found."));
+
+            // ReSharper disable once PossibleNullReferenceException
+            configureParser((T) targetParserFactory.Instance);
+
+            return this;
         }
 
         /// <summary>

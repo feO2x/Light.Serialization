@@ -1,13 +1,12 @@
 ﻿using System;
 using Light.GuardClauses;
+using Light.Serialization.Json.BuilderInterfaces;
 using Light.Serialization.Json.TokenParsers;
 
 namespace Light.Serialization.Json.TokenParserFactories
 {
-    public sealed class SingletonFactory : IJsonTokenParserFactory
+    public sealed class SingletonFactory : IJsonTokenParserFactory, IGetSingletonInstance<IJsonTokenParser>
     {
-        public readonly IJsonTokenParser Instance;
-
         public SingletonFactory(IJsonTokenParser instance)
         {
             instance.MustNotBeNull(nameof(instance));
@@ -17,6 +16,8 @@ namespace Light.Serialization.Json.TokenParserFactories
         }
 
         public Type ParserType { get; }
+
+        public IJsonTokenParser Instance { get; }
 
         public IJsonTokenParser Create()
         {

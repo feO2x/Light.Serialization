@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Light.GuardClauses;
+using Light.Serialization.Json.BuilderInterfaces;
 using Light.Serialization.Json.ComplexTypeConstruction;
 using Light.Serialization.Json.FrameworkExtensions;
 using Light.Serialization.Json.LowLevelReading;
@@ -11,33 +12,28 @@ namespace Light.Serialization.Json.TokenParsers
     /// <summary>
     ///     Represents a JSON Token Parser that can deserialize complex JSON objects.
     /// </summary>
-    public sealed class ComplexObjectParser : IJsonTokenParser
+    public sealed class ComplexObjectParser : IJsonTokenParser, ISetTypeDescriptionService
     {
         private readonly IMetadataParser _metadataParser;
         private readonly IMetaFactory _metaFactory;
-        private readonly INameNormalizer _nameNormalizer;
-        private readonly ITypeDescriptionProvider _typeDescriptionProvider;
+        private ITypeDescriptionService _typeDescriptionService;
 
         /// <summary>
         ///     Creates a new instance of ComplexObjectParser.
         /// </summary>
         /// <param name="metaFactory">The object that can create other objects from type information.</param>
-        /// <param name="nameNormalizer">The object used for name normalization between keys in complex JSON objects and .NET member names.</param>
-        /// <param name="typeDescriptionProvider">The object that holds creation descriptions for specific types.</param>
+        /// <param name="typeDescriptionService">The object that holds creation descriptions for specific types.</param>
         /// <param name="metadataParser">The parser that is used for the metadata section of an complex JSON object.</param>
         public ComplexObjectParser(IMetaFactory metaFactory,
-                                   INameNormalizer nameNormalizer,
-                                   ITypeDescriptionProvider typeDescriptionProvider,
+                                   ITypeDescriptionService typeDescriptionService,
                                    IMetadataParser metadataParser)
         {
             metaFactory.MustNotBeNull(nameof(metaFactory));
-            nameNormalizer.MustNotBeNull(nameof(nameNormalizer));
-            typeDescriptionProvider.MustNotBeNull(nameof(typeDescriptionProvider));
+            typeDescriptionService.MustNotBeNull(nameof(typeDescriptionService));
             metadataParser.MustNotBeNull(nameof(metadataParser));
 
             _metaFactory = metaFactory;
-            _nameNormalizer = nameNormalizer;
-            _typeDescriptionProvider = typeDescriptionProvider;
+            _typeDescriptionService = typeDescriptionService;
             _metadataParser = metadataParser;
         }
 
@@ -65,7 +61,7 @@ namespace Light.Serialization.Json.TokenParsers
 
             // If the first token is the end of the complex object, then there are no child values
             if (currentToken.JsonType == JsonTokenType.EndOfObject)
-                return ParseResult.FromParsedValue(_metaFactory.CreateObject(_typeDescriptionProvider.GetTypeCreationDescription(context.RequestedType), null));
+                return ParseResult.FromParsedValue(_metaFactory.CreateObject(_typeDescriptionService.GetTypeCreationDescription(context.RequestedType), null));
 
             // Else parse the metadata section
             var metadataParseResult = _metadataParser.ParseMetadataSection(ref currentToken, context);
@@ -81,7 +77,7 @@ namespace Light.Serialization.Json.TokenParsers
                 throw new NotImplementedException("We have to switch to the DictionaryParser here");
 
             // Get the type creation description for the type that should be constructed.
-            var typeCreationDescription = _typeDescriptionProvider.GetTypeCreationDescription(metadataParseResult.TypeToConstruct);
+            var typeCreationDescription = _typeDescriptionService.GetTypeCreationDescription(metadataParseResult.TypeToConstruct);
 
             // Check if there is any data left to deserialized
             if (currentToken.JsonType == JsonTokenType.EndOfObject)
@@ -94,7 +90,7 @@ namespace Light.Serialization.Json.TokenParsers
             while (true)
             {
                 var key = context.DeserializeToken<string>(currentToken);
-                var normalizedKey = _nameNormalizer.Normalize(key);
+                var normalizedKey = _typeDescriptionService.NormalizeName(key);
 
                 var injectableValueInfo = typeCreationDescription.GetInjectableValueDescriptionFromNormalizedName(normalizedKey) ??
                                           InjectableValueDescription.FromUnknownValue(normalizedKey, typeof(object));
@@ -138,6 +134,20 @@ namespace Light.Serialization.Json.TokenParsers
 
             // return the deserialized object
             return ParseResult.FromParsedValue(createdObject);
+        }
+
+        /// <summary>
+        ///     Sets the specified type description service on the target instance.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
+        public ITypeDescriptionService TypeDescriptionService
+        {
+            get { return _typeDescriptionService; }
+            set
+            {
+                value.MustNotBeNull(nameof(value));
+                _typeDescriptionService = value;
+            }
         }
     }
 }

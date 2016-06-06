@@ -162,8 +162,7 @@ namespace Light.Serialization.Json.Unity
                                                                                                                              c.Resolve<IMetadataParser>(nameof(ComplexObjectMetadataParser)))),
                                                                               new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonTokenParser, ComplexObjectParser>(new InjectionFactory(c => new ComplexObjectParser(c.Resolve<IMetaFactory>(),
-                                                                                                                                   c.Resolve<INameNormalizer>(),
-                                                                                                                                   c.Resolve<ITypeDescriptionProvider>(),
+                                                                                                                                   c.Resolve<ITypeDescriptionService>(),
                                                                                                                                    c.Resolve<IMetadataParser>(nameof(ComplexObjectMetadataParser)))),
                                                                                  new ContainerControlledLifetimeManager())
 
@@ -174,14 +173,8 @@ namespace Light.Serialization.Json.Unity
                 .RegisterTypeWithTypeName<IMetadataParser, ComplexObjectMetadataParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IMetadataParser, ArrayMetadataParser>(new ContainerControlledLifetimeManager())
 
-                // Name normalizer
-                .RegisterType<INameNormalizer, ToLowerWithoutSpecialCharactersNormalizer>(new ContainerControlledLifetimeManager())
-
-                // Type description provider
-                .RegisterTypeWithTypeName<ITypeDescriptionProvider, DefaultTypeDescriptionProvider>(new ContainerControlledLifetimeManager())
-                .RegisterType<ITypeDescriptionProvider, CreationDescriptionCacheDecorator>(new ContainerControlledLifetimeManager(),
-                                                                                           new InjectionFactory(c => new CreationDescriptionCacheDecorator(c.Resolve<Dictionary<Type, TypeCreationDescription>>(),
-                                                                                                                                                           c.Resolve<ITypeDescriptionProvider>(nameof(DefaultTypeDescriptionProvider)))))
+                // Type description service
+                .RegisterType<ITypeDescriptionService, DefaultTypeDescriptionServiceWithCaching>(new ContainerControlledLifetimeManager())
                 .RegisterType<Dictionary<Type, TypeCreationDescription>>(new ContainerControlledLifetimeManager());
         }
 
