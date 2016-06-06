@@ -134,7 +134,7 @@ namespace Light.Serialization.Json
         /// </summary>
         public JsonDeserializer Build()
         {
-            var parsers = _tokenParserFactories.Select(pp => pp.Create())
+            var parsers = _tokenParserFactories.Select(factory => factory.Create())
                                                .ToList();
 
             return new JsonDeserializer(_readerFactory, parsers, _tokenParserCache);
