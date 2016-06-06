@@ -145,10 +145,10 @@ namespace Light.Serialization.Json.ObjectMetadata
         {
             configureOptions.MustNotBeNull(nameof(configureOptions));
 
-            var transformer = new TypeNameToJsonNameScanner();
-            configureOptions(transformer);
+            var scanner = new TypeNameToJsonNameScanner();
+            configureOptions(scanner);
 
-            transformer.CreateMappings(this);
+            scanner.CreateMappings(this);
             return this;
         }
 
