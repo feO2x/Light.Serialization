@@ -78,7 +78,10 @@ namespace Light.Serialization.Json
         private object DeserializeDocument(Type requestedType)
         {
             var token = _jsonReader.ReadNextToken();
-            return DeserializeJsonToken(token, requestedType);
+            var parseResult = DeserializeJsonToken(token, requestedType);
+            parseResult.IsDeferredReference.MustBeFalse(exception: () => new DeserializationException("The specified JSON document only contained a deferred refernce."));
+
+            return parseResult.ParsedValue;
         }
 
         private ParseResult DeserializeJsonToken(JsonToken token, Type requestedType)

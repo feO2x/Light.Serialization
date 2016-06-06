@@ -72,9 +72,9 @@ namespace Light.Serialization.Json.Tests
         protected void UseDomainFriendlyNames(Action<TypeNameToJsonNameScanner.IScanningOptions> options = null)
         {
             if (options == null)
-                _container.UseDomainFriendlyNaming(DomainFriendlyNameMapping.CreateWithDefaultTypeMappings());
+                _container.UseDomainFriendlyNames(DomainFriendlyNameMapping.CreateWithDefaultTypeMappings());
             else
-                _container.UseDomainFriendlyNaming(options);
+                _container.UseDomainFriendlyNames(options);
         }
     }
 }

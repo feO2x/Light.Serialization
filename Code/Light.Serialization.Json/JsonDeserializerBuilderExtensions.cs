@@ -30,7 +30,7 @@ namespace Light.Serialization.Json
             collection.Add(new SingletonFactory(new EnumParser()));
             collection.Add(new SingletonFactory(new StringParser()));
             collection.Add(new SingletonFactory(new GuidParser()));
-            collection.Add(new JsonStringInheritanceParserFactory(collection.OfType<IJsonStringToPrimitiveParser>().ToList()));
+            collection.Add(new JsonStringInheritanceParserFactory(collection.Select(f => f.Create()).OfType<IJsonStringToPrimitiveParser>().ToList()));
             collection.Add(new SingletonFactory(new CollectionParser(metaFactory, arrayMetadataParser)));
             collection.Add(new SingletonFactory(new DictionaryParser(metaFactory, complexObjectMetadataParser)));
             collection.Add(new SingletonFactory(new ComplexObjectParser(metaFactory, typeDescriptionService, complexObjectMetadataParser)));
