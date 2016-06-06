@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Light.Serialization.Json.LowLevelReading;
 
 namespace Light.Serialization.Json.TokenParsers
@@ -33,7 +34,7 @@ namespace Light.Serialization.Json.TokenParsers
         public JsonStringParseResult TryParse(JsonDeserializationContext context, string deserializedString)
         {
             DateTime dateTime;
-            return DateTime.TryParse(deserializedString, out dateTime) ? new JsonStringParseResult(true, dateTime) : new JsonStringParseResult(false);
+            return DateTime.TryParse(deserializedString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out dateTime) ? new JsonStringParseResult(true, dateTime) : new JsonStringParseResult(false);
         }
 
         private DateTime Parse(JsonToken token)
