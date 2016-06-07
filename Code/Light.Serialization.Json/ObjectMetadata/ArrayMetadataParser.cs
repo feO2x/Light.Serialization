@@ -1,11 +1,10 @@
 ﻿using System;
-using Light.GuardClauses;
 using Light.Serialization.Json.LowLevelReading;
 
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    /// Represents a metadata parser for parsing JSON array metadata.
+    ///     Represents a metadata parser for parsing JSON array metadata.
     /// </summary>
     public sealed class ArrayMetadataParser : BaseMetadataParser, IMetadataParser
     {
@@ -24,18 +23,13 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// <returns>The metadata parse result.</returns>
         public MetadataParseResult ParseMetadataSection(ref JsonToken currentToken, JsonDeserializationContext context)
         {
-            currentToken.JsonType.MustBe(JsonTokenType.String, $"The {nameof(currentToken)} is not a JSON string.");
-
             var jsonReader = context.JsonReader;
             var typeToConstruct = context.RequestedType;
             var objectId = -1;
 
             // Loop through the metadata section of the JSON array
-            for (var i = 0;; i++)
+            for (var i = 0; currentToken.JsonType == JsonTokenType.String; i++)
             {
-                if (currentToken.JsonType != JsonTokenType.String)
-                    break;
-
                 var tokenString = context.DeserializeToken<string>(currentToken);
 
                 // $ref - refernce to another object in the JSON document
