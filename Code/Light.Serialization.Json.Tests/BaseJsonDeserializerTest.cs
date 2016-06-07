@@ -30,8 +30,11 @@ namespace Light.Serialization.Json.Tests
 
         public void ConfigureDefaultDomainFriendlyNaming(Action<TypeNameToJsonNameScanner.IScanningOptions> configureAdditionalTypes = null)
         {
-            var domainFriendlyNameMapping = DomainFriendlyNameMapping.CreateWithDefaultTypeMappings()
-                                                                     .ScanTypes(configureAdditionalTypes);
+            var domainFriendlyNameMapping = DomainFriendlyNameMapping.CreateWithDefaultTypeMappings();
+
+            if (configureAdditionalTypes != null)
+                domainFriendlyNameMapping.ScanTypes(configureAdditionalTypes);
+
             _builder.WithNameToTypeMapping(domainFriendlyNameMapping);
         }
 

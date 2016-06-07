@@ -98,6 +98,9 @@
     <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\DecimalTests.cs">
       <Link>DeserializationTests\DecimalTests.cs</Link>
     </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\DictionaryTests.cs">
+      <Link>DeserializationTests\DictionaryTests.cs</Link>
+    </Compile>
     <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\DoubleTests.cs">
       <Link>DeserializationTests\DoubleTests.cs</Link>
     </Compile>
