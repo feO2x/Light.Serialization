@@ -87,6 +87,7 @@
     <Compile Include="DeserializationTests\TimeSpanTests.cs" />
     <Compile Include="DeserializationTests\StringTests.cs" />
     <Compile Include="DeserializationTests\NullTests.cs" />
+    <Compile Include="SampleTypes\DummyPerson.cs" />
     <Compile Include="SampleTypes\MoreComplexDummyClass.cs" />
     <Compile Include="SampleTypes\Nodes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="SerializationTests\DelegateTests.cs" />
     <Compile Include="SerializationTests\DictionaryTests.cs" />
     <Compile Include="SerializationTests\CustomRuleTests.cs" />
+    <Compile Include="SerializationTests\HumanReadableJsonTests.cs" />
     <Compile Include="SerializationTests\NullableTests.cs" />
     <Compile Include="SerializationTests\TimeSpanTests.cs" />
     <Compile Include="SerializationTests\PrimitiveValuesTests.cs" />

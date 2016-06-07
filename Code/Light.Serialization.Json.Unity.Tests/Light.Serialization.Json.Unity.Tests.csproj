@@ -152,6 +152,9 @@
     <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\DictionaryTests.cs">
       <Link>SerializationTests\DictionaryTests.cs</Link>
     </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\HumanReadableJsonTests.cs">
+      <Link>SerializationTests\HumanReadableJsonTests.cs</Link>
+    </Compile>
     <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\NullableTests.cs">
       <Link>SerializationTests\NullableTests.cs</Link>
     </Compile>

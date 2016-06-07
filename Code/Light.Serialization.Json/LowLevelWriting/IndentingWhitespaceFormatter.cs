@@ -8,7 +8,7 @@ namespace Light.Serialization.Json.LowLevelWriting
     /// </summary>
     public sealed class IndentingWhitespaceFormatter : IJsonWhitespaceFormatter
     {
-        private readonly string _whiteSpace = " ";
+        private const string WhiteSpace = " ";
         private int _currentIndentationLevel;
         private string _indentCharacters = "    ";
 
@@ -80,7 +80,7 @@ namespace Light.Serialization.Json.LowLevelWriting
         {
             writer.MustNotBeNull(nameof(writer));
 
-            writer.WritePrimitiveValue(_whiteSpace);
+            writer.WritePrimitiveValue(WhiteSpace);
         }
 
         /// <summary>
