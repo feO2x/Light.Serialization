@@ -175,7 +175,8 @@ namespace Light.Serialization.Json.Unity
 
                 // Type description service
                 .RegisterType<ITypeDescriptionService, DefaultTypeDescriptionServiceWithCaching>(new ContainerControlledLifetimeManager())
-                .RegisterType<Dictionary<Type, TypeCreationDescription>>(new ContainerControlledLifetimeManager());
+                .RegisterType<Dictionary<Type, TypeCreationDescription>>(new ContainerControlledLifetimeManager(),
+                                                                         new InjectionFactory(c => new Dictionary<Type, TypeCreationDescription>()));
         }
 
         /// <summary>
