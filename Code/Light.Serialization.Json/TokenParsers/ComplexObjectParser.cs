@@ -128,6 +128,15 @@ namespace Light.Serialization.Json.TokenParsers
             {
                 foreach (var deferredReference in deferredReferences)
                 {
+                    // Check if the object has been deserialized
+                    object retrievedValue;
+                    if (context.ObjectReferencePreserver.TryGetDeserializedObject(deferredReference.Item2, out retrievedValue))
+                    {
+                        deferredReference.Item1.SetPropertyOrField(createdObject, retrievedValue);
+                        continue;
+                    }
+
+                    // If not, create a deferred reference
                     context.ObjectReferencePreserver.AddDeferredReference(new DeferredReferenceForObject(deferredReference.Item2, deferredReference.Item1, createdObject));
                 }
             }

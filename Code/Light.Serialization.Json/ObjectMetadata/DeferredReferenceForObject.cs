@@ -46,10 +46,7 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// <param name="reference">The object that should be set on the target object.</param>
         public void SetDeferredReference(object reference)
         {
-            if (_injectableValueDescription.PropertyInfo != null)
-                _injectableValueDescription.SetPropertyValue(_targetObject, reference);
-            else
-                _injectableValueDescription.SetFieldValue(_targetObject, reference);
+            _injectableValueDescription.SetPropertyOrField(_targetObject, reference);
         }
 
         [Conditional(Check.CompileAssertionsSymbol)]

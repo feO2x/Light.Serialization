@@ -224,7 +224,7 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         [Conditional(Check.CompileAssertionsSymbol)]
         private void CheckIfValueIsInjectableThroughField(object targetObject)
         {
-            if ((_kind & InjectableValueKind.SettableField) != 0)
+            if ((_kind & InjectableValueKind.SettableField) == 0)
                 throw new InvalidOperationException($"You try to set a field value on {NormalizedName}, but there is no such field on type {targetObject.GetType().FullName}.");
         }
 
@@ -248,6 +248,23 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         {
             if ((_kind & InjectableValueKind.PropertySetter) == 0)
                 throw new InvalidOperationException($"You try to set a property value on {NormalizedName}, but there is no such property on type {targetObject.GetType().FullName}.");
+        }
+
+        /// <summary>
+        ///     Sets the value on the given object using either the property info or the field info that is associated with this injectable value description.
+        /// </summary>
+        /// <param name="targetObject">The object the value should be set on.</param>
+        /// <param name="value">The value to be set.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="targetObject" /> is null.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when this injectable value description is not associated with a property info or field info.</exception>
+        public void SetPropertyOrField(object targetObject, object value)
+        {
+            if (PropertyInfo != null)
+                PropertyInfo.SetValue(targetObject, value);
+            else if (FieldInfo != null)
+                _fieldInfo.SetValue(targetObject, value);
+            else
+                throw new InvalidOperationException($"You try to set a property or field value on {NormalizedName}, but there is no possiblity to do so on type {targetObject.GetType().FullName}.");
         }
     }
 }
