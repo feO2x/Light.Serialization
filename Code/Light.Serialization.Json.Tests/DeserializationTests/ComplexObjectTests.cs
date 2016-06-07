@@ -10,15 +10,15 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         {
             const string json = "{\"x\": 42, \"y\": \"Foo\"}";
 
-            var result = GetDeserializedJson<DummyClass>(json);
+            var result = GetDeserializedJson<DummyDto>(json);
 
-            var expected = new DummyClass(42, "Foo");
+            var expected = new DummyDto(42, "Foo");
             result.ShouldBeEquivalentTo(expected);
         }
 
-        public class DummyClass
+        public class DummyDto
         {
-            public DummyClass(int x, string y)
+            public DummyDto(int x, string y)
             {
                 X = x;
                 Y = y;
