@@ -71,6 +71,7 @@
     <Compile Include="BaseJsonSerializerTest.cs" />
     <Compile Include="DeserializationTests\BooleanTests.cs" />
     <Compile Include="DeserializationTests\CharacterTests.cs" />
+    <Compile Include="DeserializationTests\ComplexObjectTests.cs" />
     <Compile Include="DeserializationTests\DateTimeTests.cs" />
     <Compile Include="DeserializationTests\DateTimeOffsetTests.cs" />
     <Compile Include="DeserializationTests\DoubleTests.cs" />

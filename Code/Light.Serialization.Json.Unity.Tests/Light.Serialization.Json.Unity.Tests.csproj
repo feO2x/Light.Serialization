@@ -89,6 +89,9 @@
     <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\CollectionTests.cs">
       <Link>DeserializationTests\CollectionTests.cs</Link>
     </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\ComplexObjectTests.cs">
+      <Link>DeserializationTests\ComplexObjectTests.cs</Link>
+    </Compile>
     <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\DateTimeOffsetTests.cs">
       <Link>DeserializationTests\DateTimeOffsetTests.cs</Link>
     </Compile>
