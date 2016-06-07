@@ -79,6 +79,7 @@
     <Compile Include="DeserializationTests\FloatTests.cs" />
     <Compile Include="DeserializationTests\GuidTests.cs" />
     <Compile Include="DeserializationTests\IntegerTypesTests.cs" />
+    <Compile Include="DeserializationTests\StringTests.cs" />
     <Compile Include="DeserializationTests\NullTests.cs" />
     <Compile Include="SampleTypes\Nodes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
