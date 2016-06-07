@@ -79,6 +79,7 @@
     <Compile Include="DeserializationTests\FloatTests.cs" />
     <Compile Include="DeserializationTests\GuidTests.cs" />
     <Compile Include="DeserializationTests\IntegerTypesTests.cs" />
+    <Compile Include="FrameworkExtensionTests\StringExtensionsTests.cs" />
     <Compile Include="DeserializationTests\WhitespaceTests.cs" />
     <Compile Include="DeserializationTests\TimeSpanTests.cs" />
     <Compile Include="DeserializationTests\StringTests.cs" />
