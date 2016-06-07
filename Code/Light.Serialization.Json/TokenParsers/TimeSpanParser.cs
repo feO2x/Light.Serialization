@@ -35,8 +35,14 @@ namespace Light.Serialization.Json.TokenParsers
         /// </summary>
         public JsonStringParseResult TryParse(JsonDeserializationContext context, string deserializedString)
         {
-            TimeSpan timeSpan;
-            return TimeSpan.TryParse(deserializedString, out timeSpan) ? new JsonStringParseResult(true, timeSpan) : new JsonStringParseResult(false);
+            try
+            {
+                return new JsonStringParseResult(true, new Iso8601DurationToTimeSpanParser().ParseToken(context.Token));
+            }
+            catch (JsonDocumentException)
+            {
+                return new JsonStringParseResult(false);
+            }
         }
 
         private static object ParseValue(JsonToken token)
