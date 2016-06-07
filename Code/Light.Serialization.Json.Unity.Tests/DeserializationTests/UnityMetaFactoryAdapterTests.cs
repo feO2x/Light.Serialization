@@ -9,10 +9,10 @@ using Xunit;
 
 namespace Light.Serialization.UnityContainerIntegration.Tests
 {
-    public sealed class UnityObjectFactoryTests
+    public sealed class UnityMetaFactoryAdapterTests
     {
         [Fact(DisplayName = "The deserializer must be able to use the unity container to inject values into deserialized objects that are not contained within the JSON document.")]
-        public void ResolveTest()
+        public void ValueNotPresentInDocument()
         {
             var diContainer = new UnityContainer().RegisterDefaultDeserializationTypes()
                                                   .UseDomainFriendlyNames(options => options.AllTypesFromAssemblies(typeof(AssemblyMarker))
