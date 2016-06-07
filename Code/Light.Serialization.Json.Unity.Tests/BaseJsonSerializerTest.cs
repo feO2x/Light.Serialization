@@ -69,6 +69,12 @@ namespace Light.Serialization.Json.Tests
             _container.DisableTypeMetadata();
         }
 
+        protected void DisableAllMetadata()
+        {
+            DisableObjectReferencePreservation();
+            DisableTypeMetadata();
+        }
+
         protected void UseDomainFriendlyNames(Action<TypeNameToJsonNameScanner.IScanningOptions> options = null)
         {
             if (options == null)

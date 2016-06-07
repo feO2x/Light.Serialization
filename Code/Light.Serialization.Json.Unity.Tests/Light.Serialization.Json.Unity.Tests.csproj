@@ -137,6 +137,9 @@
     <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\ComplexObjectTests.cs">
       <Link>SerializationTests\ComplexObjectTests.cs</Link>
     </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\CustomRuleTests.cs">
+      <Link>SerializationTests\CustomRuleTests.cs</Link>
+    </Compile>
     <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\DateTimeOffsetTests.cs">
       <Link>SerializationTests\DateTimeOffsetTests.cs</Link>
     </Compile>

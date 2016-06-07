@@ -12,13 +12,14 @@ namespace Light.Serialization.Json.Tests.SerializationTests
         [Fact(DisplayName = "An exception is thrown when a delegate should be serialized as delegates are currently not supported.")]
         public void ExceptionMustBeThrownWhenDelegateIsSerialized()
         {
-            var numberOfCalls = 0;
-            var action = new Action(() => numberOfCalls++);
+            Action action = DoNothing;
 
             Action act = () => GetSerializedJson(action);
 
             act.ShouldThrow<SerializationException>()
                .And.Message.Should().Contain($"Type {action.GetType()} cannot be serialized because there is no IJsonWriterInstructor registered that can cover this type.");
         }
+
+        private static void DoNothing() { }
     }
 }
