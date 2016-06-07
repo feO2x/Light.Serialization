@@ -122,6 +122,9 @@
     <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\NullTests.cs">
       <Link>DeserializationTests\NullTests.cs</Link>
     </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\ObjectReferencePreservationTests.cs">
+      <Link>DeserializationTests\ObjectReferencePreservationTests.cs</Link>
+    </Compile>
     <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\StringTests.cs">
       <Link>DeserializationTests\StringTests.cs</Link>
     </Compile>

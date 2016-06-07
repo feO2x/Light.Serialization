@@ -63,6 +63,10 @@ namespace Light.Serialization.Json.TokenParsers
             var typeToConstruct = metadataParseResult.TypeToConstruct;
             var collection = _metaFactory.CreateCollection(typeToConstruct);
 
+            // Add this collection to the object reference preserver if there was a $id in the metadata section
+            if (metadataParseResult.ReferencePreservationInfo.IsEmpty == false)
+                context.ObjectReferencePreserver.AddDeserializedObject(metadataParseResult.ReferencePreservationInfo.Id, collection);
+
             // TODO: arrays cannot be populated this way, I have to create another method
             var itemType = typeToConstruct.IsConstructedGenericType ? typeToConstruct.GenericTypeArguments[0] : typeof(object);
             PopulateCollection(currentToken, collection, context, itemType);

@@ -101,6 +101,7 @@
     <Compile Include="SerializationTests\CustomRuleTests.cs" />
     <Compile Include="SerializationTests\HumanReadableJsonTests.cs" />
     <Compile Include="SerializationTests\NullableTests.cs" />
+    <Compile Include="DeserializationTests\ObjectReferencePreservationTests.cs" />
     <Compile Include="SerializationTests\TimeSpanTests.cs" />
     <Compile Include="SerializationTests\PrimitiveValuesTests.cs" />
   </ItemGroup>
