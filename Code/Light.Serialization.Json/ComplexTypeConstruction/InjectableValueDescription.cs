@@ -246,7 +246,7 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         [Conditional(Check.CompileAssertionsSymbol)]
         private void CheckIfValueIsInjectableThroughProperty(object targetObject)
         {
-            if ((_kind & InjectableValueKind.PropertySetter) != 0)
+            if ((_kind & InjectableValueKind.PropertySetter) == 0)
                 throw new InvalidOperationException($"You try to set a property value on {NormalizedName}, but there is no such property on type {targetObject.GetType().FullName}.");
         }
     }

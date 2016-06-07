@@ -57,6 +57,13 @@ namespace Light.Serialization.Json.ObjectMetadata
         {
             deferredReference.MustNotBeNull(nameof(deferredReference));
 
+            object deserializedObject;
+            if (_deserializedObjects.TryGetValue(deferredReference.ReferenceId, out deserializedObject))
+            {
+                deferredReference.SetDeferredReference(deserializedObject);
+                return;
+            }
+
             List<IDeferredReference> targetList;
             if (_deferredReferences.TryGetValue(deferredReference.ReferenceId, out targetList) == false)
             {
