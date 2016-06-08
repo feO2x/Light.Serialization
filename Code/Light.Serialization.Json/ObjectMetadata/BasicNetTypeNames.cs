@@ -251,6 +251,7 @@ namespace Light.Serialization.Json.ObjectMetadata
                 .AddMapping(AbstractReadOnlyGenericDictionary, typeof(IReadOnlyDictionary<,>))
                 .AddMapping(SortedGenericDictionary, typeof(SortedDictionary<,>))
                 .AddMapping(GenericHashSet, typeof(HashSet<>))
+                .AddMapping(SortedGenericSet, typeof(SortedSet<>))
                 .AddMapping(AbstractGenericSet, typeof(ISet<>));
         }
     }

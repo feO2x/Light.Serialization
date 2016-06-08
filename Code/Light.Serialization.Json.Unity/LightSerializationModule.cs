@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Light.GuardClauses;
 using Light.Serialization.Abstractions;
@@ -172,6 +173,7 @@ namespace Light.Serialization.Json.Unity
                 // Metadata parsers
                 .RegisterTypeWithTypeName<IMetadataParser, ComplexObjectMetadataParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IMetadataParser, ArrayMetadataParser>(new ContainerControlledLifetimeManager())
+                .RegisterType<INameToTypeMapping, SimpleNameToTypeMapping>(new ContainerControlledLifetimeManager())
 
                 // Type description service
                 .RegisterType<ITypeDescriptionService, DefaultTypeDescriptionServiceWithCaching>(new ContainerControlledLifetimeManager())
@@ -342,6 +344,49 @@ namespace Light.Serialization.Json.Unity
 
             lifetimeManager = lifetimeManager ?? new TransientLifetimeManager();
             return container.RegisterType<TFrom, TTo>(typeof(TTo).Name, lifetimeManager, injectionFactory);
+        }
+
+        /// <summary>
+        ///     Registers <see cref="Dictionary{TKey,TValue}" /> and <see cref="SortedDictionary{TKey,TValue}" /> with the container using their default constructors.
+        /// </summary>
+        /// <param name="container">The container to be populated.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> is null.</exception>
+        public static IUnityContainer RegisterDefaultDictionaryTypes(this IUnityContainer container)
+        {
+            container.MustNotBeNull(nameof(container));
+
+            return container.RegisterType(typeof(Dictionary<,>), new InjectionConstructor())
+                            .RegisterType(typeof(SortedDictionary<,>), new InjectionConstructor());
+        }
+
+        /// <summary>
+        ///     Registers <see cref="List{T}" />, <see cref="ObservableCollection{T}" />, and <see cref="Collection{T}" /> with the container using their default constructors.
+        /// </summary>
+        /// <param name="container">The container to be populated.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> is null.</exception>
+        public static IUnityContainer RegisterDefaultCollectionTypes(this IUnityContainer container)
+        {
+            container.MustNotBeNull(nameof(container));
+
+            return container.RegisterType(typeof(List<>), new InjectionConstructor())
+                            .RegisterType(typeof(ObservableCollection<>), new InjectionConstructor())
+                            .RegisterType(typeof(Collection<>), new InjectionConstructor());
+        }
+
+        /// <summary>
+        ///     Registers <see cref="HashSet{T}"/> and <see cref="SortedSet{T}" /> with the container using their default constructors.
+        /// </summary>
+        /// <param name="container">The container to be populated.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> is null.</exception>
+        public static IUnityContainer RegisterDefaultSetTypes(this IUnityContainer container)
+        {
+            container.MustNotBeNull(nameof(container));
+
+            return container.RegisterType(typeof(HashSet<>), new InjectionConstructor())
+                            .RegisterType(typeof(SortedSet<>), new InjectionConstructor());
         }
     }
 }

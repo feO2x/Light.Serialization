@@ -7,6 +7,8 @@ using Light.Serialization.Json.Unity;
 using Microsoft.Practices.Unity;
 using Xunit;
 
+#pragma warning disable CS0436 // Type conflicts with imported type
+
 namespace Light.Serialization.UnityContainerIntegration.Tests
 {
     public sealed class UnityMetaFactoryAdapterTests

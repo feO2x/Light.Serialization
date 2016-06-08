@@ -106,8 +106,8 @@ namespace Light.Serialization.Json.TokenParsers
 
                     deferredReferences.Add(new Tuple<InjectableValueDescription, int>(injectableValueInfo, parseResult.RefId));
                 }
-
-                deserializedChildValues.Add(injectableValueInfo, parseResult.ParsedValue);
+                else
+                    deserializedChildValues.Add(injectableValueInfo, parseResult.ParsedValue);
 
                 if (jsonReader.ReadAndExpectEndOfObjectOrValueDelimiter() == JsonTokenType.EndOfObject)
                     break;

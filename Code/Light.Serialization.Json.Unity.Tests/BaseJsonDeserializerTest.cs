@@ -7,7 +7,7 @@ using Microsoft.Practices.Unity;
 
 // ReSharper disable once CheckNamespace
 
-namespace Light.Serialization.Tests
+namespace Light.Serialization.Json.Tests
 {
     public abstract class BaseJsonDeserializerTest
     {
@@ -15,7 +15,10 @@ namespace Light.Serialization.Tests
 
         protected BaseJsonDeserializerTest()
         {
-            Container = new UnityContainer().RegisterDefaultDeserializationTypes();
+            Container = new UnityContainer().RegisterDefaultDeserializationTypes()
+                                            .RegisterDefaultCollectionTypes()
+                                            .RegisterDefaultDictionaryTypes()
+                                            .RegisterDefaultSetTypes();
         }
 
         public void CompareDeserializedJsonToExpected<T>(string json, T expected)

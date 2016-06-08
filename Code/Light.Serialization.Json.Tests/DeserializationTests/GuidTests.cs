@@ -3,6 +3,8 @@ using FluentAssertions;
 using Light.Serialization.Json.FrameworkExtensions;
 using Xunit;
 
+#pragma warning disable CS0436 // Type conflicts with imported type
+
 namespace Light.Serialization.Json.Tests.DeserializationTests
 {
     public sealed class GuidTests : BaseJsonDeserializerTest
