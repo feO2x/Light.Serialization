@@ -60,5 +60,18 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
                 }
             }
         }
+
+        [Fact(DisplayName = "The deserializer must be able to resolve deferred dictionary references.")]
+        public void DictionaryPreservation()
+        {
+            const string json = "{ \"$id\": 0, \"Foo\": \"Bar\", \"Baz\": { \"$ref\": 0 }, \"Qux\": \"Quux\" }";
+
+            var dictionary = GetDeserializedJson<Dictionary<string, object>>(json);
+
+            dictionary.Count.Should().Be(3);
+            dictionary["Foo"].Should().Be("Bar");
+            dictionary["Qux"].Should().Be("Quux");
+            dictionary["Baz"].Should().BeSameAs(dictionary);
+        }
     }
 }

@@ -71,6 +71,8 @@ namespace Light.Serialization.Json.TokenParsers
                 return ParseResult.FromDeferredReference(metadataParseResult.ReferencePreservationInfo.Id);
 
             var dictionary = _metaFactory.CreateDictionary(metadataParseResult.TypeToConstruct);
+            if (metadataParseResult.ReferencePreservationInfo.IsEmpty == false)
+                context.ObjectReferencePreserver.AddDeserializedObject(metadataParseResult.ReferencePreservationInfo.Id, dictionary);
 
             var specificDictionaryType = metadataParseResult.TypeToConstruct.GetTypeInfo().GetResolvedTypeInfoForGenericInterface(typeof(IDictionary<,>));
             var keyType = specificDictionaryType != null ? specificDictionaryType.GenericTypeArguments[0] : typeof(object);
@@ -88,7 +90,7 @@ namespace Light.Serialization.Json.TokenParsers
                 currentToken.MustBeComplexObjectKey();
 
                 var parseResult = context.DeserializeToken(currentToken, keyType);
-                parseResult.IsDeferredReference.MustBe(false, exception: () => new DeserializationException("The key of complex JSON object must not be a deferred reference"));
+                parseResult.IsDeferredReference.MustBeFalse(exception: () => new DeserializationException("The key of a complex JSON object must not be a deferred reference."));
                 var key = parseResult.ParsedValue;
 
                 currentToken = context.JsonReader
