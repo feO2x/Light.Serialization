@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using FluentAssertions;
 using Xunit;
 using TestData = System.Collections.Generic.IEnumerable<object[]>;
@@ -62,6 +64,25 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
                 new object[] { "[12.23, 3.11, 15556.99]", new[] { 12.23, 3.11, 15556.99 }, 0.001 },
                 new object[] { "[3.141,1.6e10]", new[] { 3.141, 1.6e10 }, 0.0001 },
                 new object[] { "[]", new double[0], 0.0 }
+            };
+
+        [Theory(DisplayName = "The deserializer must be able to parse the collection type when it is present in the metadata section and the requested type is a collection abstraction.")]
+        [MemberData(nameof(AbstractCollectionReferenceData))]
+        public void AbstractCollectionReference(string json, ICollection expected)
+        {
+            ConfigureDefaultDomainFriendlyNaming();
+            var actual = GetDeserializedJson<ICollection>(json);
+
+            actual.Should().BeEquivalentTo(expected);
+            actual.GetType().Should().Be(expected.GetType());
+        }
+
+        public static readonly TestData AbstractCollectionReferenceData =
+            new[]
+            {
+                new object[] { "[ \"$type\", { \"name\": \"genericList\", \"typeArguments\": [ \"int32\" ] }, 1, 2, 3 ]", new List<int> { 1, 2, 3 } },
+                new object[] { "[ \"$type\", { \"name\": \"observableGenericList\", \"typeArguments\": [ \"string\" ] }, \"Foo\", \"Bar\" ]", new ObservableCollection<string> { "Foo", "Bar" } },
+                new object[] { "[ \"$type\", { \"name\": \"genericCollection\", \"typeArguments\": [ \"float64\" ] }, 42.2, -83334.175 ]", new Collection<double> { 42.2, -83334.175 } }
             };
     }
 }
