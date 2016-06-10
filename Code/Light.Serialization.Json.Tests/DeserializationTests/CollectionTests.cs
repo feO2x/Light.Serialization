@@ -106,5 +106,31 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
 
             deserializedArray.ShouldAllBeEquivalentTo(expected);
         }
+
+        [Fact(DisplayName = "The deserializer must be able to parse JSON arrays to .NET multidimensional arrays.")]
+        public void MultidimensionalArray()
+        {
+            ConfigureDefaultDomainFriendlyNaming();
+
+            var expected = new int[2, 4];
+            expected[0, 0] = 11;
+            expected[0, 1] = 12;
+            expected[0, 2] = 13;
+            expected[0, 3] = 14;
+            expected[1, 0] = 15;
+            expected[1, 1] = 16;
+            expected[1, 2] = 17;
+            expected[1, 3] = 18;
+            /* The multidimensional array should look like this:
+             * 11 12 13 14
+             * 15 16 17 18
+             */
+            const string json = "[ \"$type\", { \"name\": \"array\", \"arrayType\": \"int32\", \"arrayRank\": 2, \"arrayLength\": [2,4] }, 11, 12, 13, 14, 15, 16, 17, 18 ]";
+
+            var actual = GetDeserializedJson<int[,]>(json);
+
+            actual.GetType().Should().Be(expected.GetType());
+            actual.Should().BeEquivalentTo(expected);
+        }
     }
 }

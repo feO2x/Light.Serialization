@@ -52,6 +52,7 @@
     <Compile Include="BuilderInterfaces\IGetSingletonInstance.cs" />
     <Compile Include="ObjectMetadata\ArrayMetadataParseResult.cs" />
     <Compile Include="ObjectMetadata\DeferredReferenceForArray.cs" />
+    <Compile Include="ObjectMetadata\DeferredReferenceForMultidimensionalArray.cs" />
     <Compile Include="ObjectMetadata\IArrayMetadataParser.cs" />
     <Compile Include="TokenParserFactories\IJsonTokenParserFactory.cs" />
     <Compile Include="TokenParserFactories\JsonStringInheritanceParserFactory.cs" />

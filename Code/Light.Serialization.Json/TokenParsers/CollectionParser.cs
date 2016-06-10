@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using Light.GuardClauses;
+using Light.Serialization.Abstractions;
 using Light.Serialization.Json.ComplexTypeConstruction;
 using Light.Serialization.Json.LowLevelReading;
 using Light.Serialization.Json.ObjectMetadata;
@@ -76,6 +77,8 @@ namespace Light.Serialization.Json.TokenParsers
                 // Check if the array length was present in the metadata section; if not, we don't know how long the resulting array must be
                 if (metadataParseResult.ArrayLenghts == null)
                 {
+                    if (typeToConstruct.GetArrayRank() > 1)
+                        throw new DeserializationException("Light.GuardClauses does not support the deserialization of multidimensional arrays without the use of a metadata sections in JSON arrays because we cannot know how large the different dimensions are.");
                     array = PopulateArrayWithUnknownLenght(typeToConstruct.GetElementType(), currentToken, context);
                     if (metadataParseResult.ReferencePreservationInfo.IsEmpty == false)
                         context.ObjectReferencePreserver.AddDeserializedObject(metadataParseResult.ReferencePreservationInfo.Id, array);
@@ -86,7 +89,10 @@ namespace Light.Serialization.Json.TokenParsers
                 array = Array.CreateInstance(typeToConstruct.GetElementType(), metadataParseResult.ArrayLenghts);
                 if (metadataParseResult.ReferencePreservationInfo.IsEmpty == false)
                     context.ObjectReferencePreserver.AddDeserializedObject(metadataParseResult.ReferencePreservationInfo.Id, array);
-                PopulateArray(array, typeToConstruct.GetElementType(), currentToken, context);
+                if (array.Rank == 1)
+                    PopulateOneDimensionalArray(array, typeToConstruct.GetElementType(), currentToken, context);
+                else
+                    PopulateMultiDimensionalArray(array, typeToConstruct.GetElementType(), currentToken, context, metadataParseResult.ArrayLenghts);
                 return ParseResult.FromParsedValue(array);
             }
 
@@ -101,34 +107,6 @@ namespace Light.Serialization.Json.TokenParsers
             PopulateCollection(collection, itemType, currentToken, context);
 
             return ParseResult.FromParsedValue(collection);
-        }
-
-        private static void PopulateArray(Array array, Type itemType, JsonToken currentToken, JsonDeserializationContext context)
-        {
-            var currentIndex = 0;
-            while (true)
-            {
-                currentToken.MustBeBeginOfValue();
-                var parseResult = context.DeserializeToken(currentToken, itemType);
-
-                if (parseResult.IsDeferredReference)
-                    context.ObjectReferencePreserver.AddDeferredReference(new DeferredReferenceForArray(parseResult.ReferenceId, currentIndex, array));
-                else
-                    array.SetValue(parseResult.ParsedValue, currentIndex);
-
-                currentToken = context.JsonReader.ReadNextToken();
-                switch (currentToken.JsonType)
-                {
-                    case JsonTokenType.ValueDelimiter:
-                        currentToken = context.JsonReader.ReadNextToken();
-                        currentIndex++;
-                        continue;
-                    case JsonTokenType.EndOfArray:
-                        return;
-                    default:
-                        throw new JsonDocumentException($"Expected value delimiter or end of array in JSON document, but found {currentToken}.", currentToken);
-                }
-            }
         }
 
         private static void PopulateCollection(IList collection, Type itemType, JsonToken currentToken, JsonDeserializationContext context)
@@ -156,6 +134,77 @@ namespace Light.Serialization.Json.TokenParsers
                     default:
                         throw new JsonDocumentException($"Expected value delimiter or end of array in JSON document, but found {currentToken}.", currentToken);
                 }
+            }
+        }
+
+        private static void PopulateOneDimensionalArray(Array array, Type itemType, JsonToken currentToken, JsonDeserializationContext context)
+        {
+            var currentIndex = 0;
+            while (true)
+            {
+                currentToken.MustBeBeginOfValue();
+                var parseResult = context.DeserializeToken(currentToken, itemType);
+
+                if (parseResult.IsDeferredReference)
+                    context.ObjectReferencePreserver.AddDeferredReference(new DeferredReferenceForArray(parseResult.ReferenceId, currentIndex, array));
+                else
+                    array.SetValue(parseResult.ParsedValue, currentIndex);
+
+                currentToken = context.JsonReader.ReadNextToken();
+                switch (currentToken.JsonType)
+                {
+                    case JsonTokenType.ValueDelimiter:
+                        currentToken = context.JsonReader.ReadNextToken();
+                        currentIndex++;
+                        continue;
+                    case JsonTokenType.EndOfArray:
+                        return;
+                    default:
+                        throw new JsonDocumentException($"Expected value delimiter or end of array in JSON document, but found {currentToken}.", currentToken);
+                }
+            }
+        }
+
+        private static void PopulateMultiDimensionalArray(Array array, Type itemType, JsonToken currentToken, JsonDeserializationContext context, int[] arrayLenghts)
+        {
+            var currentIndices = new int[arrayLenghts.Length];
+
+            while (true)
+            {
+                currentToken.MustBeBeginOfValue();
+                var parseResult = context.DeserializeToken(currentToken, itemType);
+
+                if (parseResult.IsDeferredReference)
+                    context.ObjectReferencePreserver.AddDeferredReference(new DeferredReferenceForMultidimensionalArray(parseResult.ReferenceId, currentIndices, array));
+                else
+                    array.SetValue(parseResult.ParsedValue, currentIndices);
+
+                currentToken = context.JsonReader.ReadNextToken();
+                switch (currentToken.JsonType)
+                {
+                    case JsonTokenType.ValueDelimiter:
+                        currentToken = context.JsonReader.ReadNextToken();
+                        AdjustCurrentIndices(currentIndices, arrayLenghts);
+                        continue;
+                    case JsonTokenType.EndOfArray:
+                        return;
+                    default:
+                        throw new JsonDocumentException($"Expected value delimiter or end of array in JSON document, but found {currentToken}.", currentToken);
+                }
+            }
+        }
+
+        private static void AdjustCurrentIndices(int[] currentIndices, int[] arrayLenghts)
+        {
+            for (var i = arrayLenghts.Length - 1; i >= 0; --i)
+            {
+                if (currentIndices[i] + 1 < arrayLenghts[i])
+                {
+                    ++currentIndices[i];
+                    break;
+                }
+
+                currentIndices[i] = 0;
             }
         }
 

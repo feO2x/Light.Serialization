@@ -118,9 +118,11 @@ namespace Light.Serialization.Json.ObjectMetadata
 
             reader.ReadAndExpectValueDelimiterToken();
 
+            // If the type is an array, then the rest of the metadata section has to be parsed differently
             if (collectionType == typeof(Array))
                 return ParseArrayMetadataSection(context);
 
+            // Else call the base class implementation for resolving a "normal" type metadata section
             var resolvedGenericCollectionType = ParseResolvedGenericType(collectionType, context);
             return new CollectionTypeInfo(resolvedGenericCollectionType);
         }
@@ -130,6 +132,7 @@ namespace Light.Serialization.Json.ObjectMetadata
             var reader = context.JsonReader;
             var currentToken = reader.ReadNextToken();
 
+            // The next element must be the arrayType symbol
             currentToken.MustBeComplexObjectKey();
             var currentKey = context.DeserializeToken<string>(currentToken);
             if (currentKey != _arrayTypeSymbol)
@@ -138,19 +141,68 @@ namespace Light.Serialization.Json.ObjectMetadata
             reader.ReadAndExpectPairDelimiterToken();
             var elementType = ParseType(context);
 
+            // The next token is either the optional arrayRank symbol describing the dimensions of the target array...
             currentToken = reader.ReadAndExpectValueDelimiterToken()
                                  .ReadNextToken();
             currentToken.MustBeComplexObjectKey();
             currentKey = context.DeserializeToken<string>(currentToken);
+
+            var numberOfDimensions = 1;
+
+            if (currentKey == _arrayRankSymbol)
+            {
+                currentToken = reader.ReadAndExpectPairDelimiterToken()
+                                     .ReadNextToken();
+                if (currentToken.JsonType != JsonTokenType.IntegerNumber)
+                    throw new JsonDocumentException($"Expected JSON number describing the number of dimensions for the target array, but found {currentToken}.", currentToken);
+
+                numberOfDimensions = context.DeserializeToken<int>(currentToken);
+                if (numberOfDimensions < 1)
+                    throw new JsonDocumentException($"{_arrayRankSymbol} describes the number of dimensions of a multidimensional array and must be greated than 0, but you specified {numberOfDimensions}.", currentToken);
+
+                currentToken = reader.ReadAndExpectValueDelimiterToken()
+                                     .ReadNextToken();
+                currentToken.MustBeComplexObjectKey();
+                currentKey = context.DeserializeToken<string>(currentToken);
+            }
+
+            // ...or the arrayLenght symbol. Note that this symbol is mandatory.
             if (currentKey != _arrayLengthSymbol)
                 throw new JsonDocumentException($"Expected {_arrayLengthSymbol} in metadata section of JSON array, but found {currentToken}.", currentToken);
 
             currentToken = reader.ReadAndExpectPairDelimiterToken()
                                  .ReadNextToken();
 
-            reader.ReadAndExpectEndOfObject();
+            // If the target array is not multidimensional, arrayLenght must be a simple integer number
+            if (numberOfDimensions == 1)
+            {
+                if (currentToken.JsonType != JsonTokenType.IntegerNumber)
+                    throw new JsonDocumentException($"Expected JSON number describing the length of the target array, but found {currentToken}.", currentToken);
+                reader.ReadAndExpectEndOfObject();
+                return new CollectionTypeInfo(elementType.MakeArrayType(), new[] { context.DeserializeToken<int>(currentToken) });
+            }
 
-            return new CollectionTypeInfo(elementType.MakeArrayType(), new[] { context.DeserializeToken<int>(currentToken) });
+            // Else the value is a JSON array containing the lengths of the different dimensions for the target array
+            if (currentToken.JsonType != JsonTokenType.BeginOfArray)
+                throw new JsonDocumentException($"Expected JSON array describing the lengths of the different dimensions of the target array, but found {currentToken}.", currentToken);
+
+            var arraySizes = new int[numberOfDimensions];
+            for (var i = 0;; i++)
+            {
+                currentToken = reader.ReadNextToken();
+                if (currentToken.JsonType != JsonTokenType.IntegerNumber)
+                    throw new JsonDocumentException($"Expected JSON number that describes dimension {i} of the target array, but found {currentToken}.", currentToken);
+                arraySizes[i] = context.DeserializeToken<int>(currentToken);
+                if (i < numberOfDimensions - 1)
+                    reader.ReadAndExpectValueDelimiterToken();
+                else
+                {
+                    reader.ReadAndExpectedEndOfArray();
+                    break;
+                }
+            }
+            reader.ReadAndExpectEndOfObject();
+            return new CollectionTypeInfo(elementType.MakeArrayType(numberOfDimensions), arraySizes);
         }
 
         private struct CollectionTypeInfo

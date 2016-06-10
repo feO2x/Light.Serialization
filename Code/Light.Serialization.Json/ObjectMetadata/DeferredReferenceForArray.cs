@@ -16,7 +16,7 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// </summary>
         /// <param name="referenceId">The id of the deferred reference.</param>
         /// <param name="targetIndex">The index where the deferred reference will be set in the array.</param>
-        /// <param name="array">The array where the deferred object will be set on.</param>
+        /// <param name="array">The array where the deferred reference will be set on.</param>
         /// <exception cref="ArgumentOutOfRangeException">
         ///     Thrown when <paramref name="referenceId" /> or <paramref name="targetIndex" /> is less than zero or
         ///     <paramref name="targetIndex" /> is greater than or equal to the length of the array.

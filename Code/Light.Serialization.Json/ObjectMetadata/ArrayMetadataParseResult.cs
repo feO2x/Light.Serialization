@@ -82,7 +82,7 @@ namespace Light.Serialization.Json.ObjectMetadata
             typeToConstruct.MustNotBeNull(nameof(typeToConstruct));
             arrayLengths.MustNotBeNullOrEmpty(nameof(arrayLengths));
 
-            return new ArrayMetadataParseResult(typeToConstruct, referencePreservationInfo, null);
+            return new ArrayMetadataParseResult(typeToConstruct, referencePreservationInfo, arrayLengths);
         }
     }
 }
