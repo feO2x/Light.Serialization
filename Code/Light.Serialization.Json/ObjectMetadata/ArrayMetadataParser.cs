@@ -148,6 +148,8 @@ namespace Light.Serialization.Json.ObjectMetadata
             currentToken = reader.ReadAndExpectPairDelimiterToken()
                                  .ReadNextToken();
 
+            reader.ReadAndExpectEndOfObject();
+
             return new CollectionTypeInfo(elementType.MakeArrayType(), new[] { context.DeserializeToken<int>(currentToken) });
         }
 

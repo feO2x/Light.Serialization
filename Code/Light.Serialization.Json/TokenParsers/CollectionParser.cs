@@ -54,7 +54,7 @@ namespace Light.Serialization.Json.TokenParsers
         {
             var currentToken = context.JsonReader.ReadNextToken();
 
-            // Check if the JSON array is empty
+            // Check if the JSON array is empty - in this case, there is no metadata section, and therefore the array must not be added to the ObjectReferencePreserver
             if (currentToken.JsonType == JsonTokenType.EndOfArray)
                 return ParseResult.FromParsedValue(context.RequestedType.IsArray ?
                                                        Array.CreateInstance(context.RequestedType.GetElementType(), 0) :

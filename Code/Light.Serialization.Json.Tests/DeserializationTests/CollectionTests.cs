@@ -82,7 +82,8 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
             {
                 new object[] { "[ \"$type\", { \"name\": \"genericList\", \"typeArguments\": [ \"int32\" ] }, 1, 2, 3 ]", new List<int> { 1, 2, 3 } },
                 new object[] { "[ \"$type\", { \"name\": \"observableGenericList\", \"typeArguments\": [ \"string\" ] }, \"Foo\", \"Bar\" ]", new ObservableCollection<string> { "Foo", "Bar" } },
-                new object[] { "[ \"$type\", { \"name\": \"genericCollection\", \"typeArguments\": [ \"float64\" ] }, 42.2, -83334.175 ]", new Collection<double> { 42.2, -83334.175 } }
+                new object[] { "[ \"$type\", { \"name\": \"genericCollection\", \"typeArguments\": [ \"float64\" ] }, 42.2, -83334.175 ]", new Collection<double> { 42.2, -83334.175 } },
+                new object[] { "[ \"$type\", { \"name\": \"array\", \"arrayType\": \"int32\", \"arrayLength\": 3 }, 87, 42, 0 ]", new[] { 87, 42, 0 } }
             };
 
         [Theory(DisplayName = "The deserializer must be able to parse JSON number arrays as .NET int arrays.")]
