@@ -42,9 +42,9 @@ namespace Light.Serialization.Json.ObjectMetadata
             if (actualType.IsArray)
                 SerializeArrayInfo(serializationContext);
             else
-                SerializeTypeInfoRecursively(serializationContext.ActualType, serializationContext.Writer);
+                SerializeTypeInfoRecursively(actualType, writer);
 
-            serializationContext.Writer.WriteDelimiter();
+            writer.WriteDelimiter();
         }
 
         private void SerializeArrayInfo(JsonSerializationContext serializationContext)

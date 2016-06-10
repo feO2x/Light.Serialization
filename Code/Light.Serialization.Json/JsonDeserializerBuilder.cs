@@ -17,8 +17,8 @@ namespace Light.Serialization.Json
     /// </summary>
     public sealed class JsonDeserializerBuilder
     {
-        private readonly IMetadataParser _arrayMetadataParser;
-        private readonly IMetadataParser _complexObjectMetadataParser;
+        private readonly IArrayMetadataParser _arrayMetadataParser;
+        private readonly IObjectMetadataParser _complexObjectMetadataParser;
         private readonly IMetaFactory _metaFactory = new DefaultMetaFactory();
         private readonly List<IJsonTokenParserFactory> _tokenParserFactories;
         private INameToTypeMapping _nameToTypeMapping;
@@ -50,18 +50,17 @@ namespace Light.Serialization.Json
             mapping.MustNotBeNull(nameof(mapping));
 
             _nameToTypeMapping = mapping;
-            SetNameToTypeMappingOnMetadataParser(_complexObjectMetadataParser, mapping);
-            SetNameToTypeMappingOnMetadataParser(_arrayMetadataParser, mapping);
+            SetNameToTypeMappingOnMetadataParser(_complexObjectMetadataParser as ISetNameToTypeMapping, mapping);
+            SetNameToTypeMappingOnMetadataParser(_arrayMetadataParser as ISetNameToTypeMapping, mapping);
             return this;
         }
 
-        private static void SetNameToTypeMappingOnMetadataParser(IMetadataParser metadataParser, INameToTypeMapping mapping)
+        private static void SetNameToTypeMappingOnMetadataParser(ISetNameToTypeMapping metadataParser, INameToTypeMapping mapping)
         {
-            var setNameToTypeMapping = metadataParser as ISetNameToTypeMapping;
-            if (setNameToTypeMapping == null)
+            if (metadataParser == null)
                 return;
 
-            setNameToTypeMapping.NameToTypeMapping = mapping;
+            metadataParser.NameToTypeMapping = mapping;
         }
 
         /// <summary>

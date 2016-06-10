@@ -49,6 +49,7 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// <returns>The type that should be instantiated.</returns>
         protected Type ParseType(JsonDeserializationContext context)
         {
+            
             var jsonReader = context.JsonReader;
             var currentToken = jsonReader.ReadNextToken();
 
@@ -77,12 +78,21 @@ namespace Light.Serialization.Json.ObjectMetadata
                 throw new JsonDocumentException($"Expected name of generic type in metadata section of complex JSON object, but found {currentToken}.", currentToken);
             var genericTypeName = context.DeserializeToken<string>(currentToken);
             var genericType = _nameToTypeMapping.Map(genericTypeName);
+            jsonReader.ReadAndExpectValueDelimiterToken();
 
+            // TODO: this method cannot parse array types yet, I have to insert some branching logic here
+
+            return ParseResolvedGenericType(genericType, context);
+        }
+
+        protected Type ParseResolvedGenericType(Type genericType, JsonDeserializationContext context)
+        {
             // Read the "typeArguments" key of hte generic type description
-            currentToken = jsonReader.ReadAndExpectValueDelimiterToken()
-                                     .ReadNextToken();
+            var jsonReader = context.JsonReader;
+            var currentToken = jsonReader.ReadNextToken();
+
             currentToken.MustBeComplexObjectKey();
-            key = context.DeserializeToken<string>(currentToken);
+            var key = context.DeserializeToken<string>(currentToken);
             if (key != _genericTypeArgumentsSymbol)
                 throw new JsonDocumentException($"Expected {_genericTypeArgumentsSymbol} in metadata section of complex JSON object, but found {key}.", currentToken);
 

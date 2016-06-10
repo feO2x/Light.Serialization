@@ -11,8 +11,8 @@ namespace Light.Serialization.Json
     {
         public static TCollection AddDefaultTokenParserFactories<TCollection>(this TCollection collection,
                                                                               IMetaFactory metaFactory,
-                                                                              IMetadataParser complexObjectMetadataParser,
-                                                                              IMetadataParser arrayMetadataParser,
+                                                                              IObjectMetadataParser complexObjectMetadataParser,
+                                                                              IArrayMetadataParser arrayMetadataParser,
                                                                               ITypeDescriptionService typeDescriptionService)
             where TCollection : IList<IJsonTokenParserFactory>
         {

@@ -14,7 +14,7 @@ namespace Light.Serialization.Json.TokenParsers
     /// </summary>
     public sealed class ComplexObjectParser : IJsonTokenParser, ISetTypeDescriptionService
     {
-        private readonly IMetadataParser _metadataParser;
+        private readonly IObjectMetadataParser _metadataParser;
         private readonly IMetaFactory _metaFactory;
         private ITypeDescriptionService _typeDescriptionService;
 
@@ -26,7 +26,7 @@ namespace Light.Serialization.Json.TokenParsers
         /// <param name="metadataParser">The parser that is used for the metadata section of an complex JSON object.</param>
         public ComplexObjectParser(IMetaFactory metaFactory,
                                    ITypeDescriptionService typeDescriptionService,
-                                   IMetadataParser metadataParser)
+                                   IObjectMetadataParser metadataParser)
         {
             metaFactory.MustNotBeNull(nameof(metaFactory));
             typeDescriptionService.MustNotBeNull(nameof(typeDescriptionService));

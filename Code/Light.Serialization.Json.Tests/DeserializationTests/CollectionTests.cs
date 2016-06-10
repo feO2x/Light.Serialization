@@ -84,5 +84,26 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
                 new object[] { "[ \"$type\", { \"name\": \"observableGenericList\", \"typeArguments\": [ \"string\" ] }, \"Foo\", \"Bar\" ]", new ObservableCollection<string> { "Foo", "Bar" } },
                 new object[] { "[ \"$type\", { \"name\": \"genericCollection\", \"typeArguments\": [ \"float64\" ] }, 42.2, -83334.175 ]", new Collection<double> { 42.2, -83334.175 } }
             };
+
+        [Theory(DisplayName = "The deserializer must be able to parse JSON number arrays as .NET int arrays.")]
+        [InlineData("[1, 2, 3]", new[] { 1, 2, 3 })]
+        [InlineData("[3, -42, 1887, 0]", new[] { 3, -42, 1887, 0 })]
+        [InlineData("[]", new int[] { })]
+        public void IntArrays(string json, int[] expected)
+        {
+            var deserializedArray = GetDeserializedJson<int[]>(json);
+
+            deserializedArray.ShouldAllBeEquivalentTo(expected);
+        }
+
+        [Theory(DisplayName = "The deserializer must be able to parse JSON string arrays as .NET string arrays.")]
+        [InlineData("[\"Foo\", \"Bar\"]", new[] { "Foo", "Bar" })]
+        [InlineData("[]", new string[] { })]
+        public void StringArrays(string json, string[] expected)
+        {
+            var deserializedArray = GetDeserializedJson<string[]>(json);
+
+            deserializedArray.ShouldAllBeEquivalentTo(expected);
+        }
     }
 }

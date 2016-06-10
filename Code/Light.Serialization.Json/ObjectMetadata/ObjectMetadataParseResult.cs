@@ -4,10 +4,10 @@ using Light.GuardClauses;
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents the information that is necessary to create a dictionary, a complex .NET object, or a collection
-    ///     from the metadata section of a complex JSON object or JSON array.
+    ///     Represents the information that is necessary to create a dictionary, a complex .NET object
+    ///     from the metadata section of a complex JSON object.
     /// </summary>
-    public struct MetadataParseResult
+    public struct ObjectMetadataParseResult
     {
         /// <summary>
         ///     Gets the type that should be constructed.
@@ -19,7 +19,7 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// </summary>
         public readonly ReferencePreservationInfo ReferencePreservationInfo;
 
-        private MetadataParseResult(Type typeToConstruct, ReferencePreservationInfo referencePreservationInfo)
+        private ObjectMetadataParseResult(Type typeToConstruct, ReferencePreservationInfo referencePreservationInfo)
         {
             TypeToConstruct = typeToConstruct;
             ReferencePreservationInfo = referencePreservationInfo;
@@ -30,18 +30,18 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="refId" /> is less than zero.</exception>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="deserializedObject" /> is null.</exception>
-        public static MetadataParseResult FromRetrievedObject(int refId, object deserializedObject)
+        public static ObjectMetadataParseResult FromRetrievedObject(int refId, object deserializedObject)
         {
-            return new MetadataParseResult(null, ReferencePreservationInfo.FromAlreadyDeserializedObject(refId, deserializedObject));
+            return new ObjectMetadataParseResult(null, ReferencePreservationInfo.FromAlreadyDeserializedObject(refId, deserializedObject));
         }
 
         /// <summary>
         ///     Creates a new instance of MetadataParseResult with a deferred reference.
         /// </summary>
         /// <param name="refId">The reference id pointing to another object that has not been fully deserialized yet.</param>
-        public static MetadataParseResult FromDeferredReference(int refId)
+        public static ObjectMetadataParseResult FromDeferredReference(int refId)
         {
-            return new MetadataParseResult(null, ReferencePreservationInfo.FromDeferredReference(refId));
+            return new ObjectMetadataParseResult(null, ReferencePreservationInfo.FromDeferredReference(refId));
         }
 
         /// <summary>
@@ -50,11 +50,11 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// <param name="typeToConstruct">The type that should be instantiated and populated.</param>
         /// <param name="referencePreservationInfo">Information about Object Reference Preservation.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeToConstruct" /> is null.</exception>
-        public static MetadataParseResult FromMetadata(Type typeToConstruct, ReferencePreservationInfo referencePreservationInfo)
+        public static ObjectMetadataParseResult FromMetadata(Type typeToConstruct, ReferencePreservationInfo referencePreservationInfo)
         {
             typeToConstruct.MustNotBeNull(nameof(typeToConstruct));
 
-            return new MetadataParseResult(typeToConstruct, referencePreservationInfo);
+            return new ObjectMetadataParseResult(typeToConstruct, referencePreservationInfo);
         }
     }
 }

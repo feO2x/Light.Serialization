@@ -154,25 +154,16 @@ namespace Light.Serialization.Json.Unity
                 .RegisterTypeWithTypeName<IJsonTokenParser, GuidParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonStringToPrimitiveParser, GuidParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonTokenParser, JsonStringInheritanceParser>()
-
-                // TODO: these registrations can be simplified when the ArrayMetadataParser gets its own interface
-                .RegisterTypeWithTypeName<IJsonTokenParser, CollectionParser>(new InjectionFactory(c => new CollectionParser(c.Resolve<IMetaFactory>(),
-                                                                                                                             c.Resolve<IMetadataParser>(nameof(ArrayMetadataParser)))),
-                                                                              new ContainerControlledLifetimeManager())
-                .RegisterTypeWithTypeName<IJsonTokenParser, DictionaryParser>(new InjectionFactory(c => new DictionaryParser(c.Resolve<IMetaFactory>(),
-                                                                                                                             c.Resolve<IMetadataParser>(nameof(ComplexObjectMetadataParser)))),
-                                                                              new ContainerControlledLifetimeManager())
-                .RegisterTypeWithTypeName<IJsonTokenParser, ComplexObjectParser>(new InjectionFactory(c => new ComplexObjectParser(c.Resolve<IMetaFactory>(),
-                                                                                                                                   c.Resolve<ITypeDescriptionService>(),
-                                                                                                                                   c.Resolve<IMetadataParser>(nameof(ComplexObjectMetadataParser)))),
-                                                                                 new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, CollectionParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, DictionaryParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, ComplexObjectParser>(new ContainerControlledLifetimeManager())
 
                 // Meta Factory
                 .RegisterType<IMetaFactory, UnityMetaFactoryAdapter>(new ContainerControlledLifetimeManager())
 
                 // Metadata parsers
-                .RegisterTypeWithTypeName<IMetadataParser, ComplexObjectMetadataParser>(new ContainerControlledLifetimeManager())
-                .RegisterTypeWithTypeName<IMetadataParser, ArrayMetadataParser>(new ContainerControlledLifetimeManager())
+                .RegisterType<IObjectMetadataParser, ComplexObjectMetadataParser>(new ContainerControlledLifetimeManager())
+                .RegisterType<IArrayMetadataParser, ArrayMetadataParser>(new ContainerControlledLifetimeManager())
                 .RegisterType<INameToTypeMapping, SimpleNameToTypeMapping>(new ContainerControlledLifetimeManager())
 
                 // Type description service

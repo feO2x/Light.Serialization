@@ -1,6 +1,5 @@
 ﻿using System;
 using Light.GuardClauses;
-using Light.Serialization.Json.BuilderInterfaces;
 using Light.Serialization.Json.LowLevelReading;
 
 namespace Light.Serialization.Json.ObjectMetadata
@@ -8,7 +7,7 @@ namespace Light.Serialization.Json.ObjectMetadata
     /// <summary>
     ///     Represents an object that parses the metadata section of complex JSON objects.
     /// </summary>
-    public sealed class ComplexObjectMetadataParser : BaseMetadataParser, IMetadataParser
+    public sealed class ComplexObjectMetadataParser : BaseMetadataParser, IObjectMetadataParser
     {
         /// <summary>
         ///     Creates a new instance of ComplexObjectMetadataParser.
@@ -24,7 +23,7 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// <param name="currentToken">The JSON token that represents the first label in a complex JSON object.</param>
         /// <param name="context">The deserialization context for the complex JSON object.</param>
         /// <returns>The metadata parse result.</returns>
-        public MetadataParseResult ParseMetadataSection(ref JsonToken currentToken, JsonDeserializationContext context)
+        public ObjectMetadataParseResult ParseMetadataSection(ref JsonToken currentToken, JsonDeserializationContext context)
         {
             currentToken.JsonType.MustBe(JsonTokenType.String, $"The {nameof(currentToken)} is not a JSON string.");
 
@@ -50,9 +49,9 @@ namespace Light.Serialization.Json.ObjectMetadata
                     objectId = context.DeserializeToken<int>(numberToken);
                     object retrievedObject;
                     if (context.ObjectReferencePreserver.TryGetDeserializedObject(objectId, out retrievedObject))
-                        return MetadataParseResult.FromRetrievedObject(objectId, retrievedObject);
+                        return ObjectMetadataParseResult.FromRetrievedObject(objectId, retrievedObject);
 
-                    return MetadataParseResult.FromDeferredReference(objectId);
+                    return ObjectMetadataParseResult.FromDeferredReference(objectId);
                 }
 
                 // $id - defining an id for this complex JSON object
@@ -75,13 +74,13 @@ namespace Light.Serialization.Json.ObjectMetadata
                 else
                 {
                     var referencePreservationInfo = objectId == -1 ? ReferencePreservationInfo.Empty : ReferencePreservationInfo.FromNewObjectInJsonDocument(objectId);
-                    return MetadataParseResult.FromMetadata(typeToConstruct, referencePreservationInfo);
+                    return ObjectMetadataParseResult.FromMetadata(typeToConstruct, referencePreservationInfo);
                 }
 
                 // Update currentToken for next loop cycle
                 currentToken = jsonReader.ReadNextToken();
                 if (currentToken.JsonType == JsonTokenType.EndOfObject)
-                    return MetadataParseResult.FromMetadata(typeToConstruct, ReferencePreservationInfo.FromNewObjectInJsonDocument(objectId));
+                    return ObjectMetadataParseResult.FromMetadata(typeToConstruct, ReferencePreservationInfo.FromNewObjectInJsonDocument(objectId));
 
                 currentToken.MustBeValueDelimiterInObject();
 

@@ -16,7 +16,7 @@ namespace Light.Serialization.Json.TokenParsers
     /// </summary>
     public sealed class DictionaryParser : IJsonTokenParser
     {
-        private readonly IMetadataParser _metadataParser;
+        private readonly IObjectMetadataParser _metadataParser;
         private readonly IMetaFactory _metaFactory;
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace Light.Serialization.Json.TokenParsers
         /// <param name="metaFactory">The factory that is able to create dictionaries from type information.</param>
         /// <param name="metadataParser">The object that can parse the metadata section of a complex JSON object.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="metaFactory" /> or <paramref name="metadataParser" /> is null.</exception>
-        public DictionaryParser(IMetaFactory metaFactory, IMetadataParser metadataParser)
+        public DictionaryParser(IMetaFactory metaFactory, IObjectMetadataParser metadataParser)
         {
             metaFactory.MustNotBeNull(nameof(metaFactory));
             metadataParser.MustNotBeNull(nameof(metadataParser));

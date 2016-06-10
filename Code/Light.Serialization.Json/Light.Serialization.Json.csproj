@@ -50,6 +50,9 @@
     <Compile Include="BuilderInterfaces\ISetTypeToNameMapping.cs" />
     <Compile Include="Caching\DefaultTypeDescriptionServiceWithCaching.cs" />
     <Compile Include="BuilderInterfaces\IGetSingletonInstance.cs" />
+    <Compile Include="ObjectMetadata\ArrayMetadataParseResult.cs" />
+    <Compile Include="ObjectMetadata\DeferredReferenceForArray.cs" />
+    <Compile Include="ObjectMetadata\IArrayMetadataParser.cs" />
     <Compile Include="TokenParserFactories\IJsonTokenParserFactory.cs" />
     <Compile Include="TokenParserFactories\JsonStringInheritanceParserFactory.cs" />
     <Compile Include="TokenParserFactories\SingletonFactory.cs" />
@@ -73,7 +76,7 @@
     <Compile Include="ObjectMetadata\DeferredReferenceForDictionary.cs" />
     <Compile Include="ObjectMetadata\DeferredReferenceForObject.cs" />
     <Compile Include="ObjectMetadata\IDeferredReference.cs" />
-    <Compile Include="ObjectMetadata\MetadataParseResult.cs" />
+    <Compile Include="ObjectMetadata\ObjectMetadataParseResult.cs" />
     <Compile Include="ComplexTypeConstruction\TypeCreationDescription.cs" />
     <Compile Include="ComplexTypeDecomposition\IReadableValuesTypeAnalyzer.cs" />
     <Compile Include="ComplexTypeDecomposition\IValueProvider.cs" />
@@ -110,7 +113,7 @@
     <Compile Include="ObjectMetadata\ArrayMetadataInstructor.cs" />
     <Compile Include="ObjectMetadata\DomainFriendlyNameMapping.cs" />
     <Compile Include="ObjectMetadata\IAddMapping.cs" />
-    <Compile Include="ObjectMetadata\IMetadataParser.cs" />
+    <Compile Include="ObjectMetadata\IObjectMetadataParser.cs" />
     <Compile Include="ObjectMetadata\INameToTypeMapping.cs" />
     <Compile Include="ObjectMetadata\IMetadataInstructor.cs" />
     <Compile Include="BuilderInterfaces\ISetObjectReferencePreservationStatus.cs" />
