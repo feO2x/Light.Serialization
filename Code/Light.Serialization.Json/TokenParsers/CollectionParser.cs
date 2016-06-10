@@ -112,7 +112,7 @@ namespace Light.Serialization.Json.TokenParsers
                 var parseResult = context.DeserializeToken(currentToken, itemType);
 
                 if (parseResult.IsDeferredReference)
-                    context.ObjectReferencePreserver.AddDeferredReference(new DeferredReferenceForArray(parseResult.RefId, currentIndex, array));
+                    context.ObjectReferencePreserver.AddDeferredReference(new DeferredReferenceForArray(parseResult.ReferenceId, currentIndex, array));
                 else
                     array.SetValue(parseResult.ParsedValue, currentIndex);
 
@@ -140,7 +140,7 @@ namespace Light.Serialization.Json.TokenParsers
                 var parseResult = context.DeserializeToken(currentToken, itemType);
 
                 if (parseResult.IsDeferredReference)
-                    context.ObjectReferencePreserver.AddDeferredReference(new DeferredReferenceForCollection(parseResult.RefId, currentIndex, collection));
+                    context.ObjectReferencePreserver.AddDeferredReference(new DeferredReferenceForCollection(parseResult.ReferenceId, currentIndex, collection));
                 else
                     collection.Add(parseResult.ParsedValue);
 
@@ -182,7 +182,7 @@ namespace Light.Serialization.Json.TokenParsers
                     if (deferredReferences == null)
                         deferredReferences = new List<DeferredReferenceCandidate>();
 
-                    deferredReferences.Add(new DeferredReferenceCandidate(parseResult.RefId, currentIndex));
+                    deferredReferences.Add(new DeferredReferenceCandidate(parseResult.ReferenceId, currentIndex));
                 }
                 else
                     temporaryList.Add((T) parseResult.ParsedValue);

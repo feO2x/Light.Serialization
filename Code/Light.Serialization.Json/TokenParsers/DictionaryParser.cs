@@ -100,7 +100,7 @@ namespace Light.Serialization.Json.TokenParsers
 
                 parseResult = context.DeserializeToken(currentToken, valueType);
                 if (parseResult.IsDeferredReference)
-                    context.ObjectReferencePreserver.AddDeferredReference(new DeferredReferenceForDictionary(parseResult.RefId, key, dictionary));
+                    context.ObjectReferencePreserver.AddDeferredReference(new DeferredReferenceForDictionary(parseResult.ReferenceId, key, dictionary));
                 else
                     dictionary.Add(key, parseResult.ParsedValue);
 

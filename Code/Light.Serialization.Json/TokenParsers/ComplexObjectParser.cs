@@ -85,7 +85,7 @@ namespace Light.Serialization.Json.TokenParsers
             currentToken.MustBeComplexObjectKey();
 
             var deserializedChildValues = new Dictionary<InjectableValueDescription, object>();
-            List<Tuple<InjectableValueDescription, int>> deferredReferences = null;
+            List<DeferredReferenceCandidate> deferredReferences = null;
             // Run through the remaining key-value pairs of the complex JSON object and deserialize them
             while (true)
             {
@@ -102,9 +102,9 @@ namespace Light.Serialization.Json.TokenParsers
                 if (parseResult.IsDeferredReference)
                 {
                     if (deferredReferences == null)
-                        deferredReferences = new List<Tuple<InjectableValueDescription, int>>();
+                        deferredReferences = new List<DeferredReferenceCandidate>();
 
-                    deferredReferences.Add(new Tuple<InjectableValueDescription, int>(injectableValueInfo, parseResult.RefId));
+                    deferredReferences.Add(new DeferredReferenceCandidate(injectableValueInfo, parseResult.ReferenceId));
                 }
                 else
                     deserializedChildValues.Add(injectableValueInfo, parseResult.ParsedValue);
@@ -128,16 +128,16 @@ namespace Light.Serialization.Json.TokenParsers
             {
                 foreach (var deferredReference in deferredReferences)
                 {
-                    // Check if the object has been deserialized
+                    // Check if the object has been deserialized in the recursive algorithm until now
                     object retrievedValue;
-                    if (context.ObjectReferencePreserver.TryGetDeserializedObject(deferredReference.Item2, out retrievedValue))
+                    if (context.ObjectReferencePreserver.TryGetDeserializedObject(deferredReference.ReferenceId, out retrievedValue))
                     {
-                        deferredReference.Item1.SetPropertyOrField(createdObject, retrievedValue);
+                        deferredReference.InjectableValueDescription.SetPropertyOrField(createdObject, retrievedValue);
                         continue;
                     }
 
                     // If not, create a deferred reference
-                    context.ObjectReferencePreserver.AddDeferredReference(new DeferredReferenceForObject(deferredReference.Item2, deferredReference.Item1, createdObject));
+                    context.ObjectReferencePreserver.AddDeferredReference(new DeferredReferenceForObject(deferredReference.ReferenceId, deferredReference.InjectableValueDescription, createdObject));
                 }
             }
 
@@ -156,6 +156,18 @@ namespace Light.Serialization.Json.TokenParsers
             {
                 value.MustNotBeNull(nameof(value));
                 _typeDescriptionService = value;
+            }
+        }
+
+        private struct DeferredReferenceCandidate
+        {
+            public readonly InjectableValueDescription InjectableValueDescription;
+            public readonly int ReferenceId;
+
+            public DeferredReferenceCandidate(InjectableValueDescription injectableValueDescription, int referenceId)
+            {
+                InjectableValueDescription = injectableValueDescription;
+                ReferenceId = referenceId;
             }
         }
     }

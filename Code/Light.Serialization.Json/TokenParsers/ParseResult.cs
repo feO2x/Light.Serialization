@@ -31,7 +31,7 @@ namespace Light.Serialization.Json.TokenParsers
         ///     Gets the id of the deferred reference.
         /// </summary>
         /// <exception cref="InvalidOperationException">Thrown when this parse result does not represent a deferred reference.</exception>
-        public int RefId
+        public int ReferenceId
         {
             get
             {
