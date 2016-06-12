@@ -164,5 +164,35 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
             deserializerArray.GetType().Should().Be(expected.GetType());
             deserializerArray.ShouldAllBeEquivalentTo(expected);
         }
+
+        [Fact(DisplayName = "The deserializer must be able to parse multidimensional JSON arrays that are placed inside a dictionary.")]
+        public void MultidimensionalArraysInDictionary()
+        {
+            ConfigureDefaultDomainFriendlyNames();
+
+            var expected = new Dictionary<string, int[,]>();
+            var firstArray = new int[2, 3];
+            for (var i = 0; i < 2; i++)
+            {
+                for (var j = 0; j < 3; j++)
+                {
+                    firstArray[i, j] = (i + 1) * (j + 1);
+                }
+            }
+            expected.Add("First Array", firstArray);
+            var secondArray = new int[2, 2];
+            secondArray[0, 0] = 15;
+            secondArray[0, 1] = 16;
+            secondArray[1, 0] = 17;
+            secondArray[1, 1] = 18;
+            expected.Add("Second Array", secondArray);
+
+            const string json = "{ \"$type\": { \"name\": \"genericMap\", \"typeArguments\": [ \"string\", { \"name\": \"array\", \"arrayType\": \"int32\", \"arrayRank\": 2 } ] }, \"First Array\": [ \"$type\", { \"name\": \"array\", \"arrayType\": \"int32\", \"arrayRank\": 2, \"arrayLength\": [ 2, 3 ] }, 1, 2, 3, 2, 4, 6 ], \"Second Array\": [ \"$type\", { \"name\": \"array\", \"arrayType\": \"int32\", \"arrayRank\": 2, \"arrayLength\": [ 2, 2 ] }, 15, 16, 17, 18 ] }";
+
+            var actual = GetDeserializedJson<IDictionary<string, int[,]>>(json);
+
+            actual.GetType().Should().Be(expected.GetType());
+            actual.ShouldAllBeEquivalentTo(expected);
+        }
     }
 }
