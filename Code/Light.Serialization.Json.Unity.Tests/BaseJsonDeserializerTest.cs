@@ -42,7 +42,7 @@ namespace Light.Serialization.Json.Tests
             return testTarget.Deserialize(json, requestedType);
         }
 
-        public void ConfigureDefaultDomainFriendlyNaming(Action<TypeNameToJsonNameScanner.IScanningOptions> configureAdditionalTypes = null)
+        public void ConfigureDefaultDomainFriendlyNames(Action<TypeNameToJsonNameScanner.IScanningOptions> configureAdditionalTypes = null)
         {
             var domainFriendlyNameMapping = DomainFriendlyNameMapping.CreateWithDefaultTypeMappings();
 

@@ -30,7 +30,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         [MemberData(nameof(UseAbstractionsData))]
         public void UseAbstractions(string json, IDictionary<string, string> expected)
         {
-            ConfigureDefaultDomainFriendlyNaming();
+            ConfigureDefaultDomainFriendlyNames();
             var actual = GetDeserializedJson<IDictionary<string, string>>(json);
 
             actual.ShouldAllBeEquivalentTo(expected);
@@ -56,7 +56,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         public void EnumKeys<T>(string json, IDictionary<T, string> expected, T sampleValueForTypeResolving)
         {
             var enumType = sampleValueForTypeResolving.GetType();
-            ConfigureDefaultDomainFriendlyNaming(options => options.UseTypes(enumType));
+            ConfigureDefaultDomainFriendlyNames(options => options.UseTypes(enumType));
 
             var actual = GetDeserializedJson<IDictionary<T, string>>(json);
 
@@ -82,7 +82,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         [MemberData(nameof(NumericKeysData))]
         public void NumericKeys<T>(string json, IDictionary<T, object> expected, T sampleValueForTypeResolving)
         {
-            ConfigureDefaultDomainFriendlyNaming();
+            ConfigureDefaultDomainFriendlyNames();
 
             var actual = GetDeserializedJson<IDictionary<T, object>>(json);
 

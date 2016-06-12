@@ -67,13 +67,13 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
         /// <exception cref="EmptyStringException">Thrown when <paramref name="value" /> is an empty string.</exception>
         /// <exception cref="StringIsOnlyWhiteSpaceException">Thrown when <paramref name="value" /> contains only whitespace.</exception>
-        public string GenericTypeNameSymbol
+        public string TypeNameSymbol
         {
-            get { return _genericTypeNameSymbol; }
+            get { return _typeNameSymbol; }
             set
             {
                 value.MustNotBeNullOrWhiteSpace(nameof(value));
-                _genericTypeNameSymbol = value;
+                _typeNameSymbol = value;
             }
         }
 
@@ -146,7 +146,7 @@ namespace Light.Serialization.Json.ObjectMetadata
         // ReSharper disable InconsistentNaming
         protected string _concreteTypeSymbol = JsonSymbols.DefaultConcreteTypeSymbol;
         protected string _genericTypeArgumentsSymbol = JsonSymbols.DefaultGenericTypeArgumentsSymbol;
-        protected string _genericTypeNameSymbol = JsonSymbols.DefaultGenericTypeNameSymbol;
+        protected string _typeNameSymbol = JsonSymbols.DefaultTypeNameSymbol;
         protected string _idSymbol = JsonSymbols.DefaultIdSymbol;
         protected string _referenceSymbol = JsonSymbols.DefaultReferenceSymbol;
         protected string _arrayTypeSymbol = JsonSymbols.DefaultArrayTypeSymbol;

@@ -70,7 +70,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         [MemberData(nameof(AbstractCollectionReferenceData))]
         public void AbstractCollectionReference(string json, ICollection expected)
         {
-            ConfigureDefaultDomainFriendlyNaming();
+            ConfigureDefaultDomainFriendlyNames();
             var actual = GetDeserializedJson<ICollection>(json);
 
             actual.Should().BeEquivalentTo(expected);
@@ -110,7 +110,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         [Fact(DisplayName = "The deserializer must be able to parse JSON arrays to .NET multidimensional arrays.")]
         public void MultidimensionalArray()
         {
-            ConfigureDefaultDomainFriendlyNaming();
+            ConfigureDefaultDomainFriendlyNames();
 
             var expected = new int[2, 4];
             expected[0, 0] = 11;
@@ -146,6 +146,23 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
             var deserializedArray = GetDeserializedJson<int[][]>(json);
 
             deserializedArray.ShouldAllBeEquivalentTo(expected);
+        }
+
+        [Fact(DisplayName = "The deserializer must be able to parse nested JSON arrays as .NET jagged arrays when they are referenced via a collection abstraction.")]
+        public void JaggedArraysReferencedViaAbstraction()
+        {
+            ConfigureDefaultDomainFriendlyNames();
+
+            var expected = new int[2][];
+            expected[0] = new[] { -1, 89 };
+            expected[1] = new[] { -345, 150002, 13 };
+
+            const string json = " [ \"$type\", { \"name\": \"array\", \"arrayType\": { \"name\": \"array\", \"arrayType\": \"int32\" }, \"arrayLength\": 2 }, [ \"$type\", { \"name\": \"array\", \"arrayType\": \"int32\", \"arrayLength\": 2 }, -1, 89 ], [ \"$type\", { \"name\": \"array\", \"arrayType\": \"int32\", \"arrayLength\": 3 }, -345, 150002, 13 ] ] ";
+
+            var deserializerArray = GetDeserializedJson<IReadOnlyList<IReadOnlyList<int>>>(json);
+
+            deserializerArray.GetType().Should().Be(expected.GetType());
+            deserializerArray.ShouldAllBeEquivalentTo(expected);
         }
     }
 }

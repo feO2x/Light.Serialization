@@ -105,8 +105,8 @@ namespace Light.Serialization.Json.ObjectMetadata
             currentToken = reader.ReadNextToken();
             currentToken.MustBeComplexObjectKey();
             var key = context.DeserializeToken<string>(currentToken);
-            if (key != _genericTypeNameSymbol)
-                throw new JsonDocumentException($"Expected {_genericTypeNameSymbol} in metadata section, but found {key}.", currentToken);
+            if (key != _typeNameSymbol)
+                throw new JsonDocumentException($"Expected {_typeNameSymbol} in metadata section, but found {key}.", currentToken);
 
             // Read the value of the "name" key, it must be a JSON string
             currentToken = reader.ReadAndExpectPairDelimiterToken()

@@ -123,11 +123,6 @@ namespace Light.Serialization.Json
         public const string DefaultTypeArgumentSymbol = "typeArguments";
 
         /// <summary>
-        ///     Gets the "name" symbol that is used to mark the type name of a generic type (specific to Light.Serialization.Json).
-        /// </summary>
-        public const string DefaultTypeNameSymbol = "name";
-
-        /// <summary>
         ///     Gets the "$id" symbol that marks the JSON document id of a complex JSON object.
         /// </summary>
         public const string DefaultIdSymbol = "$id";
@@ -138,9 +133,9 @@ namespace Light.Serialization.Json
         public const string DefaultReferenceSymbol = "$ref";
 
         /// <summary>
-        ///     Gets the "name" symbol that marks the type name of a generic type serialized in the metadata section of a complex JSON object.
+        ///     Gets the "name" symbol that marks the type name of a generic type or array type serialized in the metadata section of a complex JSON object.
         /// </summary>
-        public const string DefaultGenericTypeNameSymbol = "name";
+        public const string DefaultTypeNameSymbol = "name";
 
         /// <summary>
         ///     Gets the "typeArguments" symbol that marks the JSON array of arguments for generic types.

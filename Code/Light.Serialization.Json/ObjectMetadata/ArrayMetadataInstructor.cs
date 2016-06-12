@@ -53,7 +53,7 @@ namespace Light.Serialization.Json.ObjectMetadata
             var actualType = serializationContext.ActualType;
 
             writer.BeginObject()
-                  .WriteKey(_genericTypeNameSymbol, false)
+                  .WriteKey(_typeNameSymbol, false)
                   .WriteString(_typeToNameMapping.Map(typeof(Array)))
                   .WriteDelimiter()
                   .WriteKey(_arrayTypeSymbol, false);

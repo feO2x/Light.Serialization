@@ -141,7 +141,7 @@ namespace Light.Serialization.Json.ObjectMetadata
         private void WriteGenericTypeInformation(Type currentType, IJsonWriter writer)
         {
             writer.BeginObject()
-                  .WriteKey(_genericTypeNameSymbol, false)
+                  .WriteKey(_typeNameSymbol, false)
                   .WriteString(_typeToNameMapping.Map(currentType.GetGenericTypeDefinition()))
                   .WriteDelimiter()
                   .WriteKey(_genericTypeArgumentsSymbol, false)
@@ -166,7 +166,7 @@ namespace Light.Serialization.Json.ObjectMetadata
         private void WriteArrayTypeInformation(Type arrayType, IJsonWriter writer)
         {
             writer.BeginObject()
-                  .WriteKey(_genericTypeNameSymbol, false)
+                  .WriteKey(_typeNameSymbol, false)
                   .WriteString(_typeToNameMapping.Map(typeof(Array)))
                   .WriteDelimiter()
                   .WriteKey(_arrayTypeSymbol, false);
