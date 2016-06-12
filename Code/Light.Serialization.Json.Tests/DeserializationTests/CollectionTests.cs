@@ -132,5 +132,20 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
             actual.GetType().Should().Be(expected.GetType());
             actual.Should().BeEquivalentTo(expected);
         }
+
+        [Fact(DisplayName = "The deserializer must be able to parse nested JSON arrays as .NET jagged arrays.")]
+        public void JaggedArrays()
+        {
+            var expected = new int[4][];
+            expected[0] = new[] { 1, 2, 3 };
+            expected[1] = new[] { 4, 5, 6, 7 };
+            expected[2] = new[] { 8, 9 };
+            expected[3] = new int[] { };
+
+            const string json = "[ [ 1, 2, 3 ], [ 4, 5, 6, 7], [8, 9], [] ]";
+            var deserializedArray = GetDeserializedJson<int[][]>(json);
+
+            deserializedArray.ShouldAllBeEquivalentTo(expected);
+        }
     }
 }
