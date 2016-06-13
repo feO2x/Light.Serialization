@@ -5,7 +5,7 @@ namespace Light.Serialization.Json.TokenParsers
     /// <summary>
     ///     Represents a JSON token parser that can parse boolean value.
     /// </summary>
-    public sealed class BooleanParser : IJsonTokenParser
+    public sealed class BooleanParser : BaseJsonStringToPrimitiveParser<bool>, IJsonStringToPrimitiveParser
     {
         /// <summary>
         ///     Gets the value indicating that this parser can be cached.
@@ -29,6 +29,22 @@ namespace Light.Serialization.Json.TokenParsers
         public ParseResult ParseValue(JsonDeserializationContext context)
         {
             return ParseResult.FromParsedValue(context.Token.JsonType == JsonTokenType.True);
+        }
+
+        /// <summary>
+        ///     Tries to parse the specified string as a boolean value.
+        /// </summary>
+        public JsonStringParseResult TryParse(JsonDeserializationContext context, string deserializedString)
+        {
+            switch (deserializedString)
+            {
+                case JsonSymbols.False:
+                    return new JsonStringParseResult(true, false);
+                case JsonSymbols.True:
+                    return new JsonStringParseResult(true, true);
+                default:
+                    return new JsonStringParseResult(false);
+            }
         }
     }
 }

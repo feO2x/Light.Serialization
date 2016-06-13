@@ -8,7 +8,7 @@ namespace Light.Serialization.Json.TokenParsers
     /// <summary>
     ///     Represents a JSON token parser that parses to .NET characters.
     /// </summary>
-    public sealed class CharacterParser : IJsonTokenParser
+    public sealed class CharacterParser : BaseJsonStringToPrimitiveParser<char>, IJsonStringToPrimitiveParser
     {
         /// <summary>
         ///     Gets the value indicating that this parser can be cached.
@@ -45,6 +45,14 @@ namespace Light.Serialization.Json.TokenParsers
             if (token.Length != 3)
                 throw CreateException(token);
             return ParseResult.FromParsedValue(currentCharacter);
+        }
+
+        /// <summary>
+        ///     Tries to parse the specified string as a character.
+        /// </summary>
+        public JsonStringParseResult TryParse(JsonDeserializationContext context, string deserializedString)
+        {
+            return deserializedString.Length == 1 ? new JsonStringParseResult(true, deserializedString[0]) : new JsonStringParseResult(false);
         }
 
         private static char ReadEscapeSequence(JsonToken token)

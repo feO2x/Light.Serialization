@@ -161,5 +161,34 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
             
             actual.ShouldAllBeEquivalentTo(expected);
         }
+
+        [Fact(DisplayName = "The deserializer must be able to parse primitive values that are stored in a dictionary with key type object.")]
+        public void DictioanryWithObjectAsKeyType()
+        {
+            var expected = new Dictionary<object, object>
+                           {
+                               [1] = "One",
+                               [3.3] = "Three",
+                               [false] = "Foo",
+                               ['h'] = "Bar",
+                               [new DateTime(2016, 6, 13)] = 14,
+                               [new Guid("22CBA95F-F4AA-49D2-B48C-214ACFFE991F")] = 42.1
+                           };
+
+            const string json = "{ \"1\": \"One\", \"3.3\": \"Three\", \"false\": \"Foo\", \"h\": \"Bar\", \"2016-6-13\": 14, \"22CBA95F-F4AA-49D2-B48C-214ACFFE991F\": 42.1 }";
+
+            var actual = GetDeserializedJson<IDictionary<object, object>>(json);
+
+            var actualEnumerator = actual.GetEnumerator();
+            var expectedEnumerator = expected.GetEnumerator();
+            for (var i = 0; i < actual.Count; i++)
+            {
+                actualEnumerator.MoveNext();
+                expectedEnumerator.MoveNext();
+
+                actualEnumerator.Current.Key.Should().Be(expectedEnumerator.Current.Key);
+                actualEnumerator.Current.Value.Should().Be(expectedEnumerator.Current.Value);
+            }
+        }
     }
 }

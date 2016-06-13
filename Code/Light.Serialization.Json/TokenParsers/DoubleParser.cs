@@ -8,7 +8,7 @@ namespace Light.Serialization.Json.TokenParsers
     /// <summary>
     ///     Represents a JSON token parser that can parse JSON numbers to .NET double values.
     /// </summary>
-    public sealed class DoubleParser : IJsonTokenParser
+    public sealed class DoubleParser : BaseJsonStringToPrimitiveParser<double>, IJsonStringToPrimitiveParser
     {
         /// <summary>
         ///     Gets the value indicating that this parser can be cached.
@@ -44,6 +44,15 @@ namespace Light.Serialization.Json.TokenParsers
                 return ParseResult.FromParsedValue(result);
 
             throw new DeserializationException($"Cannot deserialize value {doubleString} to a double value.");
+        }
+
+        /// <summary>
+        ///     Tries to parse the specified string as a double value.
+        /// </summary>
+        public JsonStringParseResult TryParse(JsonDeserializationContext context, string deserializedString)
+        {
+            double parsedValue;
+            return double.TryParse(deserializedString, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out parsedValue) ? new JsonStringParseResult(true, parsedValue) : new JsonStringParseResult(false);
         }
     }
 }

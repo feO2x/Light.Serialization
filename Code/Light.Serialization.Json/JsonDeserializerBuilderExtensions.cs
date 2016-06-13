@@ -16,17 +16,17 @@ namespace Light.Serialization.Json
                                                                               ITypeDescriptionService typeDescriptionService)
             where TCollection : IList<IJsonTokenParserFactory>
         {
-            collection.Add(new SingletonFactory(new UnsignedIntegerParser()));
+            collection.Add(new SingletonFactory(new SignedIntegerParser()));
             collection.Add(new SingletonFactory(new DoubleParser()));
             collection.Add(new SingletonFactory(new BooleanParser()));
-            collection.Add(new SingletonFactory(new NullParser()));
+            collection.Add(new SingletonFactory(new CharacterParser()));
             collection.Add(new SingletonFactory(new DateTimeParser()));
             collection.Add(new SingletonFactory(new DateTimeOffsetParser()));
             collection.Add(new SingletonFactory(new TimeSpanParser()));
-            collection.Add(new SingletonFactory(new SignedIntegerParser()));
+            collection.Add(new SingletonFactory(new UnsignedIntegerParser()));
             collection.Add(new SingletonFactory(new FloatParser()));
             collection.Add(new SingletonFactory(new DecimalParser()));
-            collection.Add(new SingletonFactory(new CharacterParser()));
+            collection.Add(new SingletonFactory(new NullParser()));
             collection.Add(new SingletonFactory(new EnumParser()));
             collection.Add(new SingletonFactory(new StringParser()));
             collection.Add(new SingletonFactory(new GuidParser()));

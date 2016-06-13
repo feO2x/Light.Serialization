@@ -9,7 +9,7 @@ namespace Light.Serialization.Json.TokenParsers
     /// <summary>
     ///     Represents a JSON Token Parser that can parse JSON numeric tokens to .NET integer values.
     /// </summary>
-    public sealed class SignedIntegerParser : IJsonTokenParser
+    public sealed class SignedIntegerParser : BaseJsonStringToPrimitiveParser<int>, IJsonStringToPrimitiveParser
     {
         private SignedIntegerTypes _signedIntegerTypes = SignedIntegerTypes.CreateDefaultSignedIntegerTypes();
 
@@ -112,6 +112,15 @@ namespace Light.Serialization.Json.TokenParsers
                 result = -result;
 
             return ParseResult.FromParsedValue(integerInfo.Type == typeof(long) ? result : integerInfo.DowncastValue(result));
+        }
+
+        /// <summary>
+        ///     Tries to parse the specified string as an integer value.
+        /// </summary>
+        public JsonStringParseResult TryParse(JsonDeserializationContext context, string deserializedString)
+        {
+            int parsedValue;
+            return int.TryParse(deserializedString, out parsedValue) ? new JsonStringParseResult(true, parsedValue) : new JsonStringParseResult(false);
         }
 
         private static long CalculateBase(int digitsLeftToRead)

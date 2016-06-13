@@ -135,20 +135,24 @@ namespace Light.Serialization.Json.Unity
                 // Token Parsers
                 .RegisterType<IReadOnlyList<IJsonTokenParser>, IJsonTokenParser[]>()
                 .RegisterType<IReadOnlyList<IJsonStringToPrimitiveParser>, IJsonStringToPrimitiveParser[]>()
-                .RegisterTypeWithTypeName<IJsonTokenParser, UnsignedIntegerParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, SignedIntegerParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonStringToPrimitiveParser, SignedIntegerParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonTokenParser, DoubleParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonStringToPrimitiveParser, DoubleParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonTokenParser, BooleanParser>(new ContainerControlledLifetimeManager())
-                .RegisterTypeWithTypeName<IJsonTokenParser, NullParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonStringToPrimitiveParser, BooleanParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, CharacterParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonStringToPrimitiveParser, CharacterParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonTokenParser, DateTimeParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonStringToPrimitiveParser, DateTimeParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonTokenParser, DateTimeOffsetParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonStringToPrimitiveParser, DateTimeOffsetParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonTokenParser, TimeSpanParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonStringToPrimitiveParser, TimeSpanParser>(new ContainerControlledLifetimeManager())
-                .RegisterTypeWithTypeName<IJsonTokenParser, SignedIntegerParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, UnsignedIntegerParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonTokenParser, FloatParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonTokenParser, DecimalParser>(new ContainerControlledLifetimeManager())
-                .RegisterTypeWithTypeName<IJsonTokenParser, CharacterParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, NullParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonTokenParser, EnumParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonTokenParser, StringParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonTokenParser, GuidParser>(new ContainerControlledLifetimeManager())
@@ -339,6 +343,7 @@ namespace Light.Serialization.Json.Unity
 
         /// <summary>
         ///     Registers <see cref="Dictionary{TKey,TValue}" /> and <see cref="SortedDictionary{TKey,TValue}" /> with the container using their default constructors.
+        ///     Also maps <see cref="IDictionary{TKey,TValue}" /> to <see cref="Dictionary{TKey,TValue}" /> by default.
         /// </summary>
         /// <param name="container">The container to be populated.</param>
         /// <returns>The container for method chaining.</returns>
@@ -348,11 +353,13 @@ namespace Light.Serialization.Json.Unity
             container.MustNotBeNull(nameof(container));
 
             return container.RegisterType(typeof(Dictionary<,>), new InjectionConstructor())
-                            .RegisterType(typeof(SortedDictionary<,>), new InjectionConstructor());
+                            .RegisterType(typeof(SortedDictionary<,>), new InjectionConstructor())
+                            .RegisterType(typeof(IDictionary<,>), typeof(Dictionary<,>));
         }
 
         /// <summary>
         ///     Registers <see cref="List{T}" />, <see cref="ObservableCollection{T}" />, and <see cref="Collection{T}" /> with the container using their default constructors.
+        ///     Also maps <see cref="IList{T}" />, <see cref="ICollection{T}" />, and <see cref="IEnumerable{T}" /> to <see cref="List{T}" /> by default.
         /// </summary>
         /// <param name="container">The container to be populated.</param>
         /// <returns>The container for method chaining.</returns>
@@ -363,11 +370,15 @@ namespace Light.Serialization.Json.Unity
 
             return container.RegisterType(typeof(List<>), new InjectionConstructor())
                             .RegisterType(typeof(ObservableCollection<>), new InjectionConstructor())
-                            .RegisterType(typeof(Collection<>), new InjectionConstructor());
+                            .RegisterType(typeof(Collection<>), new InjectionConstructor())
+                            .RegisterType(typeof(IList<>), typeof(List<>))
+                            .RegisterType(typeof(ICollection<>), typeof(List<>))
+                            .RegisterType(typeof(IEnumerable<>), typeof(List<>));
         }
 
         /// <summary>
-        ///     Registers <see cref="HashSet{T}"/> and <see cref="SortedSet{T}" /> with the container using their default constructors.
+        ///     Registers <see cref="HashSet{T}" /> and <see cref="SortedSet{T}" /> with the container using their default constructors.
+        ///     Also maps <see cref="ISet{T}" /> to <see cref="HashSet{T}" /> by default.
         /// </summary>
         /// <param name="container">The container to be populated.</param>
         /// <returns>The container for method chaining.</returns>
@@ -377,7 +388,8 @@ namespace Light.Serialization.Json.Unity
             container.MustNotBeNull(nameof(container));
 
             return container.RegisterType(typeof(HashSet<>), new InjectionConstructor())
-                            .RegisterType(typeof(SortedSet<>), new InjectionConstructor());
+                            .RegisterType(typeof(SortedSet<>), new InjectionConstructor())
+                            .RegisterType(typeof(ISet<>), typeof(HashSet<>));
         }
     }
 }
