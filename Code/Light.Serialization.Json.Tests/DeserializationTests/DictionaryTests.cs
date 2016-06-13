@@ -74,7 +74,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
                 new object[]
                 {
                     "{\"$type\":{\"name\":\"genericMap\",\"typeArguments\":[\"CollectionBehavior\",\"string\"]}, \"CollectionPerAssembly\": \"run tests per assembly\", \"CollectionPerClass\": \"run tests per class\"}",
-                    new Dictionary<CollectionBehavior, string> {[CollectionBehavior.CollectionPerAssembly] = "run tests per assembly", [CollectionBehavior.CollectionPerClass] = "run tests per class"},  CollectionBehavior.CollectionPerAssembly
+                    new Dictionary<CollectionBehavior, string> { [CollectionBehavior.CollectionPerAssembly] = "run tests per assembly", [CollectionBehavior.CollectionPerClass] = "run tests per class" }, CollectionBehavior.CollectionPerAssembly
                 }
             };
 
@@ -148,5 +148,18 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
                     new Dictionary<decimal, object> { [-4200.705m] = "nearly the answer", [42.0m] = "that's it" }, new decimal()
                 }
             };
+
+        [Fact(DisplayName = "The deserializer must be able to deserialize a dictionary that is referenced via type object.")]
+        public void DeserializeDictionaryThatIsReferencedViaObject()
+        {
+            ConfigureDefaultDomainFriendlyNames();
+
+            var expected = new Dictionary<string, string> { ["Foo"] = "Bar", ["Baz"] = "Qux" };
+            const string json = "{ \"$type\": { \"name\": \"genericMap\", \"typeArguments\": [ \"string\", \"string\" ] }, \"Foo\": \"Bar\", \"Baz\": \"Qux\" }";
+
+            var actual = (Dictionary<string, string>) GetDeserializedJson<object>(json);
+            
+            actual.ShouldAllBeEquivalentTo(expected);
+        }
     }
 }

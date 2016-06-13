@@ -70,7 +70,24 @@ namespace Light.Serialization.Json.TokenParsers
             if (metadataParseResult.ReferencePreservationInfo.IsDeferredReference)
                 return ParseResult.FromDeferredReference(metadataParseResult.ReferencePreservationInfo.Id);
 
-            var dictionary = _metaFactory.CreateDictionary(metadataParseResult.TypeToConstruct);
+            return ParseDictionary(metadataParseResult, context, currentToken, _metaFactory);
+        }
+
+        /// <summary>
+        ///     Creates and populates a dictionary instance. This method should called when you parsed the metadata section of a complex JSON object in another <see cref="IJsonTokenParser" />
+        ///     and realize that the actual object you have to create is a dictionary.
+        /// </summary>
+        /// <param name="metadataParseResult">The metadata parse result that describes the dictionary type.</param>
+        /// <param name="context">The deserialization context for the dictionary to be created.</param>
+        /// <param name="currentToken">The token that points to the first key in the complex JSON object after the metadata section.</param>
+        /// <param name="metaFactory">The factory that can create collections, dictionaries, and complex objects using type information.</param>
+        /// <returns>The parsed dictionary wrapped in a parse result.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="metaFactory" /> is null.</exception>
+        public static ParseResult ParseDictionary(ObjectMetadataParseResult metadataParseResult, JsonDeserializationContext context, JsonToken currentToken, IMetaFactory metaFactory)
+        {
+            metaFactory.MustNotBeNull(nameof(metaFactory));
+
+            var dictionary = metaFactory.CreateDictionary(metadataParseResult.TypeToConstruct);
             if (metadataParseResult.ReferencePreservationInfo.IsEmpty == false)
                 context.ObjectReferencePreserver.AddDeserializedObject(metadataParseResult.ReferencePreservationInfo.Id, dictionary);
 
