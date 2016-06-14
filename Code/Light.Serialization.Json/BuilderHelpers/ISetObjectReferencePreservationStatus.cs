@@ -1,4 +1,4 @@
-namespace Light.Serialization.Json.BuilderInterfaces
+namespace Light.Serialization.Json.BuilderHelpers
 {
     /// <summary>
     ///     Represents the abstraction used to enable or disable object reference preservation.

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Light.GuardClauses;
-using Light.Serialization.Json.BuilderInterfaces;
+using Light.Serialization.Json.BuilderHelpers;
 using Light.Serialization.Json.ObjectMetadata;
 
 namespace Light.Serialization.Json.WriterInstructors

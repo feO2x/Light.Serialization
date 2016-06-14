@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Light.Serialization.Json.PrimitiveTypeFormatters;
 
-namespace Light.Serialization.Json.BuilderInterfaces
+namespace Light.Serialization.Json.BuilderHelpers
 {
     /// <summary>
     ///     Represents the abstraction to inject a primitive type formatters dictionary via a property set method.

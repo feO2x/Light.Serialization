@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Light.GuardClauses;
-using Light.Serialization.Json.BuilderInterfaces;
+using Light.Serialization.Json.BuilderHelpers;
 using Light.Serialization.Json.Caching;
 using Light.Serialization.Json.ComplexTypeConstruction;
 using Light.Serialization.Json.LowLevelReading;

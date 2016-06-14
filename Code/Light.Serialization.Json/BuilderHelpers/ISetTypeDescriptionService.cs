@@ -1,7 +1,7 @@
 ﻿using System;
 using Light.Serialization.Json.ComplexTypeConstruction;
 
-namespace Light.Serialization.Json.BuilderInterfaces
+namespace Light.Serialization.Json.BuilderHelpers
 {
     /// <summary>
     ///     Represents the abstraction for setting a <see cref="ISetTypeDescriptionService" /> instance on token parser.

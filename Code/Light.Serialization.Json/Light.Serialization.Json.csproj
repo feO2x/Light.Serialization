@@ -41,15 +41,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BuilderInterfaces\ISetCharacterEscaper.cs" />
-    <Compile Include="BuilderInterfaces\ISetCollectionMetadataInstructor.cs" />
-    <Compile Include="BuilderInterfaces\ISetNameToTypeMapping.cs" />
-    <Compile Include="BuilderInterfaces\ISetPrimitiveTypeFormatters.cs" />
-    <Compile Include="BuilderInterfaces\ISetTypeAnalyzer.cs" />
-    <Compile Include="BuilderInterfaces\ISetTypeDescriptionService.cs" />
-    <Compile Include="BuilderInterfaces\ISetTypeToNameMapping.cs" />
+    <Compile Include="BuilderHelpers\ISetCharacterEscaper.cs" />
+    <Compile Include="BuilderHelpers\ISetCollectionMetadataInstructor.cs" />
+    <Compile Include="BuilderHelpers\ISetKeyNormalizer.cs" />
+    <Compile Include="BuilderHelpers\ISetNameToTypeMapping.cs" />
+    <Compile Include="BuilderHelpers\ISetPrimitiveTypeFormatters.cs" />
+    <Compile Include="BuilderHelpers\ISetTypeAnalyzer.cs" />
+    <Compile Include="BuilderHelpers\ISetTypeDescriptionService.cs" />
+    <Compile Include="BuilderHelpers\ISetTypeToNameMapping.cs" />
+    <Compile Include="BuilderHelpers\PropertyInjectionPool.cs" />
     <Compile Include="Caching\DefaultTypeDescriptionServiceWithCaching.cs" />
-    <Compile Include="BuilderInterfaces\IGetSingletonInstance.cs" />
+    <Compile Include="BuilderHelpers\IGetSingletonInstance.cs" />
+    <Compile Include="FrameworkExtensions\EnumerableExtensions.cs" />
     <Compile Include="ObjectMetadata\ArrayMetadataParseResult.cs" />
     <Compile Include="ObjectMetadata\DeferredReferenceForArray.cs" />
     <Compile Include="ObjectMetadata\DeferredReferenceForMultidimensionalArray.cs" />
@@ -90,7 +93,7 @@
     <Compile Include="FrameworkExtensions\ReflectionExtensions.cs" />
     <Compile Include="FrameworkExtensions\StringBuilderExtensions.cs" />
     <Compile Include="FrameworkExtensions\StringExtensions.cs" />
-    <Compile Include="BuilderInterfaces\ISetObjectMetadataInstructor.cs" />
+    <Compile Include="BuilderHelpers\ISetObjectMetadataInstructor.cs" />
     <Compile Include="IntegerMetadata\DecimalPartInfo.cs" />
     <Compile Include="IntegerMetadata\SignedIntegerTypeInfo.cs" />
     <Compile Include="IntegerMetadata\SignedIntegerTypes.cs" />
@@ -117,8 +120,8 @@
     <Compile Include="ObjectMetadata\IObjectMetadataParser.cs" />
     <Compile Include="ObjectMetadata\INameToTypeMapping.cs" />
     <Compile Include="ObjectMetadata\IMetadataInstructor.cs" />
-    <Compile Include="BuilderInterfaces\ISetObjectReferencePreservationStatus.cs" />
-    <Compile Include="BuilderInterfaces\ISetTypeInfoSerializationStatus.cs" />
+    <Compile Include="BuilderHelpers\ISetObjectReferencePreservationStatus.cs" />
+    <Compile Include="BuilderHelpers\ISetTypeInfoSerializationStatus.cs" />
     <Compile Include="ObjectMetadata\ITypeToNameMapping.cs" />
     <Compile Include="ObjectMetadata\ListExtensions.cs" />
     <Compile Include="ObjectMetadata\ObjectReferencePreserver.cs" />

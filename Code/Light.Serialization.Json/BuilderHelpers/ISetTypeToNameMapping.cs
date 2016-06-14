@@ -1,7 +1,7 @@
 ﻿using System;
 using Light.Serialization.Json.ObjectMetadata;
 
-namespace Light.Serialization.Json.BuilderInterfaces
+namespace Light.Serialization.Json.BuilderHelpers
 {
     /// <summary>
     ///     Represents the abstraction of setting a type to name mapping using property injection.

@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Light.GuardClauses;
-using Light.Serialization.Json.BuilderInterfaces;
+using Light.Serialization.Json.BuilderHelpers;
 using Light.Serialization.Json.Caching;
 using Light.Serialization.Json.ComplexTypeDecomposition;
+using Light.Serialization.Json.FrameworkExtensions;
 using Light.Serialization.Json.LowLevelWriting;
 using Light.Serialization.Json.ObjectMetadata;
 using Light.Serialization.Json.PrimitiveTypeFormatters;
@@ -18,10 +19,8 @@ namespace Light.Serialization.Json
     /// </summary>
     public sealed class JsonSerializerBuilder
     {
-        /// <summary>
-        ///     Gets the list containing all writer instructors.
-        /// </summary>
-        public readonly List<IJsonWriterInstructor> WriterInstructors;
+        private readonly PropertyInjectionPool _pool = new PropertyInjectionPool();
+        private readonly List<IJsonWriterInstructor> _writerInstructors;
 
         private ICharacterEscaper _characterEscaper = new DefaultCharacterEscaper();
         private IMetadataInstructor _collectionMetadataInstructor;
@@ -39,27 +38,37 @@ namespace Light.Serialization.Json
         public JsonSerializerBuilder()
         {
             UseDefaultWriterFactory();
-            _instructorCache = new Dictionary<Type, IJsonWriterInstructor>();
+            _instructorCache = _pool.Register(new Dictionary<Type, IJsonWriterInstructor>());
 
             _primitiveTypeFormattersMapping = new List<IPrimitiveTypeFormatter>().AddDefaultPrimitiveTypeFormatters(_characterEscaper)
                                                                                  .ToDictionary(f => f.TargetType);
+            _pool.RegisterAll(_primitiveTypeFormattersMapping.Values);
 
-            _collectionMetadataInstructor = new ArrayMetadataInstructor(_typeToNameMapping);
-            _objectMetadataInstructor = new ComplexObjectMetadataInstructor(_typeToNameMapping);
+            _collectionMetadataInstructor = _pool.Register(new ArrayMetadataInstructor(_typeToNameMapping));
+            _objectMetadataInstructor = _pool.Register(new ComplexObjectMetadataInstructor(_typeToNameMapping));
 
-            WriterInstructors = new List<IJsonWriterInstructor>().AddDefaultWriterInstructors(_primitiveTypeFormattersMapping,
-                                                                                              _typeAnalyzer,
-                                                                                              _collectionMetadataInstructor,
-                                                                                              _objectMetadataInstructor);
+            _writerInstructors = new List<IJsonWriterInstructor>().AddDefaultWriterInstructors(_primitiveTypeFormattersMapping,
+                                                                                               _typeAnalyzer,
+                                                                                               _collectionMetadataInstructor,
+                                                                                               _objectMetadataInstructor);
+            _pool.RegisterAll(_writerInstructors);
         }
+
+        /// <summary>
+        ///     Gets the collection containing all writer instructors that will be injected into the serializer.
+        /// </summary>
+        public IReadOnlyList<IJsonWriterInstructor> WriterInstructors => _writerInstructors;
 
         /// <summary>
         ///     Configures to builder to use the specified JSON writer factory for the serializer.
         /// </summary>
         /// <param name="createWriterFactory">The delegate that creates the writer factory being injected into the serializer.</param>
         /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="createWriterFactory" /> is null.</exception>
         public JsonSerializerBuilder WithWriterFactory(Func<IJsonWriterFactory> createWriterFactory)
         {
+            createWriterFactory.MustNotBeNull(nameof(createWriterFactory));
+
             _createWriterFactory = createWriterFactory;
             return this;
         }
@@ -74,12 +83,8 @@ namespace Light.Serialization.Json
         {
             characterEscaper.MustNotBeNull(nameof(characterEscaper));
 
-            _characterEscaper = characterEscaper;
-
-            foreach (var primitiveTypeFormatter in _primitiveTypeFormattersMapping.Values.OfType<ISetCharacterEscaper>())
-            {
-                primitiveTypeFormatter.CharacterEscaper = _characterEscaper;
-            }
+            SetFieldAndReplaceInPool(out _characterEscaper, characterEscaper);
+            _pool.Objects.OfType<ISetCharacterEscaper>().Do(o => o.CharacterEscaper = characterEscaper);
 
             return this;
         }
@@ -94,12 +99,8 @@ namespace Light.Serialization.Json
         {
             typeAnalyzer.MustNotBeNull(nameof(typeAnalyzer));
 
-            _typeAnalyzer = typeAnalyzer;
-
-            foreach (var instructor in WriterInstructors.OfType<ISetTypeAnalyzer>())
-            {
-                instructor.TypeAnalyzer = typeAnalyzer;
-            }
+            SetFieldAndReplaceInPool(out _typeAnalyzer, typeAnalyzer);
+            _pool.Objects.OfType<ISetTypeAnalyzer>().Do(o => o.TypeAnalyzer = typeAnalyzer);
 
             return this;
         }
@@ -112,14 +113,24 @@ namespace Light.Serialization.Json
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="formatters" /> is null.</exception>
         public JsonSerializerBuilder WithPrimitiveTypeFormatters(IList<IPrimitiveTypeFormatter> formatters)
         {
-            formatters.MustNotBeNull(nameof(formatters));
+            return WithPrimitiveTypeFormatters(formatters.ToDictionary(f => f.TargetType));
+        }
 
-            _primitiveTypeFormattersMapping = formatters.ToDictionary(f => f.TargetType);
+        /// <summary>
+        ///     Configures the builder to use the specified formatters instead of the default ones.
+        /// </summary>
+        /// <param name="formattersMapping">The dictionary containing all formatters to be used.</param>
+        /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="formattersMapping" /> is null.</exception>
+        public JsonSerializerBuilder WithPrimitiveTypeFormatters(IDictionary<Type, IPrimitiveTypeFormatter> formattersMapping)
+        {
+            formattersMapping.MustNotBeNull(nameof(formattersMapping));
 
-            foreach (var instructor in WriterInstructors.OfType<ISetPrimitiveTypeFormatters>())
-            {
-                instructor.PrimitiveTypeFormattersMapping = _primitiveTypeFormattersMapping;
-            }
+            _pool.RemoveAll(_primitiveTypeFormattersMapping.Values);
+            _primitiveTypeFormattersMapping = formattersMapping;
+            _pool.RegisterAll(formattersMapping.Values);
+
+            _pool.Objects.OfType<ISetPrimitiveTypeFormatters>().Do(o => o.PrimitiveTypeFormattersMapping = _primitiveTypeFormattersMapping);
 
             return this;
         }
@@ -135,26 +146,7 @@ namespace Light.Serialization.Json
             formatter.MustNotBeNull(nameof(formatter));
 
             _primitiveTypeFormattersMapping.Add(formatter.TargetType, formatter);
-
-            return this;
-        }
-
-        /// <summary>
-        ///     Configures the builder to use the specified formatters instead of the default ones.
-        /// </summary>
-        /// <param name="formattersMapping">The dictionary containing all formatters to be used.</param>
-        /// <returns>The builder for method chaining.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="formattersMapping" /> is null.</exception>
-        public JsonSerializerBuilder WithPrimitiveTypeFormatters(IDictionary<Type, IPrimitiveTypeFormatter> formattersMapping)
-        {
-            formattersMapping.MustNotBeNull(nameof(formattersMapping));
-
-            _primitiveTypeFormattersMapping = formattersMapping;
-
-            foreach (var instructor in WriterInstructors.OfType<ISetPrimitiveTypeFormatters>())
-            {
-                instructor.PrimitiveTypeFormattersMapping = _primitiveTypeFormattersMapping;
-            }
+            _pool.Register(formatter);
 
             return this;
         }
@@ -166,19 +158,21 @@ namespace Light.Serialization.Json
         /// <param name="additionalWriterInstructor">The writer instructor to be inserted.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="additionalWriterInstructor" /> is null.</exception>
+        /// <exception cref="ArgumentException">Thrown when the writer instructor with type T cannot be found.</exception>
         public JsonSerializerBuilder AddWriterInstructorAfter<T>(IJsonWriterInstructor additionalWriterInstructor)
             where T : IJsonWriterInstructor
         {
             additionalWriterInstructor.MustNotBeNull(nameof(additionalWriterInstructor));
 
-            var targetIndex = WriterInstructors.IndexOf(WriterInstructors.OfType<T>().First());
-            if (targetIndex == -1)
-                throw new ArgumentException($"The specified writer instructor {additionalWriterInstructor} cannot be added after the instructor {typeof (T)} because the latter was not found.");
+            var targetIndex = _writerInstructors.IndexOf(_writerInstructors.OfType<T>().First());
+            targetIndex.MustNotBe(-1,
+                                  exception: () => new ArgumentException($"The specified writer instructor \"{additionalWriterInstructor}\" cannot be added after the instructor \"{typeof(T)}\" because the latter was not found."));
 
-            if (targetIndex == WriterInstructors.Count - 1)
-                WriterInstructors.Add(additionalWriterInstructor);
+            if (targetIndex == _writerInstructors.Count - 1)
+                _writerInstructors.Add(additionalWriterInstructor);
             else
-                WriterInstructors.Insert(targetIndex + 1, additionalWriterInstructor);
+                _writerInstructors.Insert(targetIndex + 1, additionalWriterInstructor);
+            _pool.Register(additionalWriterInstructor);
 
             return this;
         }
@@ -190,21 +184,23 @@ namespace Light.Serialization.Json
         /// <param name="additionalWriterInstructor">The writer instructor to be inserted.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="additionalWriterInstructor" /> is null.</exception>
+        /// <exception cref="ArgumentException">Thrown when the writer instructor with type T cannot be found.</exception>
         public JsonSerializerBuilder AddWriterInstructorBefore<T>(IJsonWriterInstructor additionalWriterInstructor)
             where T : IJsonWriterInstructor
         {
             additionalWriterInstructor.MustNotBeNull(nameof(additionalWriterInstructor));
 
-            var targetIndex = WriterInstructors.IndexOf(WriterInstructors.OfType<T>().First());
-            if (targetIndex == -1)
-                throw new ArgumentException($"The specified writer instructor {additionalWriterInstructor} cannot be added before the instructor {typeof (T)} because the latter was not found.");
+            var targetIndex = _writerInstructors.IndexOf(_writerInstructors.OfType<T>().First());
+            targetIndex.MustNotBe(-1,
+                                  exception: () => new ArgumentException($"The specified writer instructor \"{additionalWriterInstructor}\" cannot be added before the instructor \"{typeof(T)}\" because the latter was not found."));
 
-            WriterInstructors.Insert(targetIndex, additionalWriterInstructor);
+            _writerInstructors.Insert(targetIndex, additionalWriterInstructor);
+            _pool.Register(additionalWriterInstructor);
             return this;
         }
 
         /// <summary>
-        ///     Configures the builder to use an instance of JsonWriterFactory. You do not have to call this method by default (except you have already exchanged the writer factory).
+        ///     Configures the builder to use an instance of <see cref="JsonWriterFactory" />. You do not have to call this method by default (except you have already exchanged the writer factory).
         /// </summary>
         /// <returns>The builder for method chaining.</returns>
         public JsonSerializerBuilder UseDefaultWriterFactory()
@@ -219,7 +215,7 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Configures the builder to inject the specified cache for JSON writer instructors into the serialized.
+        ///     Configures the builder to inject the specified cache for JSON writer instructors into the serializer.
         /// </summary>
         /// <param name="instructorCache">The dictionary used as the instructorCache.</param>
         /// <returns>The builder for method chaining.</returns>
@@ -244,7 +240,7 @@ namespace Light.Serialization.Json
         {
             configureInstructor.MustNotBeNull(nameof(configureInstructor));
 
-            configureInstructor(WriterInstructors.OfType<T>().First());
+            configureInstructor(_writerInstructors.OfType<T>().First());
             return this;
         }
 
@@ -260,10 +256,7 @@ namespace Light.Serialization.Json
         {
             configureFormatter.MustNotBeNull(nameof(configureFormatter));
 
-            configureFormatter(_primitiveTypeFormattersMapping.Values
-                                                              .OfType<T>()
-                                                              .First());
-
+            configureFormatter(_primitiveTypeFormattersMapping.Values.OfType<T>().First());
             return this;
         }
 
@@ -284,13 +277,16 @@ namespace Light.Serialization.Json
             var newRule = new Rule<T>(_typeAnalyzer);
             configureRule(newRule);
 
-            var existingInstructor = WriterInstructors.OfType<CustomRuleInstructor>()
-                                                      .FirstOrDefault(i => i.TargetType == typeof (T));
+            var existingInstructor = _writerInstructors.OfType<CustomRuleInstructor>()
+                                                       .FirstOrDefault(i => i.TargetType == typeof(T));
 
             if (existingInstructor != null)
-                WriterInstructors.Remove(existingInstructor);
+            {
+                _writerInstructors.Remove(existingInstructor);
+                _pool.Remove(existingInstructor);
+            }
 
-            WriterInstructors.Insert(0, new CustomRuleInstructor(typeof (T), newRule.CreateValueProviders(), _objectMetadataInstructor));
+            _writerInstructors.Insert(0, _pool.Register(new CustomRuleInstructor(typeof(T), newRule.CreateValueProviders(), _objectMetadataInstructor)));
 
             return this;
         }
@@ -305,12 +301,8 @@ namespace Light.Serialization.Json
         {
             metadataInstructor.MustNotBeNull(nameof(metadataInstructor));
 
-            _objectMetadataInstructor = metadataInstructor;
-
-            foreach (var instructor in WriterInstructors.OfType<ISetObjectMetadataInstructor>())
-            {
-                instructor.MetadataInstructor = metadataInstructor;
-            }
+            SetFieldAndReplaceInPool(out _objectMetadataInstructor, metadataInstructor);
+            _pool.Objects.OfType<ISetObjectMetadataInstructor>().Do(o => o.MetadataInstructor = metadataInstructor);
 
             return this;
         }
@@ -325,12 +317,8 @@ namespace Light.Serialization.Json
         {
             metadataInstructor.MustNotBeNull(nameof(metadataInstructor));
 
-            _collectionMetadataInstructor = metadataInstructor;
-
-            foreach (var instructor in WriterInstructors.OfType<ISetCollectionMetadataInstructor>())
-            {
-                instructor.MetadataInstructor = _collectionMetadataInstructor;
-            }
+            SetFieldAndReplaceInPool(out _collectionMetadataInstructor, metadataInstructor);
+            _pool.Objects.OfType<ISetCollectionMetadataInstructor>().Do(o => o.MetadataInstructor = metadataInstructor);
 
             return this;
         }
@@ -374,8 +362,7 @@ namespace Light.Serialization.Json
         /// <returns>The builder for method chaining.</returns>
         public JsonSerializerBuilder DisableObjectReferencePreservation()
         {
-            SetObjectReferencePreservationIfPossible(_objectMetadataInstructor, false);
-            SetObjectReferencePreservationIfPossible(_collectionMetadataInstructor, false);
+            _pool.Objects.OfType<ISetObjectReferencePreservationStatus>().Do(o => o.IsSerializingObjectIds = false);
             return this;
         }
 
@@ -385,18 +372,8 @@ namespace Light.Serialization.Json
         /// <returns>The builder for method chaining.</returns>
         public JsonSerializerBuilder EnableObjectReferencePreservation()
         {
-            SetObjectReferencePreservationIfPossible(_objectMetadataInstructor, true);
-            SetObjectReferencePreservationIfPossible(_collectionMetadataInstructor, true);
+            _pool.Objects.OfType<ISetObjectReferencePreservationStatus>().Do(o => o.IsSerializingObjectIds = true);
             return this;
-        }
-
-        private static void SetObjectReferencePreservationIfPossible(IMetadataInstructor instructor, bool value)
-        {
-            var metadataInstructor = instructor as ISetObjectReferencePreservationStatus;
-            if (metadataInstructor == null)
-                return;
-
-            metadataInstructor.IsSerializingObjectIds = value;
         }
 
         /// <summary>
@@ -405,9 +382,7 @@ namespace Light.Serialization.Json
         /// <returns>The builder for method chaining.</returns>
         public JsonSerializerBuilder DisableTypeMetadata()
         {
-            SetTypeInfoSerializationStatus(_objectMetadataInstructor, false);
-            SetTypeInfoSerializationStatus(_collectionMetadataInstructor, false);
-
+            _pool.Objects.OfType<ISetTypeInfoSerializationStatus>().Do(o => o.IsSerializingTypeInfo = false);
             return this;
         }
 
@@ -417,19 +392,8 @@ namespace Light.Serialization.Json
         /// <returns>The builder for method chaining.</returns>
         public JsonSerializerBuilder EnableTypeMetadata()
         {
-            SetTypeInfoSerializationStatus(_objectMetadataInstructor, true);
-            SetTypeInfoSerializationStatus(_collectionMetadataInstructor, true);
-
+            _pool.Objects.OfType<ISetTypeInfoSerializationStatus>().Do(o => o.IsSerializingTypeInfo = true);
             return this;
-        }
-
-        private static void SetTypeInfoSerializationStatus(IMetadataInstructor instructor, bool value)
-        {
-            var metadataInstructor = instructor as ISetTypeInfoSerializationStatus;
-            if (metadataInstructor == null)
-                return;
-
-            metadataInstructor.IsSerializingTypeInfo = value;
         }
 
         /// <summary>
@@ -442,21 +406,10 @@ namespace Light.Serialization.Json
         {
             typeToNameMapping.MustNotBeNull(nameof(typeToNameMapping));
 
-            _typeToNameMapping = typeToNameMapping;
-
-            SetTypeToNameMapping(_objectMetadataInstructor, typeToNameMapping);
-            SetTypeToNameMapping(_collectionMetadataInstructor, typeToNameMapping);
+            SetFieldAndReplaceInPool(out _typeToNameMapping, typeToNameMapping);
+            _pool.Objects.OfType<ISetTypeToNameMapping>().Do(o => o.TypeToNameMapping = typeToNameMapping);
 
             return this;
-        }
-
-        private static void SetTypeToNameMapping(IMetadataInstructor instructor, ITypeToNameMapping typeToNameMapping)
-        {
-            var metadataInstructor = instructor as ISetTypeToNameMapping;
-            if (metadataInstructor == null)
-                return;
-
-            metadataInstructor.TypeToNameMapping = typeToNameMapping;
         }
 
         /// <summary>
@@ -469,7 +422,9 @@ namespace Light.Serialization.Json
         {
             keyNormalizer.MustNotBeNull(nameof(keyNormalizer));
 
-            _keyNormalizer = keyNormalizer;
+            SetFieldAndReplaceInPool(out _keyNormalizer, keyNormalizer);
+            _pool.Objects.OfType<ISetKeyNormalizer>().Do(o => o.KeyNormalizer = keyNormalizer);
+
             return this;
         }
 
@@ -478,7 +433,14 @@ namespace Light.Serialization.Json
         /// </summary>
         public JsonSerializer Build()
         {
-            return new JsonSerializer(WriterInstructors, _createWriterFactory(), _instructorCache);
+            return new JsonSerializer(_writerInstructors, _createWriterFactory(), _instructorCache);
+        }
+
+        private void SetFieldAndReplaceInPool<T>(out T field, T value)
+        {
+            field = value;
+            _pool.Remove(field);
+            _pool.Register(value);
         }
     }
 }

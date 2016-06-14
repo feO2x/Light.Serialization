@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Light.GuardClauses;
 using Light.Serialization.Abstractions;
-using Light.Serialization.Json.BuilderInterfaces;
+using Light.Serialization.Json.BuilderHelpers;
 using Light.Serialization.Json.Caching;
 using Light.Serialization.Json.ComplexTypeConstruction;
 using Light.Serialization.Json.ComplexTypeDecomposition;

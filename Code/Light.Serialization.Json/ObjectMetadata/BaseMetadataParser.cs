@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Light.GuardClauses;
-using Light.Serialization.Json.BuilderInterfaces;
+using Light.Serialization.Json.BuilderHelpers;
 using Light.Serialization.Json.LowLevelReading;
 
 namespace Light.Serialization.Json.ObjectMetadata

@@ -1,4 +1,4 @@
-﻿namespace Light.Serialization.Json.BuilderInterfaces
+﻿namespace Light.Serialization.Json.BuilderHelpers
 {
     public interface IGetSingletonInstance<out T>
     {
