@@ -53,6 +53,8 @@
     <Compile Include="Caching\DefaultTypeDescriptionServiceWithCaching.cs" />
     <Compile Include="BuilderHelpers\IGetSingletonInstance.cs" />
     <Compile Include="FrameworkExtensions\EnumerableExtensions.cs" />
+    <Compile Include="LowLevelReading\ICharacterStream.cs" />
+    <Compile Include="LowLevelReading\StringStream.cs" />
     <Compile Include="ObjectMetadata\ArrayMetadataParseResult.cs" />
     <Compile Include="ObjectMetadata\DeferredReferenceForArray.cs" />
     <Compile Include="ObjectMetadata\DeferredReferenceForMultidimensionalArray.cs" />
@@ -109,8 +111,8 @@
     <Compile Include="LowLevelReading\JsonReaderExtensions.cs" />
     <Compile Include="LowLevelReading\JsonToken.cs" />
     <Compile Include="LowLevelReading\JsonTokenType.cs" />
-    <Compile Include="LowLevelReading\SingleBufferJsonReader.cs" />
-    <Compile Include="LowLevelReading\SingleBufferJsonReaderFactory.cs" />
+    <Compile Include="LowLevelReading\JsonReader.cs" />
+    <Compile Include="LowLevelReading\JsonReaderFactory.cs" />
     <Compile Include="LowLevelWriting\IJsonWriter.cs" />
     <Compile Include="LowLevelWriting\IJsonWriterFactory.cs" />
     <Compile Include="ObjectMetadata\BasicNetTypeNames.cs" />

@@ -126,7 +126,7 @@ namespace Light.Serialization.Json.Unity
                 .RegisterType<IDeserializer, JsonDeserializer>()
 
                 // JSON Reader Factory
-                .RegisterType<IJsonReaderFactory, SingleBufferJsonReaderFactory>(new ContainerControlledLifetimeManager())
+                .RegisterType<IJsonReaderFactory, JsonReaderFactory>(new ContainerControlledLifetimeManager())
 
                 // Token Parser Cache
                 .RegisterType<Dictionary<JsonTokenTypeCombination, IJsonTokenParser>>(new ContainerControlledLifetimeManager(),

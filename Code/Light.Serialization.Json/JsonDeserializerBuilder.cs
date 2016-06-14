@@ -22,7 +22,7 @@ namespace Light.Serialization.Json
         private readonly IMetaFactory _metaFactory = new DefaultMetaFactory();
         private readonly List<IJsonTokenParserFactory> _tokenParserFactories;
         private INameToTypeMapping _nameToTypeMapping;
-        private IJsonReaderFactory _readerFactory = new SingleBufferJsonReaderFactory();
+        private IJsonReaderFactory _readerFactory = new JsonReaderFactory();
         private Dictionary<JsonTokenTypeCombination, IJsonTokenParser> _tokenParserCache = new Dictionary<JsonTokenTypeCombination, IJsonTokenParser>();
         private ITypeDescriptionService _typeDescriptionService;
 
