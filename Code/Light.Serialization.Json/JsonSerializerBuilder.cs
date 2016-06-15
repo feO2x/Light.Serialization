@@ -15,7 +15,7 @@ using Light.Serialization.Json.WriterInstructors;
 namespace Light.Serialization.Json
 {
     /// <summary>
-    ///     Represents a builder for <see cref="JsonSerializer"/> instances.
+    ///     Represents a builder for <see cref="JsonSerializer" /> instances.
     /// </summary>
     public sealed class JsonSerializerBuilder
     {
@@ -258,7 +258,7 @@ namespace Light.Serialization.Json
         {
             configureFormatter.MustNotBeNull(nameof(configureFormatter));
 
-            configureFormatter((T) _primitiveTypeFormattersMapping[typeof(T)]);
+            configureFormatter(_primitiveTypeFormattersMapping.Values.OfType<T>().First());
             return this;
         }
 

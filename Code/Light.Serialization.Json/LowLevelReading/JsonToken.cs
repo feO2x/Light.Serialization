@@ -86,7 +86,12 @@ namespace Light.Serialization.Json.LowLevelReading
         /// </summary>
         /// <param name="startIndex">The start index of the returned string.</param>
         /// <param name="numberOfCharacters">The number of characters of the returned string.</param>
-        /// <returns></returns>
+        /// <returns>The string representation of this token.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        ///     Thrown when <paramref name="startIndex" /> is less then zero,
+        ///     or <paramref name="numberOfCharacters" /> is less than one,
+        ///     or <paramref name="numberOfCharacters" /> + <paramref name="startIndex" /> is greater than the length of the token.
+        /// </exception>
         public string ToString(int startIndex, int numberOfCharacters)
         {
             startIndex.MustNotBeLessThan(0, nameof(startIndex));
@@ -100,7 +105,7 @@ namespace Light.Serialization.Json.LowLevelReading
             var characterArray = new char[numberOfCharacters];
             for (var i = 0; i < numberOfCharacters; i++)
             {
-                characterArray[i] = this[i];
+                characterArray[i] = this[i + startIndex];
             }
             return new string(characterArray);
         }

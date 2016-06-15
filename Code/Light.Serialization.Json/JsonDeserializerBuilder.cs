@@ -20,6 +20,7 @@ namespace Light.Serialization.Json
         private readonly IArrayMetadataParser _arrayMetadataParser;
         private readonly IObjectMetadataParser _complexObjectMetadataParser;
         private readonly IMetaFactory _metaFactory = new DefaultMetaFactory();
+        private readonly PropertyInjectionPool _pool = new PropertyInjectionPool();
         private readonly List<IJsonTokenParserFactory> _tokenParserFactories;
         private INameToTypeMapping _nameToTypeMapping;
         private IJsonReaderFactory _readerFactory = new JsonReaderFactory();
@@ -112,6 +113,35 @@ namespace Light.Serialization.Json
 
             _readerFactory = readerFactory;
             return this;
+        }
+
+        /// <summary>
+        ///     Configures the JSON reader factory using the specified delegate.
+        /// </summary>
+        /// <typeparam name="T">The actual type of the JSON reader factory.</typeparam>
+        /// <param name="configureFactory">The delegate that is used to configure the instance.</param>
+        /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureFactory" /> is null.</exception>
+        public JsonDeserializerBuilder ConfigureReaderFactory<T>(Action<T> configureFactory) where T : class, IJsonReaderFactory
+        {
+            configureFactory.MustNotBeNull(nameof(configureFactory));
+
+            var readerFactory = _readerFactory.MustBeOfType<T>();
+            configureFactory(readerFactory);
+
+            return this;
+        }
+
+        /// <summary>
+        ///     Configures the default instance of <see cref="JsonReaderFactory" />. Please note that you should not
+        ///     call this method when you replaced the default reader factory with an instance of another type.
+        /// </summary>
+        /// <param name="configureFactory">The delegate that configures the factory.</param>
+        /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureFactory" /> is null.</exception>
+        public JsonDeserializerBuilder ConfigureDefaultReaderFactory(Action<JsonReaderFactory> configureFactory)
+        {
+            return ConfigureReaderFactory(configureFactory);
         }
 
         /// <summary>

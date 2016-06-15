@@ -324,8 +324,9 @@ namespace Light.Serialization.Json.LowLevelReading
 
         private JsonToken ReadSingleCharacterAndCreateToken(JsonTokenType tokenType)
         {
+            var startIndex = _stream.PinIndex();
             _stream.Advance();
-            return CreateToken(_stream.CurrentIndex - 1, tokenType);
+            return CreateToken(startIndex, tokenType);
         }
 
         private JsonToken ReadSingleCharacterAndCreateToken(int tokenStartIndex, JsonTokenType tokenType)
@@ -337,7 +338,7 @@ namespace Light.Serialization.Json.LowLevelReading
         private JsonToken CreateToken(int startIndex, JsonTokenType tokenType)
         {
             var length = _stream.CurrentIndex > startIndex ? _stream.CurrentIndex - startIndex :
-                             _stream.Buffer.Length - startIndex + _stream.CurrentIndex + 1;
+                             _stream.Buffer.Length - startIndex + _stream.CurrentIndex;
 
             return new JsonToken(_stream.Buffer, startIndex, length, tokenType);
         }
