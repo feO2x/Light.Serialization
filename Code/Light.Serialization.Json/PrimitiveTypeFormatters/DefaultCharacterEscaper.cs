@@ -3,7 +3,7 @@ using Light.GuardClauses;
 
 namespace Light.Serialization.Json.PrimitiveTypeFormatters
 {
-    // Many thanks to JSON.NET (https://github.com/JamesNK/Newtonsoft.Json). I would have never figured out how to do this without it.
+    // Many thanks to JSON.NET (https://github.com/JamesNK/Newtonsoft.Json). I would have never figured out this as fast as I could without it.
 
     /// <summary>
     ///     Represents a Character Escaper that escapes .NET characters if

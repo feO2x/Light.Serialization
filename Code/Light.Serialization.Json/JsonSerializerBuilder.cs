@@ -15,7 +15,7 @@ using Light.Serialization.Json.WriterInstructors;
 namespace Light.Serialization.Json
 {
     /// <summary>
-    ///     Represents a builder for JSON Serializer instances.
+    ///     Represents a builder for <see cref="JsonSerializer"/> instances.
     /// </summary>
     public sealed class JsonSerializerBuilder
     {
@@ -83,8 +83,9 @@ namespace Light.Serialization.Json
         {
             characterEscaper.MustNotBeNull(nameof(characterEscaper));
 
-            SetFieldAndReplaceInPool(out _characterEscaper, characterEscaper);
-            _pool.Objects.OfType<ISetCharacterEscaper>().Do(o => o.CharacterEscaper = characterEscaper);
+            _pool.SetFieldAndReplaceInPool(out _characterEscaper, characterEscaper)
+                 .AndUpdateObjectsOfType<ISetCharacterEscaper>()
+                 .Do(o => o.CharacterEscaper = characterEscaper);
 
             return this;
         }
@@ -99,8 +100,9 @@ namespace Light.Serialization.Json
         {
             typeAnalyzer.MustNotBeNull(nameof(typeAnalyzer));
 
-            SetFieldAndReplaceInPool(out _typeAnalyzer, typeAnalyzer);
-            _pool.Objects.OfType<ISetTypeAnalyzer>().Do(o => o.TypeAnalyzer = typeAnalyzer);
+            _pool.SetFieldAndReplaceInPool(out _typeAnalyzer, typeAnalyzer)
+                 .AndUpdateObjectsOfType<ISetTypeAnalyzer>()
+                 .Do(o => o.TypeAnalyzer = typeAnalyzer);
 
             return this;
         }
@@ -256,7 +258,7 @@ namespace Light.Serialization.Json
         {
             configureFormatter.MustNotBeNull(nameof(configureFormatter));
 
-            configureFormatter(_primitiveTypeFormattersMapping.Values.OfType<T>().First());
+            configureFormatter((T) _primitiveTypeFormattersMapping[typeof(T)]);
             return this;
         }
 
@@ -301,8 +303,9 @@ namespace Light.Serialization.Json
         {
             metadataInstructor.MustNotBeNull(nameof(metadataInstructor));
 
-            SetFieldAndReplaceInPool(out _objectMetadataInstructor, metadataInstructor);
-            _pool.Objects.OfType<ISetObjectMetadataInstructor>().Do(o => o.MetadataInstructor = metadataInstructor);
+            _pool.SetFieldAndReplaceInPool(out _objectMetadataInstructor, metadataInstructor)
+                 .AndUpdateObjectsOfType<ISetObjectMetadataInstructor>()
+                 .Do(o => o.MetadataInstructor = metadataInstructor);
 
             return this;
         }
@@ -317,8 +320,9 @@ namespace Light.Serialization.Json
         {
             metadataInstructor.MustNotBeNull(nameof(metadataInstructor));
 
-            SetFieldAndReplaceInPool(out _collectionMetadataInstructor, metadataInstructor);
-            _pool.Objects.OfType<ISetCollectionMetadataInstructor>().Do(o => o.MetadataInstructor = metadataInstructor);
+            _pool.SetFieldAndReplaceInPool(out _collectionMetadataInstructor, metadataInstructor)
+                 .AndUpdateObjectsOfType<ISetCollectionMetadataInstructor>()
+                 .Do(o => o.MetadataInstructor = metadataInstructor);
 
             return this;
         }
@@ -330,12 +334,11 @@ namespace Light.Serialization.Json
         /// <param name="configureInstructor">The delegate that configures the instructor.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureInstructor" /> is null.</exception>
-        public JsonSerializerBuilder ConfigureObjectMetadataInstructor<T>(Action<T> configureInstructor)
-            where T : IMetadataInstructor
+        public JsonSerializerBuilder ConfigureObjectMetadataInstructor<T>(Action<T> configureInstructor) where T : class, IMetadataInstructor
         {
             configureInstructor.MustNotBeNull(nameof(configureInstructor));
 
-            configureInstructor((T) _objectMetadataInstructor);
+            configureInstructor(_objectMetadataInstructor.MustBeOfType<T>());
 
             return this;
         }
@@ -347,11 +350,11 @@ namespace Light.Serialization.Json
         /// <param name="configureInstructor">The delegate that configures the instructor.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureInstructor" /> is null.</exception>
-        public JsonSerializerBuilder ConfigureCollectionMetadataInstructor<T>(Action<T> configureInstructor)
+        public JsonSerializerBuilder ConfigureCollectionMetadataInstructor<T>(Action<T> configureInstructor) where T : class, IMetadataInstructor
         {
             configureInstructor.MustNotBeNull(nameof(configureInstructor));
 
-            configureInstructor((T) _collectionMetadataInstructor);
+            configureInstructor(_collectionMetadataInstructor.MustBeOfType<T>());
 
             return this;
         }
@@ -406,8 +409,9 @@ namespace Light.Serialization.Json
         {
             typeToNameMapping.MustNotBeNull(nameof(typeToNameMapping));
 
-            SetFieldAndReplaceInPool(out _typeToNameMapping, typeToNameMapping);
-            _pool.Objects.OfType<ISetTypeToNameMapping>().Do(o => o.TypeToNameMapping = typeToNameMapping);
+            _pool.SetFieldAndReplaceInPool(out _typeToNameMapping, typeToNameMapping)
+                 .AndUpdateObjectsOfType<ISetTypeToNameMapping>()
+                 .Do(o => o.TypeToNameMapping = typeToNameMapping);
 
             return this;
         }
@@ -422,8 +426,9 @@ namespace Light.Serialization.Json
         {
             keyNormalizer.MustNotBeNull(nameof(keyNormalizer));
 
-            SetFieldAndReplaceInPool(out _keyNormalizer, keyNormalizer);
-            _pool.Objects.OfType<ISetKeyNormalizer>().Do(o => o.KeyNormalizer = keyNormalizer);
+            _pool.SetFieldAndReplaceInPool(out _keyNormalizer, keyNormalizer)
+                 .AndUpdateObjectsOfType<ISetKeyNormalizer>()
+                 .Do(o => o.KeyNormalizer = keyNormalizer);
 
             return this;
         }
@@ -434,13 +439,6 @@ namespace Light.Serialization.Json
         public JsonSerializer Build()
         {
             return new JsonSerializer(_writerInstructors, _createWriterFactory(), _instructorCache);
-        }
-
-        private void SetFieldAndReplaceInPool<T>(out T field, T value)
-        {
-            field = value;
-            _pool.Remove(field);
-            _pool.Register(value);
         }
     }
 }

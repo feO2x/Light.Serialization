@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Light.Serialization.Json.BuilderHelpers
 {
@@ -43,6 +44,19 @@ namespace Light.Serialization.Json.BuilderHelpers
                 _objects.Remove(@object);
             }
             return this;
+        }
+
+        public PropertyInjectionPool SetFieldAndReplaceInPool<T>(out T field, T value)
+        {
+            field = value;
+            Remove(field);
+            Register(value);
+            return this;
+        }
+
+        public IEnumerable<T> AndUpdateObjectsOfType<T>()
+        {
+            return Objects.OfType<T>();
         }
     }
 }
