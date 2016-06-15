@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Light.GuardClauses;
 using Light.GuardClauses.Exceptions;
 using Light.Serialization.Abstractions;
@@ -56,6 +57,11 @@ namespace Light.Serialization.Json
             _jsonWriter = null;
             _serializedObjects = null;
             return json;
+        }
+
+        public void Serialize(object objectGraphRoot, Stream stream)
+        {
+            throw new NotImplementedException();
         }
 
         private void SerializeObject(object @object)

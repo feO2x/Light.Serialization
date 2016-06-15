@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Light.GuardClauses;
 using Light.Serialization.Abstractions;
 using Light.Serialization.Json.Caching;
@@ -68,6 +69,24 @@ namespace Light.Serialization.Json
             requestedType.MustNotBeNull(nameof(requestedType));
 
             _jsonReader = _jsonReaderFactory.CreateFromString(json);
+            _objectReferencePreserver = new ObjectReferencePreserver();
+            var returnValue = DeserializeDocument(requestedType);
+            _jsonReader = null;
+            _objectReferencePreserver = null;
+            return returnValue;
+        }
+
+        public T Deserialize<T>(TextReader textReader)
+        {
+            return (T) Deserialize(textReader, typeof(T));
+        }
+
+        public object Deserialize(TextReader textReader, Type requestedType)
+        {
+            textReader.MustNotBeNull(nameof(textReader));
+            requestedType.MustNotBeNull(nameof(requestedType));
+
+            _jsonReader = _jsonReaderFactory.CreateFromTextReader(textReader);
             _objectReferencePreserver = new ObjectReferencePreserver();
             var returnValue = DeserializeDocument(requestedType);
             _jsonReader = null;

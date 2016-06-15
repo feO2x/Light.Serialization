@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace Light.Serialization.Json.LowLevelReading
 {
@@ -15,6 +16,17 @@ namespace Light.Serialization.Json.LowLevelReading
         public IJsonReader CreateFromString(string json)
         {
             return new JsonReader(new StringStream(json));
+        }
+
+        /// <summary>
+        ///     Creates a JSON reader instance from the specified JSON stream.
+        /// </summary>
+        /// <param name="textReader">The text reader encapsulating the stream that contains the JSON document.</param>
+        /// <returns>The created JSON reader.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="textReader" /> is null.</exception>
+        public IJsonReader CreateFromTextReader(TextReader textReader)
+        {
+            return new JsonReader(new TextReaderAdapter(textReader));
         }
     }
 }

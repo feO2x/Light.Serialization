@@ -55,6 +55,7 @@
     <Compile Include="FrameworkExtensions\EnumerableExtensions.cs" />
     <Compile Include="LowLevelReading\ICharacterStream.cs" />
     <Compile Include="LowLevelReading\StringStream.cs" />
+    <Compile Include="LowLevelReading\TextReaderAdapter.cs" />
     <Compile Include="ObjectMetadata\ArrayMetadataParseResult.cs" />
     <Compile Include="ObjectMetadata\DeferredReferenceForArray.cs" />
     <Compile Include="ObjectMetadata\DeferredReferenceForMultidimensionalArray.cs" />

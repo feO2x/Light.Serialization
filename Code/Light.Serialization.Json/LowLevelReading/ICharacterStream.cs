@@ -9,6 +9,8 @@
         bool IsEndOfStream { get; }
 
         char CurrentCharacter { get; }
+
+        int PinIndex();
         bool Advance();
     }
 }

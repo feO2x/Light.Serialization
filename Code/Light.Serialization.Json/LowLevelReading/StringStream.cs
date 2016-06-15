@@ -43,6 +43,11 @@ namespace Light.Serialization.Json.LowLevelReading
 
         public int CurrentIndex => _currentIndex;
 
+        public int PinIndex()
+        {
+            return _currentIndex;
+        }
+
         public bool IsEndOfStream => _currentIndex == _buffer.Length;
     }
 }

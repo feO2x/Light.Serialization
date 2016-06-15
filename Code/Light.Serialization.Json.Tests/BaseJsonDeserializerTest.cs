@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using FluentAssertions;
 using Light.Serialization.Abstractions;
 using Light.Serialization.Json.ObjectMetadata;
@@ -54,6 +55,13 @@ namespace Light.Serialization.Json.Tests
             Action act = () => testTarget.Deserialize<T>(json);
 
             act.ShouldThrow<DeserializationException>().And.Message.Should().Be(exceptionMessage);
+        }
+
+        public T GetDeserializedJsonFromStream<T>(TextReader textReader)
+        {
+            var testTarget = _builder.Build();
+
+            return testTarget.Deserialize<T>(textReader);
         }
     }
 }
