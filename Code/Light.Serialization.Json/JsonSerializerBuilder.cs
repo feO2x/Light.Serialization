@@ -19,23 +19,22 @@ namespace Light.Serialization.Json
     public sealed class JsonSerializerBuilder : BaseBuilderWithPropertyInjectionPool<JsonSerializerBuilder>
     {
         private readonly List<IJsonWriterInstructor> _writerInstructors;
-
         private ICharacterEscaper _characterEscaper = new DefaultCharacterEscaper();
         private IMetadataInstructor _collectionMetadataInstructor;
-        private Func<IJsonWriterFactory> _createWriterFactory;
         private IDictionary<Type, IJsonWriterInstructor> _instructorCache;
         private IJsonKeyNormalizer _keyNormalizer = new FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer();
         private IMetadataInstructor _objectMetadataInstructor;
         private IDictionary<Type, IPrimitiveTypeFormatter> _primitiveTypeFormattersMapping;
         private IReadableValuesTypeAnalyzer _typeAnalyzer = new ValueProvidersCacheDecorator(new PublicPropertiesAndFieldsAnalyzer(), new Dictionary<Type, IList<IValueProvider>>());
         private ITypeToNameMapping _typeToNameMapping = new SimpleNameToTypeMapping();
+        private IJsonWriterFactory _writerFactory;
 
         /// <summary>
         ///     Initializes a new instance of <see cref="JsonSerializerBuilder" />.
         /// </summary>
         public JsonSerializerBuilder()
         {
-            UseDefaultWriterFactory();
+            _writerFactory = Pool.Register(JsonWriterFactory.CreateDefault());
             _instructorCache = Pool.Register(new Dictionary<Type, IJsonWriterInstructor>());
 
             _primitiveTypeFormattersMapping = new List<IPrimitiveTypeFormatter>().AddDefaultPrimitiveTypeFormatters(_characterEscaper)
@@ -60,14 +59,14 @@ namespace Light.Serialization.Json
         /// <summary>
         ///     Configures to builder to use the specified JSON writer factory for the serializer.
         /// </summary>
-        /// <param name="createWriterFactory">The delegate that creates the writer factory being injected into the serializer.</param>
+        /// <param name="writerFactory">the writer factory that is injected into the serializer.</param>
         /// <returns>The builder for method chaining.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="createWriterFactory" /> is null.</exception>
-        public JsonSerializerBuilder WithWriterFactory(Func<IJsonWriterFactory> createWriterFactory)
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="writerFactory" /> is null.</exception>
+        public JsonSerializerBuilder WithWriterFactory(IJsonWriterFactory writerFactory)
         {
-            createWriterFactory.MustNotBeNull(nameof(createWriterFactory));
+            writerFactory.MustNotBeNull(nameof(writerFactory));
 
-            _createWriterFactory = createWriterFactory;
+            _writerFactory = writerFactory;
             return this;
         }
 
@@ -195,21 +194,6 @@ namespace Light.Serialization.Json
             _writerInstructors.Insert(targetIndex, additionalWriterInstructor);
             Pool.Register(additionalWriterInstructor);
             return this;
-        }
-
-        /// <summary>
-        ///     Configures the builder to use an instance of <see cref="JsonWriterFactory" />. You do not have to call this method by default (except you have already exchanged the writer factory).
-        /// </summary>
-        /// <returns>The builder for method chaining.</returns>
-        public JsonSerializerBuilder UseDefaultWriterFactory()
-        {
-            _createWriterFactory = CreateDefaultWriterFactory;
-            return this;
-        }
-
-        private JsonWriterFactory CreateDefaultWriterFactory()
-        {
-            return new JsonWriterFactory(_keyNormalizer, new WhitespaceFormatterNullObject());
         }
 
         /// <summary>
@@ -427,11 +411,35 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
+        ///     Exchanges the existing delegate that creates an <see cref="IJsonWhitespaceFormatter" /> with an instance creating an
+        ///     <see cref="IndentingWhitespaceFormatter" /> so that the resulting JSON document contains new lines and indenting.
+        /// </summary>
+        /// <returns>The builder for method chaining.</returns>
+        public JsonSerializerBuilder EnableHumanReadableJsonDocuments()
+        {
+            return WithCreateMethodForWhitespaceFormatter(IndentingWhitespaceFormatter.Create);
+        }
+
+        /// <summary>
+        ///     Exchanges the creation delegate for the whitespace formatter with the specified one.
+        /// </summary>
+        /// <param name="createWhitespaceFormatter">The delegate that creates a new <see cref="IJsonWhitespaceFormatter" /> instance.</param>
+        /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="createWhitespaceFormatter" /> is null.</exception>
+        public JsonSerializerBuilder WithCreateMethodForWhitespaceFormatter(Func<IJsonWhitespaceFormatter> createWhitespaceFormatter)
+        {
+            createWhitespaceFormatter.MustNotBeNull(nameof(createWhitespaceFormatter));
+
+            ConfigureAll<ISetWhitespaceFormatterCreationDelegate>(o => o.CreateWhitespaceFormatter = createWhitespaceFormatter);
+            return this;
+        }
+
+        /// <summary>
         ///     Creates a new instance of <see cref="JsonSerializer" /> using the specified builder settings.
         /// </summary>
         public JsonSerializer Build()
         {
-            return new JsonSerializer(_writerInstructors, _createWriterFactory(), _instructorCache);
+            return new JsonSerializer(_writerInstructors, _writerFactory, _instructorCache);
         }
     }
 }

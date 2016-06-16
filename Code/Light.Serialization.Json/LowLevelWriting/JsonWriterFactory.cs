@@ -2,30 +2,31 @@
 using System.IO;
 using System.Text;
 using Light.GuardClauses;
+using Light.Serialization.Json.BuilderHelpers;
 
 namespace Light.Serialization.Json.LowLevelWriting
 {
     /// <summary>
     ///     Represents the factory that creates the default JSON Writer and manages all corresponding disposables.
     /// </summary>
-    public sealed class JsonWriterFactory : IJsonWriterFactory
+    public sealed class JsonWriterFactory : IJsonWriterFactory, ISetWhitespaceFormatterCreationDelegate, ISetKeyNormalizer
     {
-        private readonly IJsonKeyNormalizer _keyNormalizer;
-        private readonly IJsonWhitespaceFormatter _whitespaceFormatter;
+        private Func<IJsonWhitespaceFormatter> _createWhitespaceFormatter;
+        private IJsonKeyNormalizer _keyNormalizer;
 
         /// <summary>
         ///     Creates a new instance of JsonWriterFactory.
         /// </summary>
         /// <param name="keyNormalizer">The key normalizer that will be injected into the JsonWriter.</param>
-        /// <param name="whitespaceFormatter">The whitespace formatter that will be injected into the JsonWriter.</param>
+        /// <param name="createWhitespaceFormatter">The whitespace formatter that will be injected into the JsonWriter.</param>
         /// <exception cref="ArgumentNullException">Thrown when any parameter is null.</exception>
-        public JsonWriterFactory(IJsonKeyNormalizer keyNormalizer, IJsonWhitespaceFormatter whitespaceFormatter)
+        public JsonWriterFactory(IJsonKeyNormalizer keyNormalizer, Func<IJsonWhitespaceFormatter> createWhitespaceFormatter)
         {
             keyNormalizer.MustNotBeNull(nameof(keyNormalizer));
-            whitespaceFormatter.MustNotBeNull(nameof(whitespaceFormatter));
+            createWhitespaceFormatter.MustNotBeNull(nameof(createWhitespaceFormatter));
 
             _keyNormalizer = keyNormalizer;
-            _whitespaceFormatter = whitespaceFormatter;
+            _createWhitespaceFormatter = createWhitespaceFormatter;
         }
 
         /// <summary>
@@ -36,7 +37,7 @@ namespace Light.Serialization.Json.LowLevelWriting
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> is null.</exception>
         public IJsonWriter CreateFromStringBuilder(StringBuilder builder)
         {
-            return new JsonWriter(new StringWriter(builder), _whitespaceFormatter, _keyNormalizer);
+            return new JsonWriter(new StringWriter(builder), _createWhitespaceFormatter(), _keyNormalizer);
         }
 
         /// <summary>
@@ -47,25 +48,53 @@ namespace Light.Serialization.Json.LowLevelWriting
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="writer" /> is null.</exception>
         public IJsonWriter CreateFromTextWriter(TextWriter writer)
         {
-            return new JsonWriter(writer, _whitespaceFormatter, _keyNormalizer);
+            return new JsonWriter(writer, _createWhitespaceFormatter(), _keyNormalizer);
         }
 
         /// <summary>
-        ///     Creates a new JsonWriterFactory instance with the default normalizer (for JSON keys with lowerCamelCase style and without special characters)
+        ///     Gets or sets the key normalizer that is injected into the <see cref="JsonWriter" />.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
+        public IJsonKeyNormalizer KeyNormalizer
+        {
+            get { return _keyNormalizer; }
+            set
+            {
+                value.MustNotBeNull(nameof(value));
+                _keyNormalizer = value;
+            }
+        }
+
+        /// <summary>
+        ///     Gets or Sets the delegate that creates an <see cref="IJsonWhitespaceFormatter" /> instance.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
+        public Func<IJsonWhitespaceFormatter> CreateWhitespaceFormatter
+        {
+            get { return _createWhitespaceFormatter; }
+            set
+            {
+                value.MustNotBeNull(nameof(value));
+                _createWhitespaceFormatter = value;
+            }
+        }
+
+        /// <summary>
+        ///     Creates a new <see cref="JsonWriterFactory" /> instance with the default normalizer (for JSON keys with lowerCamelCase style and without special characters)
         ///     and the default whitespace formatter (no whitespace to keep the document small).
         /// </summary>
         public static JsonWriterFactory CreateDefault()
         {
-            return new JsonWriterFactory(new FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer(), new WhitespaceFormatterNullObject());
+            return new JsonWriterFactory(new FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer(), WhitespaceFormatterNullObject.Create);
         }
 
         /// <summary>
-        ///     Creates a new JsonWriterFactory instance with the default normalizer (for JSON keys with lowerCamelCase style and without special characters)
-        ///     and an IndentingWhitespaceFormatter for human-readable JSON documents with indenting.
+        ///     Creates a new <see cref="JsonWriterFactory" /> instance with the default normalizer (for JSON keys with lowerCamelCase style and without special characters)
+        ///     and an <see cref="IndentingWhitespaceFormatter" /> for human-readable JSON documents with indenting.
         /// </summary>
         public static JsonWriterFactory CreateDefaultWithIndentingWhitespaceFormatter()
         {
-            return new JsonWriterFactory(new FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer(), new IndentingWhitespaceFormatter());
+            return new JsonWriterFactory(new FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer(), IndentingWhitespaceFormatter.Create);
         }
     }
 }

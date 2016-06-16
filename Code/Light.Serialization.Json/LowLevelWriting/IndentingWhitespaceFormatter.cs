@@ -98,5 +98,13 @@ namespace Light.Serialization.Json.LowLevelWriting
                 writer.WritePrimitiveValue(IdentCharacters);
             }
         }
+
+        /// <summary>
+        ///     Creates a new instance of <see cref="IndentingWhitespaceFormatter" /> using the default constructor.
+        /// </summary>
+        public static IJsonWhitespaceFormatter Create()
+        {
+            return new IndentingWhitespaceFormatter();
+        }
     }
 }

@@ -28,5 +28,10 @@
         {
             _currentIndentationLevel = 0;
         }
+
+        public static IJsonWhitespaceFormatter Create()
+        {
+            return new WhitespaceFormatterNullObject();
+        }
     }
 }

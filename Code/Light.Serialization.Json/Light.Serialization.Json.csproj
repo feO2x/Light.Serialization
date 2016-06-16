@@ -50,6 +50,7 @@
     <Compile Include="BuilderHelpers\ISetTypeAnalyzer.cs" />
     <Compile Include="BuilderHelpers\ISetTypeDescriptionService.cs" />
     <Compile Include="BuilderHelpers\ISetTypeToNameMapping.cs" />
+    <Compile Include="BuilderHelpers\ISetWhitespaceFormatterCreationDelegate.cs" />
     <Compile Include="BuilderHelpers\PropertyInjectionPool.cs" />
     <Compile Include="Caching\DefaultTypeDescriptionServiceWithCaching.cs" />
     <Compile Include="BuilderHelpers\IGetSingletonInstance.cs" />
