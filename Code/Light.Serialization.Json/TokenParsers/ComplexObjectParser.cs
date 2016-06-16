@@ -12,10 +12,10 @@ namespace Light.Serialization.Json.TokenParsers
     /// <summary>
     ///     Represents a JSON Token Parser that can deserialize complex JSON objects.
     /// </summary>
-    public sealed class ComplexObjectParser : IJsonTokenParser, ISetTypeDescriptionService
+    public sealed class ComplexObjectParser : IJsonTokenParser, ISetTypeDescriptionService, ISetObjectMetadataParser
     {
-        private readonly IObjectMetadataParser _metadataParser;
         private readonly IMetaFactory _metaFactory;
+        private IObjectMetadataParser _metadataParser;
         private ITypeDescriptionService _typeDescriptionService;
 
         /// <summary>
@@ -143,6 +143,20 @@ namespace Light.Serialization.Json.TokenParsers
 
             // return the deserialized object
             return ParseResult.FromParsedValue(createdObject);
+        }
+
+        /// <summary>
+        ///     Gets or sets the object that is used the metadata section of a complex JSON object.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
+        public IObjectMetadataParser MetadataParser
+        {
+            get { return _metadataParser; }
+            set
+            {
+                value.MustNotBeNull(nameof(value));
+                _metadataParser = value;
+            }
         }
 
         /// <summary>

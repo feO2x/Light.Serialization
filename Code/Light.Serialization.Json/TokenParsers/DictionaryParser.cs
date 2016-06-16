@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Light.GuardClauses;
 using Light.Serialization.Abstractions;
+using Light.Serialization.Json.BuilderHelpers;
 using Light.Serialization.Json.ComplexTypeConstruction;
 using Light.Serialization.Json.FrameworkExtensions;
 using Light.Serialization.Json.LowLevelReading;
@@ -14,10 +15,10 @@ namespace Light.Serialization.Json.TokenParsers
     /// <summary>
     ///     Represents a JSON token parser that deserializes complex JSON objects to .NET dictionaries.
     /// </summary>
-    public sealed class DictionaryParser : IJsonTokenParser
+    public sealed class DictionaryParser : IJsonTokenParser, ISetObjectMetadataParser
     {
-        private readonly IObjectMetadataParser _metadataParser;
         private readonly IMetaFactory _metaFactory;
+        private IObjectMetadataParser _metadataParser;
 
         /// <summary>
         ///     Creates a new instance of <see cref="DictionaryParser" />.
@@ -71,6 +72,19 @@ namespace Light.Serialization.Json.TokenParsers
                 return ParseResult.FromDeferredReference(metadataParseResult.ReferencePreservationInfo.Id);
 
             return ParseDictionary(metadataParseResult, context, currentToken, _metaFactory);
+        }
+
+        /// <summary>
+        ///     Gets or sets the object used to parse the metadata section of the complex JSON object.
+        /// </summary>
+        public IObjectMetadataParser MetadataParser
+        {
+            get { return _metadataParser; }
+            set
+            {
+                value.MustNotBeNull(nameof(value));
+                _metadataParser = value;
+            }
         }
 
         /// <summary>

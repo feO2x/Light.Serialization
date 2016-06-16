@@ -47,6 +47,7 @@
     <Compile Include="BuilderHelpers\ISetCollectionMetadataInstructor.cs" />
     <Compile Include="BuilderHelpers\ISetKeyNormalizer.cs" />
     <Compile Include="BuilderHelpers\ISetNameToTypeMapping.cs" />
+    <Compile Include="BuilderHelpers\ISetObjectMetadataParser.cs" />
     <Compile Include="BuilderHelpers\ISetPrimitiveTypeFormatters.cs" />
     <Compile Include="BuilderHelpers\ISetTypeAnalyzer.cs" />
     <Compile Include="BuilderHelpers\ISetTypeDescriptionService.cs" />
