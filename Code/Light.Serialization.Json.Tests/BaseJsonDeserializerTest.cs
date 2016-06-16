@@ -2,6 +2,7 @@
 using System.IO;
 using FluentAssertions;
 using Light.Serialization.Abstractions;
+using Light.Serialization.Json.LowLevelReading;
 using Light.Serialization.Json.ObjectMetadata;
 
 namespace Light.Serialization.Json.Tests
@@ -55,6 +56,16 @@ namespace Light.Serialization.Json.Tests
             Action act = () => testTarget.Deserialize<T>(json);
 
             act.ShouldThrow<DeserializationException>().And.Message.Should().Be(exceptionMessage);
+        }
+
+        public void ConfigureReaderFactory(Action<JsonReaderFactory> configureFactory)
+        {
+            _builder.ConfigureReaderFactory(configureFactory);
+        }
+
+        public JsonDeserializer GetDeserializer()
+        {
+            return _builder.Build();
         }
 
         public T GetDeserializedJsonFromStream<T>(TextReader textReader)

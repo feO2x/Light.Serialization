@@ -88,6 +88,7 @@
     <Compile Include="DeserializationTests\TimeSpanTests.cs" />
     <Compile Include="DeserializationTests\StringTests.cs" />
     <Compile Include="DeserializationTests\NullTests.cs" />
+    <Compile Include="IntegrationTests\StreamingTests.cs" />
     <Compile Include="SampleTypes\DummyPerson.cs" />
     <Compile Include="SampleTypes\MoreComplexDummyClass.cs" />
     <Compile Include="SampleTypes\Nodes.cs" />

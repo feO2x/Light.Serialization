@@ -1,6 +1,7 @@
 ﻿using System;
 using FluentAssertions;
 using Light.Serialization.Abstractions;
+using Light.Serialization.Json.LowLevelReading;
 using Light.Serialization.Json.ObjectMetadata;
 using Light.Serialization.Json.Unity;
 using Microsoft.Practices.Unity;
@@ -59,6 +60,16 @@ namespace Light.Serialization.Json.Tests
             Action act = () => testTarget.Deserialize<T>(json);
 
             act.ShouldThrow<DeserializationException>().And.Message.Should().Contain(partOfExceptionMessage);
+        }
+
+        public void ConfigureReaderFactory(Action<JsonReaderFactory> configureFactory)
+        {
+            configureFactory(Container.Resolve<JsonReaderFactory>());
+        }
+
+        public JsonDeserializer GetDeserializer()
+        {
+            return Container.Resolve<JsonDeserializer>();
         }
 
         public void CheckDeserializerThrowsExceptionWithMessage<T>(string json, string exceptionMessage)
