@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Light.GuardClauses;
 using Light.GuardClauses.Exceptions;
 using Light.Serialization.Abstractions;
@@ -42,26 +43,39 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        /// Serializes the specified object graph to a JSON string.
+        ///     Serializes the specified object graph to a string.
         /// </summary>
         /// <param name="objectGraphRoot">The object that is the starting point of the object graph.</param>
         /// <returns>The serialized JSON string.</returns>
         /// <exception cref="SerializationException">Thrown when any part of the object graph could not be serialized.</exception>
         public string Serialize(object objectGraphRoot)
         {
-           _jsonWriter = _writerFactory.Create();
+            var stringBuilder = new StringBuilder();
+            _jsonWriter = _writerFactory.CreateFromStringBuilder(stringBuilder);
             _serializedObjects = new List<object>();
             SerializeObject(objectGraphRoot);
 
-            var json = _writerFactory.FinishWriteProcessAndReleaseResources();
+            var json = stringBuilder.ToString();
             _jsonWriter = null;
             _serializedObjects = null;
             return json;
         }
 
-        public void Serialize(object objectGraphRoot, Stream stream)
+        /// <summary>
+        ///     Serializes the specified object graph to the stream encapsulated by the text writer.
+        /// </summary>
+        /// <param name="objectGraphRoot">The root of the object graph to be serialized.</param>
+        /// <param name="textWriter">The text writer encapsulating the stream that the JSON document is written to.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="textWriter" /> is null.</exception>
+        public void Serialize(object objectGraphRoot, TextWriter textWriter)
         {
-            throw new NotImplementedException();
+            _jsonWriter = _writerFactory.CreateFromTextWriter(textWriter);
+            _serializedObjects = new List<object>();
+
+            SerializeObject(objectGraphRoot);
+
+            _jsonWriter = null;
+            _serializedObjects = null;
         }
 
         private void SerializeObject(object @object)

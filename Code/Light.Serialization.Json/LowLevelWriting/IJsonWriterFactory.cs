@@ -1,20 +1,26 @@
-﻿namespace Light.Serialization.Json.LowLevelWriting
+﻿using System;
+using System.IO;
+using System.Text;
+
+namespace Light.Serialization.Json.LowLevelWriting
 {
     /// <summary>
-    ///     Represents the abstraction of an object that is able to create a JSON writer and manage the lifetime of the corresponding resources.
+    ///     Represents the abstraction of an object that is able to create <see cref="IJsonWriter" /> instances that write to string builders or streams.
     /// </summary>
     public interface IJsonWriterFactory
     {
         /// <summary>
-        ///     Creates a new JSON writer instance.
+        ///     Creates a new <see cref="IJsonWriter" /> instance for the specified string builder.
         /// </summary>
-        /// <returns></returns>
-        IJsonWriter Create();
+        /// <param name="builder">The string builder that the JSON writer uses to write the document.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> is null.</exception>
+        IJsonWriter CreateFromStringBuilder(StringBuilder builder);
 
         /// <summary>
-        ///     Finishes the writing process and releases all corresponding resources. This method should be called after create.
+        ///     Creates a new <see cref="IJsonWriter" /> instance of the specified text writer.
         /// </summary>
-        /// <returns>The JSON document as a string.</returns>
-        string FinishWriteProcessAndReleaseResources();
+        /// <param name="writer">The text writer that the JSON writer uses to write the document.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="writer" /> is null.</exception>
+        IJsonWriter CreateFromTextWriter(TextWriter writer);
     }
 }

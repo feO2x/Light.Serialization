@@ -12,8 +12,6 @@ namespace Light.Serialization.Json.LowLevelWriting
     {
         private readonly IJsonKeyNormalizer _keyNormalizer;
         private readonly IJsonWhitespaceFormatter _whitespaceFormatter;
-        private StringBuilder _stringBuilder;
-        private StringWriter _stringWriter;
 
         /// <summary>
         ///     Creates a new instance of JsonWriterFactory.
@@ -31,36 +29,25 @@ namespace Light.Serialization.Json.LowLevelWriting
         }
 
         /// <summary>
-        ///     Creates a new instance of JsonWriter using a StringBuilder and StringWriter.
+        ///     Creates a new <see cref="JsonWriter" /> instance by encapsulating the specified string builder in a <see cref="StringWriter" /> instance.
         /// </summary>
-        /// <returns>The initialized JsonWriter.</returns>
-        /// <exception cref="InvalidOperationException">Thrown when a previous call to Create was not finished with <see cref="FinishWriteProcessAndReleaseResources" />.</exception>
-        public IJsonWriter Create()
+        /// <param name="builder">The builder that the JSON writer will write to.</param>
+        /// <returns>The new <see cref="JsonWriter" /> instance.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> is null.</exception>
+        public IJsonWriter CreateFromStringBuilder(StringBuilder builder)
         {
-            Check.That(_stringBuilder == null,
-                       () => new InvalidOperationException("You cannot call Create before releasing the objects of a previous Create call."));
-
-            _stringBuilder = new StringBuilder();
-            _stringWriter = new StringWriter(_stringBuilder);
-            _whitespaceFormatter.ResetIndentationLevel();
-            IJsonWriter returnValue = new JsonWriter(_stringWriter, _whitespaceFormatter, _keyNormalizer);
-            return returnValue;
+            return new JsonWriter(new StringWriter(builder), _whitespaceFormatter, _keyNormalizer);
         }
 
         /// <summary>
-        ///     Releases the StringBuilder and the StringWriter that were created for the JsonWriter and returns the resulting JSON document.
+        ///     Creates a new <see cref="JsonWriter" /> instance using the specified text writer.
         /// </summary>
-        /// <returns>The JSON document as a string.</returns>
-        public string FinishWriteProcessAndReleaseResources()
+        /// <param name="writer">The text writer that the JSON writer will use to write the document.</param>
+        /// <returns>The new <see cref="JsonWriter" /> instance.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="writer" /> is null.</exception>
+        public IJsonWriter CreateFromTextWriter(TextWriter writer)
         {
-            Check.Against(_stringBuilder == null,
-                          () => new InvalidOperationException("FinishWriteProcessAndReleaseResources must be called after Create."));
-
-            // ReSharper disable once PossibleNullReferenceException
-            var returnValue = _stringBuilder.ToString();
-            _stringWriter = null;
-            _stringBuilder = null;
-            return returnValue;
+            return new JsonWriter(writer, _whitespaceFormatter, _keyNormalizer);
         }
 
         /// <summary>

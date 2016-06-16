@@ -19,8 +19,8 @@ namespace Light.Serialization.Abstractions
         ///     Serializes the specified object graph to the stream.
         /// </summary>
         /// <param name="objectGraphRoot">The object that is the starting point of the object graph.</param>
-        /// <param name="stream">The stream that the serialized document is written to.</param>
+        /// <param name="textWriter">The text writer encapsulating the stream that the serialized document is written to.</param>
         /// <exception cref="SerializationException">Thrown when any part of the object graph could not be serialized.</exception>
-        void Serialize(object objectGraphRoot, Stream stream);
+        void Serialize(object objectGraphRoot, TextWriter textWriter);
     }
 }
