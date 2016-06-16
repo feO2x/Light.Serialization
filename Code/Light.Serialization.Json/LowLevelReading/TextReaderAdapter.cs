@@ -94,7 +94,7 @@ namespace Light.Serialization.Json.LowLevelReading
             }
 
             if (_currentIndex == _pinnedIndex)
-                throw new DeserializationException("The buffer size for deseserializing this JSON document is too small (the pinned index was reached).");
+                throw new DeserializationException("The buffer size for deseserializing the JSON document is too small (the pinned index was reached).");
 
             if (_currentIndex == _loadNextContentIndex)
             {
