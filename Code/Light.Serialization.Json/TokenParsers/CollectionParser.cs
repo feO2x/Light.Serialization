@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Light.GuardClauses;
 using Light.Serialization.Abstractions;
+using Light.Serialization.Json.BuilderHelpers;
 using Light.Serialization.Json.ComplexTypeConstruction;
 using Light.Serialization.Json.LowLevelReading;
 using Light.Serialization.Json.ObjectMetadata;
@@ -13,11 +14,11 @@ namespace Light.Serialization.Json.TokenParsers
     /// <summary>
     ///     Represents a JSON Token Parser that deserializes JSON arrays to .NET generic collections.
     /// </summary>
-    public sealed class CollectionParser : IJsonTokenParser
+    public sealed class CollectionParser : IJsonTokenParser, ISetArrayMetadataParser
     {
-        private readonly IArrayMetadataParser _metadataParser;
         private readonly IMetaFactory _metaFactory;
         private readonly MethodInfo _populateArrayWithUnknownLengthMethod = typeof(CollectionParser).GetTypeInfo().GetDeclaredMethod(nameof(PopulateArrayWithUnknownLength));
+        private IArrayMetadataParser _metadataParser;
 
         /// <summary>
         ///     Initializes a new instance of ArrayToGenericCollectionParser.
@@ -107,6 +108,20 @@ namespace Light.Serialization.Json.TokenParsers
             PopulateCollection(collection, itemType, currentToken, context);
 
             return ParseResult.FromParsedValue(collection);
+        }
+
+        /// <summary>
+        ///     Gets or sets the object used to parse the metadata section of a JSON array.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
+        public IArrayMetadataParser MetadataParser
+        {
+            get { return _metadataParser; }
+            set
+            {
+                value.MustNotBeNull(nameof(value));
+                _metadataParser = value;
+            }
         }
 
         private static void PopulateCollection(IList collection, Type itemType, JsonToken currentToken, JsonDeserializationContext context)

@@ -15,13 +15,12 @@ namespace Light.Serialization.Json
     /// <summary>
     ///     Represents a builder for the JSON Deserializer.
     /// </summary>
-    public sealed class JsonDeserializerBuilder
+    public sealed class JsonDeserializerBuilder : BaseBuilderWithPropertyInjectionPool<JsonDeserializerBuilder>
     {
-        private readonly IArrayMetadataParser _arrayMetadataParser;
         private readonly IObjectMetadataParser _complexObjectMetadataParser;
         private readonly IMetaFactory _metaFactory = new DefaultMetaFactory();
-        private readonly PropertyInjectionPool _pool = new PropertyInjectionPool();
         private readonly List<IJsonTokenParserFactory> _tokenParserFactories;
+        private IArrayMetadataParser _arrayMetadataParser;
         private INameToTypeMapping _nameToTypeMapping;
         private IJsonReaderFactory _readerFactory = new JsonReaderFactory();
         private Dictionary<JsonTokenTypeCombination, IJsonTokenParser> _tokenParserCache = new Dictionary<JsonTokenTypeCombination, IJsonTokenParser>();
@@ -33,11 +32,13 @@ namespace Light.Serialization.Json
         public JsonDeserializerBuilder()
         {
             _nameToTypeMapping = new SimpleNameToTypeMapping();
-            _complexObjectMetadataParser = new ComplexObjectMetadataParser(_nameToTypeMapping);
-            _arrayMetadataParser = new ArrayMetadataParser(_nameToTypeMapping);
-            _typeDescriptionService = new DefaultTypeDescriptionServiceWithCaching(new Dictionary<Type, TypeCreationDescription>());
+            _complexObjectMetadataParser = Pool.Register(new ComplexObjectMetadataParser(_nameToTypeMapping));
+            _arrayMetadataParser = Pool.Register(new ArrayMetadataParser(_nameToTypeMapping));
+            _typeDescriptionService = Pool.Register(new DefaultTypeDescriptionServiceWithCaching(new Dictionary<Type, TypeCreationDescription>()));
 
             _tokenParserFactories = new List<IJsonTokenParserFactory>().AddDefaultTokenParserFactories(_metaFactory, _complexObjectMetadataParser, _arrayMetadataParser, _typeDescriptionService);
+            Pool.RegisterAll(_tokenParserFactories.OfType<SingletonFactory>().Select(f => f.Create()));
+            Pool.RegisterAll(_tokenParserFactories.Where(f => f.GetType() != typeof(SingletonFactory)));
         }
 
         /// <summary>
@@ -50,18 +51,23 @@ namespace Light.Serialization.Json
         {
             mapping.MustNotBeNull(nameof(mapping));
 
-            _nameToTypeMapping = mapping;
-            SetNameToTypeMappingOnMetadataParser(_complexObjectMetadataParser as ISetNameToTypeMapping, mapping);
-            SetNameToTypeMappingOnMetadataParser(_arrayMetadataParser as ISetNameToTypeMapping, mapping);
+            Pool.SetFieldAndReplaceInPool(ref _nameToTypeMapping, mapping);
+            ConfigureAll<ISetNameToTypeMapping>(o => o.NameToTypeMapping = mapping);
+
             return this;
         }
 
-        private static void SetNameToTypeMappingOnMetadataParser(ISetNameToTypeMapping metadataParser, INameToTypeMapping mapping)
+        /// <summary>
+        ///     Exchanges the existing <see cref="IArrayMetadataParser" /> instance with the specified one.
+        /// </summary>
+        /// <param name="metadataParser">The new array metadata parser.</param>
+        /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="metadataParser" /> is null.</exception>
+        public JsonDeserializerBuilder WithArrayMetadataParser(IArrayMetadataParser metadataParser)
         {
-            if (metadataParser == null)
-                return;
-
-            metadataParser.NameToTypeMapping = mapping;
+            Pool.SetFieldAndReplaceInPool(ref _arrayMetadataParser, metadataParser);
+            ConfigureAll<ISetArrayMetadataParser>(o => o.MetadataParser = metadataParser);
+            return this;
         }
 
         /// <summary>

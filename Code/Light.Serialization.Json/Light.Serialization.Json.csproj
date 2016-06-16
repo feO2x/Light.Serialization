@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BuilderHelpers\BaseBuilderWithPropertyInjectionPool.cs" />
+    <Compile Include="BuilderHelpers\ISetArrayMetadataParser.cs" />
     <Compile Include="BuilderHelpers\ISetCharacterEscaper.cs" />
     <Compile Include="BuilderHelpers\ISetCollectionMetadataInstructor.cs" />
     <Compile Include="BuilderHelpers\ISetKeyNormalizer.cs" />
