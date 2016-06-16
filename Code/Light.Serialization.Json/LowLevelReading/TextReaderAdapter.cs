@@ -12,7 +12,7 @@ namespace Light.Serialization.Json.LowLevelReading
     public sealed class TextReaderAdapter : ICharacterStream
     {
         /// <summary>
-        ///     Gets the default char buffer size. This value defaults to 2048.
+        ///     Gets the default character buffer size. This value defaults to 2048.
         /// </summary>
         public const int DefaultBufferSize = 2048;
 
@@ -23,11 +23,11 @@ namespace Light.Serialization.Json.LowLevelReading
 
         private readonly char[] _buffer;
         private readonly TextReader _textReader;
-        private int _currentIndex;
         private int _endIndex = -1;
-        private bool _isEndOfStream;
+        private bool _isAtEndOfStream;
         private int _loadNextContentIndex;
         private int _pinnedIndex = -1;
+        private int _position;
 
         /// <summary>
         ///     Creates a new instance of <see cref="TextReaderAdapter" />.
@@ -54,25 +54,25 @@ namespace Light.Serialization.Json.LowLevelReading
         /// <summary>
         ///     Gets the current position in the buffer.
         /// </summary>
-        public int CurrentIndex => _currentIndex;
+        public int Position => _position;
 
         /// <summary>
         ///     Gets the value indicating whether the end of the stream is reached.
         /// </summary>
-        public bool IsEndOfStream => _isEndOfStream;
+        public bool IsAtEndOfStream => _isAtEndOfStream;
 
         /// <summary>
         ///     Gets the current character of the stream.
         /// </summary>
-        public char CurrentCharacter => _buffer[_currentIndex];
+        public char CurrentCharacter => _buffer[_position];
 
         /// <summary>
         ///     Pins the current index in the buffer. This way the characters from this position onward are not altered when new content is loaded from the text reader.
         /// </summary>
         /// <returns>The current index.</returns>
-        public int PinIndex()
+        public int PinPosition()
         {
-            _pinnedIndex = _currentIndex;
+            _pinnedIndex = _position;
             return _pinnedIndex;
         }
 
@@ -82,24 +82,24 @@ namespace Light.Serialization.Json.LowLevelReading
         /// <returns>True if the current position was increased, else false.</returns>
         public bool Advance()
         {
-            if (_isEndOfStream)
+            if (_isAtEndOfStream)
                 return false;
 
             AdvanceCurrentIndex();
 
-            if (_currentIndex == _endIndex)
+            if (_position == _endIndex)
             {
-                _isEndOfStream = true;
+                _isAtEndOfStream = true;
                 return false;
             }
 
-            if (_currentIndex == _pinnedIndex)
+            if (_position == _pinnedIndex)
                 throw new DeserializationException("The buffer size for deseserializing the JSON document is too small (the pinned index was reached).");
 
-            if (_currentIndex == _loadNextContentIndex)
+            if (_position == _loadNextContentIndex)
             {
                 ReadFromTextReaderIntoBuffer();
-                return !_isEndOfStream;
+                return !_isAtEndOfStream;
             }
 
             return true;
@@ -109,10 +109,10 @@ namespace Light.Serialization.Json.LowLevelReading
         {
             if (_pinnedIndex == -1)
             {
-                var numbersOfCharactersToRead = _buffer.Length - _loadNextContentIndex;
-                var numberOfCharactersRead = _textReader.Read(_buffer, _loadNextContentIndex, numbersOfCharactersToRead);
+                var numberOfCharactersToRead = _buffer.Length - _loadNextContentIndex;
+                var numberOfCharactersRead = _textReader.Read(_buffer, _loadNextContentIndex, numberOfCharactersToRead);
                 if (numberOfCharactersRead == 0)
-                    _isEndOfStream = true;
+                    _isAtEndOfStream = true;
                 else if (numberOfCharactersRead < _buffer.Length)
                     AdvanceLoadNextContentIndex(numberOfCharactersRead);
 
@@ -131,7 +131,7 @@ namespace Light.Serialization.Json.LowLevelReading
                 {
                     if (loopIteration == 1)
                     {
-                        _isEndOfStream = true;
+                        _isAtEndOfStream = true;
                         return;
                     }
                     _endIndex = _loadNextContentIndex;
@@ -148,8 +148,8 @@ namespace Light.Serialization.Json.LowLevelReading
 
         private void AdvanceCurrentIndex()
         {
-            if (++_currentIndex == _buffer.Length)
-                _currentIndex = 0;
+            if (++_position == _buffer.Length)
+                _position = 0;
         }
 
         private void AdvanceLoadNextContentIndex(int count)

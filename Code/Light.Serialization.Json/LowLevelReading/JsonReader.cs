@@ -31,8 +31,8 @@ namespace Light.Serialization.Json.LowLevelReading
         {
             IgnoreWhiteSpace();
 
-            if (_stream.IsEndOfStream)
-                return CreateToken(_stream.CurrentIndex, JsonTokenType.EndOfDocument);
+            if (_stream.IsAtEndOfStream)
+                return CreateToken(_stream.Position, JsonTokenType.EndOfDocument);
 
             var firstCharacter = _stream.CurrentCharacter;
 
@@ -61,7 +61,7 @@ namespace Light.Serialization.Json.LowLevelReading
             if (firstCharacter == JsonSymbols.ValueDelimiter)
                 return ReadSingleCharacterAndCreateToken(JsonTokenType.ValueDelimiter);
 
-            var startIndex = _stream.PinIndex();
+            var startIndex = _stream.PinPosition();
             ReadToEndOfToken();
             var token = CreateToken(startIndex, JsonTokenType.Error);
             throw new JsonDocumentException($"The Json Reader cannot recognize the sequence {token} and therefore cannot tranlate it to a valid JsonToken", token);
@@ -71,7 +71,7 @@ namespace Light.Serialization.Json.LowLevelReading
         {
             while (true)
             {
-                if (_stream.IsEndOfStream)
+                if (_stream.IsAtEndOfStream)
                     return;
 
                 if (char.IsWhiteSpace(_stream.CurrentCharacter) == false)
@@ -83,7 +83,7 @@ namespace Light.Serialization.Json.LowLevelReading
 
         private JsonToken ReadPositiveNumber(char firstCharacter)
         {
-            var startIndex = _stream.PinIndex();
+            var startIndex = _stream.PinPosition();
             var tokenType = CheckNumber(firstCharacter);
             if (tokenType == JsonTokenType.Error)
                 throw ReadToEndOfTokenAndCreateJsonDocumentException(startIndex, JsonSymbols.Number);
@@ -94,7 +94,7 @@ namespace Light.Serialization.Json.LowLevelReading
         private JsonToken ReadNegativeNumber()
         {
             // The first character is definitely a negative sign, otherwise this method would not have been called
-            var startIndex = _stream.PinIndex();
+            var startIndex = _stream.PinPosition();
 
             // Advance the current index and check if it is a digit, if not, then there is only a minus sign, which results in an exception
             _stream.Advance();
@@ -219,7 +219,7 @@ namespace Light.Serialization.Json.LowLevelReading
         private JsonToken ReadString()
         {
             // The first digit is a string delimiter, otherwise this method would not have been called
-            var startIndex = _stream.PinIndex();
+            var startIndex = _stream.PinPosition();
 
             // Read in all following characters until we get a valid string delimiter that ends the JSON string
             var isPreviousCharacterEscapeCharacter = false;
@@ -228,7 +228,7 @@ namespace Light.Serialization.Json.LowLevelReading
                 CheckNextCharacter:
                 _stream.Advance();
                 // A string must end with a string delimiter, if the buffer ends now, then the string is erroneous
-                if (_stream.IsEndOfStream)
+                if (_stream.IsAtEndOfStream)
                     throw CreateJsonDocumentException(startIndex, JsonSymbols.String);
 
                 var currentCharacter = _stream.CurrentCharacter;
@@ -284,7 +284,7 @@ namespace Light.Serialization.Json.LowLevelReading
 
         private bool IsEndOfToken()
         {
-            if (_stream.IsEndOfStream)
+            if (_stream.IsAtEndOfStream)
                 return true;
             var currentCharacter = _stream.CurrentCharacter;
             return char.IsWhiteSpace(currentCharacter) ||
@@ -296,11 +296,11 @@ namespace Light.Serialization.Json.LowLevelReading
 
         private JsonToken ReadConstantToken(string expectedToken, JsonTokenType tokenType)
         {
-            var startIndex = _stream.PinIndex();
+            var startIndex = _stream.PinPosition();
             for (var i = 1; i < expectedToken.Length; i++)
             {
                 _stream.Advance();
-                if (_stream.IsEndOfStream)
+                if (_stream.IsAtEndOfStream)
                     throw CreateJsonDocumentException(startIndex, expectedToken);
 
                 if (_stream.CurrentCharacter == expectedToken[i])
@@ -324,7 +324,7 @@ namespace Light.Serialization.Json.LowLevelReading
 
         private JsonToken ReadSingleCharacterAndCreateToken(JsonTokenType tokenType)
         {
-            var startIndex = _stream.PinIndex();
+            var startIndex = _stream.PinPosition();
             _stream.Advance();
             return CreateToken(startIndex, tokenType);
         }
@@ -337,8 +337,8 @@ namespace Light.Serialization.Json.LowLevelReading
 
         private JsonToken CreateToken(int startIndex, JsonTokenType tokenType)
         {
-            var length = _stream.CurrentIndex > startIndex ? _stream.CurrentIndex - startIndex :
-                             _stream.Buffer.Length - startIndex + _stream.CurrentIndex;
+            var length = _stream.Position > startIndex ? _stream.Position - startIndex :
+                             _stream.Buffer.Length - startIndex + _stream.Position;
 
             return new JsonToken(_stream.Buffer, startIndex, length, tokenType);
         }
@@ -360,7 +360,7 @@ namespace Light.Serialization.Json.LowLevelReading
             while (true)
             {
                 _stream.Advance();
-                if (_stream.IsEndOfStream)
+                if (_stream.IsAtEndOfStream)
                     break;
                 if (_stream.CurrentCharacter != JsonSymbols.StringDelimiter)
                     continue;
