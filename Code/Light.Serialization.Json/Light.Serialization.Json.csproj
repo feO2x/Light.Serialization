@@ -101,7 +101,7 @@
     <Compile Include="IntegerMetadata\SignedIntegerTypeInfo.cs" />
     <Compile Include="IntegerMetadata\SignedIntegerTypes.cs" />
     <Compile Include="IntegerMetadata\UnsignedIntegerTypeInfo.cs" />
-    <Compile Include="JsonDeserializationContext.cs" />
+    <Compile Include="TokenParsers\JsonDeserializationContext.cs" />
     <Compile Include="JsonDeserializer.cs" />
     <Compile Include="Caching\JsonTokenTypeCombination.cs" />
     <Compile Include="LowLevelReading\IJsonReader.cs" />
@@ -162,7 +162,7 @@
     <Compile Include="TokenParsers\TimeSpanParser.cs" />
     <Compile Include="TokenParsers\UnsignedIntegerParser.cs" />
     <Compile Include="WriterInstructors\IJsonWriterInstructor.cs" />
-    <Compile Include="JsonSerializationContext.cs" />
+    <Compile Include="WriterInstructors\JsonSerializationContext.cs" />
     <Compile Include="JsonSerializer.cs" />
     <Compile Include="JsonSymbols.cs" />
     <Compile Include="LowLevelWriting\FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer.cs" />

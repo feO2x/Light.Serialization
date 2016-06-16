@@ -2,6 +2,7 @@ using System;
 using Light.GuardClauses;
 using Light.Serialization.Json.BuilderHelpers;
 using Light.Serialization.Json.LowLevelWriting;
+using Light.Serialization.Json.WriterInstructors;
 
 namespace Light.Serialization.Json.ObjectMetadata
 {

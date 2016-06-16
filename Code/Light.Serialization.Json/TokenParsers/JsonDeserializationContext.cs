@@ -3,9 +3,8 @@ using System.Diagnostics;
 using Light.GuardClauses;
 using Light.Serialization.Json.LowLevelReading;
 using Light.Serialization.Json.ObjectMetadata;
-using Light.Serialization.Json.TokenParsers;
 
-namespace Light.Serialization.Json
+namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
     ///     Represents the context that is necessary to deserialize a single token in a JSON document.

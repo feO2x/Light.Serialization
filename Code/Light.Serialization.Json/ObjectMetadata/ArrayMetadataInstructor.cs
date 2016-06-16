@@ -1,4 +1,5 @@
 ﻿using System;
+using Light.Serialization.Json.WriterInstructors;
 
 namespace Light.Serialization.Json.ObjectMetadata
 {

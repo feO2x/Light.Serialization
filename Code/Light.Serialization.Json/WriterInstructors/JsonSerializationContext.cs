@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Light.GuardClauses;
 using Light.Serialization.Json.LowLevelWriting;
 
-namespace Light.Serialization.Json
+namespace Light.Serialization.Json.WriterInstructors
 {
     /// <summary>
     ///     Represents all information necessary to serialize a single object of a graph.

@@ -3,6 +3,7 @@ using System.Reflection;
 using Light.GuardClauses;
 using Light.Serialization.Json.BuilderHelpers;
 using Light.Serialization.Json.LowLevelReading;
+using Light.Serialization.Json.TokenParsers;
 
 namespace Light.Serialization.Json.ObjectMetadata
 {
