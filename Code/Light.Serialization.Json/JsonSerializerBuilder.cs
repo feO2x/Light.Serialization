@@ -435,6 +435,19 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
+        ///     Configures all instances that derive from the <see cref="BaseMetadata" /> class in the serialization object graph with the specified delegate (usually metadata intructors).
+        /// </summary>
+        /// <param name="configureMetadata">The delegate that configures the <see cref="BaseMetadata" /> instance.</param>
+        /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureMetadata" /> is null.</exception>
+        public JsonSerializerBuilder ConfigureMetadataSymbols(Action<BaseMetadata> configureMetadata)
+        {
+            configureMetadata.MustNotBeNull(nameof(configureMetadata));
+
+            return ConfigureAll(configureMetadata);
+        }
+
+        /// <summary>
         ///     Creates a new instance of <see cref="JsonSerializer" /> using the specified builder settings.
         /// </summary>
         public JsonSerializer Build()

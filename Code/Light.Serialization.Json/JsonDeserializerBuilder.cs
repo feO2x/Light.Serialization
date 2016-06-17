@@ -281,7 +281,7 @@ namespace Light.Serialization.Json
         /// <param name="configureMetadataParser">The delegate that configures the <see cref="BaseMetadata" /> instance.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureMetadataParser" /> is null.</exception>
-        public JsonDeserializerBuilder ConfigureMetadataParsers(Action<BaseMetadata> configureMetadataParser)
+        public JsonDeserializerBuilder ConfigureMetadataSymbols(Action<BaseMetadata> configureMetadataParser)
         {
             configureMetadataParser.MustNotBeNull(nameof(configureMetadataParser));
 
