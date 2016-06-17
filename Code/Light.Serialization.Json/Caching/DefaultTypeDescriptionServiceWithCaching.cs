@@ -10,8 +10,7 @@ namespace Light.Serialization.Json.Caching
     /// </summary>
     public class DefaultTypeDescriptionServiceWithCaching : DefaultTypeDescriptionService
     {
-        private readonly object _lockObject = new object();
-        private Dictionary<Type, TypeCreationDescription> _typeCreationDescriptionCache;
+        private readonly Dictionary<Type, TypeCreationDescription> _typeCreationDescriptionCache;
 
         /// <summary>
         ///     Creates a new instance of <see cref="DefaultTypeDescriptionServiceWithCaching" />.
@@ -26,32 +25,19 @@ namespace Light.Serialization.Json.Caching
         }
 
         /// <summary>
-        ///     Gets or sets the dictionary that is used as the cache for <see cref="TypeCreationDescription" /> instances.
-        /// </summary>
-        public Dictionary<Type, TypeCreationDescription> TypeCreationDescriptionCache
-        {
-            get { return _typeCreationDescriptionCache; }
-            set
-            {
-                value.MustNotBeNull(nameof(value));
-                _typeCreationDescriptionCache = value;
-            }
-        }
-
-        /// <summary>
         ///     Tries to get a <see cref="TypeCreationDescription" /> instance from the cache. If this is not possible,
         ///     the base class is used to create the instance.
         /// </summary>
         public override TypeCreationDescription GetTypeCreationDescription(Type type)
         {
             TypeCreationDescription description;
-            // ReSharper disable once InconsistentlySynchronizedField
-            if (_typeCreationDescriptionCache.TryGetValue(type, out description))
-                return description;
 
-            description = base.GetTypeCreationDescription(type);
-            lock (_lockObject)
+            lock (_typeCreationDescriptionCache)
             {
+                if (_typeCreationDescriptionCache.TryGetValue(type, out description))
+                    return description;
+
+                description = base.GetTypeCreationDescription(type);
                 if (_typeCreationDescriptionCache.ContainsKey(type) == false)
                     _typeCreationDescriptionCache.Add(type, description);
             }

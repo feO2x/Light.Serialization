@@ -3,11 +3,13 @@ using Light.GuardClauses;
 using Light.GuardClauses.Exceptions;
 using Light.GuardClauses.FrameworkExtensions;
 using Light.Serialization.Json.LowLevelReading;
+using Light.Serialization.Json.TokenParsers;
 
 namespace Light.Serialization.Json.Caching
 {
     /// <summary>
     ///     Represents a combination of JSON token type and .NET type.
+    ///     Instances of this type are used to choose an <see cref="IJsonTokenParser" /> from the cache.
     /// </summary>
     public struct JsonTokenTypeCombination : IEquatable<JsonTokenTypeCombination>
     {

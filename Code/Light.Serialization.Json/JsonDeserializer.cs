@@ -18,8 +18,8 @@ namespace Light.Serialization.Json
         private readonly Dictionary<JsonTokenTypeCombination, IJsonTokenParser> _cache;
         private readonly IJsonReaderFactory _jsonReaderFactory;
         private readonly IReadOnlyList<IJsonTokenParser> _tokenParsers;
-        private ObjectReferencePreserver _objectReferencePreserver;
         private IJsonReader _jsonReader;
+        private ObjectReferencePreserver _objectReferencePreserver;
 
         /// <summary>
         ///     Creates a new intance of <see cref="JsonDeserializer" />.
@@ -109,22 +109,25 @@ namespace Light.Serialization.Json
             var tokenTypeCombination = new JsonTokenTypeCombination(token.JsonType, requestedType);
             var deserializationContext = new JsonDeserializationContext(token, requestedType, _jsonReader, DeserializeJsonToken, _objectReferencePreserver);
 
-            if (_cache.TryGetValue(tokenTypeCombination, out parser) == false)
+            lock (_cache)
             {
-                foreach (var tokenParser in _tokenParsers)
+                if (_cache.TryGetValue(tokenTypeCombination, out parser) == false)
                 {
-                    if (tokenParser.IsSuitableFor(deserializationContext) == false)
-                        continue;
+                    foreach (var tokenParser in _tokenParsers)
+                    {
+                        if (tokenParser.IsSuitableFor(deserializationContext) == false)
+                            continue;
 
-                    parser = tokenParser;
-                    goto CacheParserIfNecessary;
+                        parser = tokenParser;
+                        goto CacheParserIfNecessary;
+                    }
+
+                    throw new DeserializationException($"Cannot deserialize value {token} with requested type {requestedType.FullName} because there is no parser that is suitable for this context.");
+
+                    CacheParserIfNecessary:
+                    if (parser.CanBeCached)
+                        _cache.Add(tokenTypeCombination, parser);
                 }
-
-                throw new DeserializationException($"Cannot deserialize value {token} with requested type {requestedType.FullName} because there is no parser that is suitable for this context.");
-
-                CacheParserIfNecessary:
-                if (parser.CanBeCached)
-                    _cache.Add(tokenTypeCombination, parser);
             }
 
             return parser.ParseValue(deserializationContext);

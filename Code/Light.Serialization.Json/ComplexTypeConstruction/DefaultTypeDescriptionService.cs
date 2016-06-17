@@ -10,12 +10,12 @@ using Light.Serialization.Json.FrameworkExtensions;
 namespace Light.Serialization.Json.ComplexTypeConstruction
 {
     /// <summary>
-    ///     Represents a Type Description Provider that includes all constructors, settable instance properties, and settable instance fields in a type creation description.
+    ///     Represents the default <see cref="ITypeDescriptionService" /> that includes all constructors, settable instance properties, and settable instance fields in a type creation description.
     /// </summary>
     public class DefaultTypeDescriptionService : ITypeDescriptionService
     {
         /// <summary>
-        ///     Analyzes the specified type and creates a creation description for it containing information about all constructors
+        ///     Analyzes the specified type and creates a <see cref="TypeCreationDescription" /> for it containing information about all constructors
         ///     and settable instance properties and fields.
         /// </summary>
         /// <param name="type">The type to be analyzed.</param>

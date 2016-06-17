@@ -7,7 +7,7 @@ using Light.Serialization.Json.ObjectMetadata;
 namespace Light.Serialization.Json.WriterInstructors
 {
     /// <summary>
-    ///     Provides a static helper method for serializing complex .NET object to complex JSON objects.
+    ///     Provides a static helper method for serializing complex .NET objects to complex JSON objects.
     /// </summary>
     public class ComplexObjectHelper
     {

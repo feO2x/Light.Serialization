@@ -7,6 +7,7 @@ namespace Light.Serialization.Json.Caching
 {
     /// <summary>
     ///     Represents a cache decorator for collections of value providers, belonging to a certain type.
+    ///     Access to the cache is synchronized, thus the cache can be shared in several instances.
     /// </summary>
     public sealed class ValueProvidersCacheDecorator : IReadableValuesTypeAnalyzer
     {
@@ -39,11 +40,13 @@ namespace Light.Serialization.Json.Caching
             type.MustNotBeNull(nameof(type));
 
             IList<IValueProvider> targetValueProviders;
-            if (_cache.TryGetValue(type, out targetValueProviders))
-                return targetValueProviders;
-
-            targetValueProviders = _decoratedAnalyzer.AnalyzeType(type);
-            _cache.Add(type, targetValueProviders);
+            lock (_cache)
+            {
+                if (_cache.TryGetValue(type, out targetValueProviders))
+                    return targetValueProviders;
+                targetValueProviders = _decoratedAnalyzer.AnalyzeType(type);
+                _cache.Add(type, targetValueProviders);
+            }
 
             return targetValueProviders;
         }

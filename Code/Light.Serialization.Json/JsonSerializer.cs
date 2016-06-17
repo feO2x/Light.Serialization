@@ -88,13 +88,16 @@ namespace Light.Serialization.Json
 
             var actualType = @object.GetType();
             IJsonWriterInstructor targetWriterInstructor;
-            if (_instructorCache.TryGetValue(actualType, out targetWriterInstructor) == false)
+            lock (_instructorCache)
             {
-                targetWriterInstructor = FindTargetInstructor(@object, actualType);
-                if (targetWriterInstructor == null)
-                    throw new SerializationException($"Type {actualType.FullName} cannot be serialized because there is no IJsonWriterInstructor registered that can cover this type.");
+                if (_instructorCache.TryGetValue(actualType, out targetWriterInstructor) == false)
+                {
+                    targetWriterInstructor = FindTargetInstructor(@object, actualType);
+                    if (targetWriterInstructor == null)
+                        throw new SerializationException($"Type {actualType.FullName} cannot be serialized because there is no IJsonWriterInstructor registered that can cover this type.");
 
-                _instructorCache.Add(actualType, targetWriterInstructor);
+                    _instructorCache.Add(actualType, targetWriterInstructor);
+                }
             }
 
             targetWriterInstructor.Serialize(new JsonSerializationContext(@object, actualType, SerializeObject, _jsonWriter, _serializedObjects));
