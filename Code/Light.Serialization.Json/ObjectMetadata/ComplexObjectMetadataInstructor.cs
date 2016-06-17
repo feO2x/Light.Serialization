@@ -1,4 +1,6 @@
 using System;
+using Light.GuardClauses;
+using Light.Serialization.Json.LowLevelWriting;
 using Light.Serialization.Json.WriterInstructors;
 
 namespace Light.Serialization.Json.ObjectMetadata
@@ -6,7 +8,7 @@ namespace Light.Serialization.Json.ObjectMetadata
     /// <summary>
     ///     Represents an Metadata Instructor that serializes ids and type information in the metadata section of a complex JSON object.
     /// </summary>
-    public sealed class ComplexObjectMetadataInstructor : BaseMetadataInstructor
+    public sealed class ComplexObjectMetadataInstructor : BaseMetadataInstructor, IObjectMetadataInstructor
     {
         /// <summary>
         ///     Creates a new instance of <see cref="ComplexObjectMetadataInstructor" />.
@@ -36,6 +38,14 @@ namespace Light.Serialization.Json.ObjectMetadata
             serializationContext.Writer.WriteKey(_concreteTypeSymbol, false);
             SerializeTypeInfoRecursively(serializationContext.ActualType, serializationContext.Writer);
             serializationContext.Writer.WriteDelimiter();
+        }
+
+        void IObjectMetadataInstructor.SerializeType(Type type, IJsonWriter writer)
+        {
+            type.MustNotBeNull(nameof(type));
+            writer.MustNotBeNull(nameof(type));
+
+            SerializeTypeInfoRecursively(type, writer);
         }
     }
 }

@@ -6,7 +6,7 @@ using Light.Serialization.Json.ObjectMetadata;
 using Light.Serialization.Json.PrimitiveTypeFormatters;
 using Light.Serialization.Json.WriterInstructors;
 
-namespace Light.Serialization.Json
+namespace Light.Serialization.Json.BuilderHelpers
 {
     /// <summary>
     ///     Provides extension methods to populate collections with the default instances of JSON writer instructors and primitive type formatters.
@@ -61,13 +61,14 @@ namespace Light.Serialization.Json
                                                                            IDictionary<Type, IPrimitiveTypeFormatter> primitiveTypeToFormattersMapping,
                                                                            IReadableValuesTypeAnalyzer readableValuesTypeAnalyzer,
                                                                            IMetadataInstructor collectionMetadataInstructor,
-                                                                           IMetadataInstructor objectMetadataInstructor)
+                                                                           IObjectMetadataInstructor objectMetadataInstructor)
             where TCollection : class, IList<IJsonWriterInstructor>
         {
             targetList.MustNotBeNull(nameof(targetList));
 
             targetList.Add(new PrimitiveValueInstructor(primitiveTypeToFormattersMapping));
             targetList.Add(new EnumInstructor());
+            targetList.Add(new TypeInstructorAdapter(objectMetadataInstructor));
             targetList.Add(new DictionaryInstructor(primitiveTypeToFormattersMapping, objectMetadataInstructor));
             targetList.Add(new CollectionInstructor(collectionMetadataInstructor));
             targetList.Add(new ComplexObjectInstructor(readableValuesTypeAnalyzer, objectMetadataInstructor));

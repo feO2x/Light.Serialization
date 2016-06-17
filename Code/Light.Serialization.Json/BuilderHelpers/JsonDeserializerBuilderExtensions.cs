@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Light.Serialization.Json.BuilderHelpers;
 using Light.Serialization.Json.ComplexTypeConstruction;
 using Light.Serialization.Json.ObjectMetadata;
 using Light.Serialization.Json.TokenParsers;
 
-namespace Light.Serialization.Json
+namespace Light.Serialization.Json.BuilderHelpers
 {
     /// <summary>
     ///     Provides extension methods for the <see cref="JsonDeserializerBuilder" />.

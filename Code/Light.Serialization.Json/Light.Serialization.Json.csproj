@@ -54,6 +54,7 @@
     <Compile Include="BuilderHelpers\ISetPrimitiveTypeFormatters.cs" />
     <Compile Include="BuilderHelpers\ISetTypeAnalyzer.cs" />
     <Compile Include="BuilderHelpers\ISetTypeDescriptionService.cs" />
+    <Compile Include="BuilderHelpers\ISetTypeInstructor.cs" />
     <Compile Include="BuilderHelpers\ISetTypeToNameMapping.cs" />
     <Compile Include="BuilderHelpers\ISetWhitespaceFormatterCreationDelegate.cs" />
     <Compile Include="BuilderHelpers\PropertyInjectionPool.cs" />
@@ -79,12 +80,13 @@
     <Compile Include="ComplexTypeConstruction\InjectableValueKind.cs" />
     <Compile Include="ComplexTypeConstruction\ITypeDescriptionService.cs" />
     <Compile Include="JsonDeserializerBuilder.cs" />
-    <Compile Include="JsonDeserializerBuilderExtensions.cs" />
+    <Compile Include="BuilderHelpers\JsonDeserializerBuilderExtensions.cs" />
     <Compile Include="LowLevelReading\JsonTokenExtensions.cs" />
     <Compile Include="ObjectMetadata\ArrayMetadataParser.cs" />
     <Compile Include="ObjectMetadata\BaseMetadata.cs" />
     <Compile Include="ObjectMetadata\BaseMetadataInstructor.cs" />
     <Compile Include="ObjectMetadata\BaseMetadataParser.cs" />
+    <Compile Include="ObjectMetadata\IObjectMetadataInstructor.cs" />
     <Compile Include="ObjectMetadata\ObjectMetadataParser.cs" />
     <Compile Include="ObjectMetadata\DeferredReferenceForCollection.cs" />
     <Compile Include="ObjectMetadata\DeferredReferenceForDictionary.cs" />
@@ -115,7 +117,7 @@
     <Compile Include="LowLevelReading\IJsonReaderFactory.cs" />
     <Compile Include="LowLevelReading\JsonDocumentException.cs" />
     <Compile Include="JsonSerializerBuilder.cs" />
-    <Compile Include="JsonSerializerBuilderExtensions.cs" />
+    <Compile Include="BuilderHelpers\JsonSerializerBuilderExtensions.cs" />
     <Compile Include="LowLevelReading\JsonReaderExtensions.cs" />
     <Compile Include="LowLevelReading\JsonToken.cs" />
     <Compile Include="LowLevelReading\JsonTokenType.cs" />
@@ -203,6 +205,7 @@
     <Compile Include="WriterInstructors\DictionaryInstructor.cs" />
     <Compile Include="WriterInstructors\EnumInstructor.cs" />
     <Compile Include="WriterInstructors\PrimitiveValueInstructor.cs" />
+    <Compile Include="WriterInstructors\TypeInstructorAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
