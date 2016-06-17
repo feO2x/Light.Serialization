@@ -6,6 +6,7 @@ using Light.GuardClauses.Exceptions;
 using Light.Serialization.Json.BuilderHelpers;
 using Light.Serialization.Json.Caching;
 using Light.Serialization.Json.ComplexTypeConstruction;
+using Light.Serialization.Json.FrameworkExtensions;
 using Light.Serialization.Json.LowLevelReading;
 using Light.Serialization.Json.ObjectMetadata;
 using Light.Serialization.Json.TokenParsers;
@@ -204,11 +205,49 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
+        ///     Adds the specified factory after the one that creates the token parser with the given type T.
+        /// </summary>
+        /// <typeparam name="T">The type of the token parser the factory creates. The specified factory is placed after the selected one.</typeparam>
+        /// <param name="factory">The factory that will be inserted in the list of token parser factories.</param>
+        /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="factory" /> is null.</exception>
+        public JsonDeserializerBuilder WithTokenParserFactoryAfter<T>(IJsonTokenParserFactory factory) where T : IJsonTokenParser
+        {
+            factory.MustNotBeNull(nameof(factory));
+
+            var targetIndex = _tokenParserFactories.IndexOf(f => f.ParserType == typeof(T));
+            targetIndex.MustNotBe(-1, exception: () => new ArgumentException($"A factory that creates a token parser of type \"{typeof(T)}\" could not be found."));
+
+            if (targetIndex == _tokenParserFactories.Count - 1)
+                _tokenParserFactories.Add(factory);
+            else
+                _tokenParserFactories.Insert(targetIndex, factory);
+
+            RegisterFactory(factory);
+            return this;
+        }
+
+
+        private void RegisterFactory(IJsonTokenParserFactory factory)
+        {
+            var singletonFactory = factory as SingletonFactory;
+            if (singletonFactory == null)
+            {
+                Pool.Register(factory);
+                return;
+            }
+
+            Pool.Register(singletonFactory.Instance);
+            if (singletonFactory.Instance is IJsonStringToPrimitiveParser)
+                UpdateJsonStringToPrimitiveParsers();
+        }
+
+        /// <summary>
         ///     Configures the builder to inject the specified <see cref="IMetaFactory" /> instance in the resulting deserialization object graph.
         /// </summary>
         /// <param name="metaFactory">The new meta factory.</param>
         /// <returns>The builder for method chaining.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="metaFactory"/> is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="metaFactory" /> is null.</exception>
         public JsonDeserializerBuilder WithMetaFactory(IMetaFactory metaFactory)
         {
             metaFactory.MustNotBeNull(nameof(metaFactory));
