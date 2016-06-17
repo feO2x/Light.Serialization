@@ -15,10 +15,10 @@ namespace Light.Serialization.Json.TokenParsers
     /// <summary>
     ///     Represents a JSON token parser that deserializes complex JSON objects to .NET dictionaries.
     /// </summary>
-    public sealed class DictionaryParser : IJsonTokenParser, ISetObjectMetadataParser
+    public sealed class DictionaryParser : IJsonTokenParser, ISetObjectMetadataParser, ISetMetaFactory
     {
-        private readonly IMetaFactory _metaFactory;
         private IObjectMetadataParser _metadataParser;
+        private IMetaFactory _metaFactory;
 
         /// <summary>
         ///     Creates a new instance of <see cref="DictionaryParser" />.
@@ -72,6 +72,20 @@ namespace Light.Serialization.Json.TokenParsers
                 return ParseResult.FromDeferredReference(metadataParseResult.ReferencePreservationInfo.Id);
 
             return ParseDictionary(metadataParseResult, context, currentToken, _metaFactory);
+        }
+
+        /// <summary>
+        ///     Gets or sets the meta factory used to create dictionary instances.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
+        public IMetaFactory MetaFactory
+        {
+            get { return _metaFactory; }
+            set
+            {
+                value.MustNotBeNull(nameof(value));
+                _metaFactory = value;
+            }
         }
 
         /// <summary>

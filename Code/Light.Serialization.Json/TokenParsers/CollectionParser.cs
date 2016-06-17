@@ -14,11 +14,11 @@ namespace Light.Serialization.Json.TokenParsers
     /// <summary>
     ///     Represents a JSON Token Parser that deserializes JSON arrays to .NET generic collections.
     /// </summary>
-    public sealed class CollectionParser : IJsonTokenParser, ISetArrayMetadataParser
+    public sealed class CollectionParser : IJsonTokenParser, ISetArrayMetadataParser, ISetMetaFactory
     {
-        private readonly IMetaFactory _metaFactory;
         private readonly MethodInfo _populateArrayWithUnknownLengthMethod = typeof(CollectionParser).GetTypeInfo().GetDeclaredMethod(nameof(PopulateArrayWithUnknownLength));
         private IArrayMetadataParser _metadataParser;
+        private IMetaFactory _metaFactory;
 
         /// <summary>
         ///     Initializes a new instance of ArrayToGenericCollectionParser.
@@ -58,7 +58,7 @@ namespace Light.Serialization.Json.TokenParsers
 
             // Check if the JSON array is empty - in this case, there is no metadata section, and therefore the array must not be added to the ObjectReferencePreserver
             if (currentToken.JsonType == JsonTokenType.EndOfArray)
-                return ParseResult.FromParsedValue(context.RequestedType.IsArray ?
+                return ParseResult.FromParsedValue(context.RequestedType.IsArray ?  // TODO: this will go wrong if the array type is multidimensional
                                                        Array.CreateInstance(context.RequestedType.GetElementType(), 0) :
                                                        _metaFactory.CreateCollection(context.RequestedType));
 
@@ -70,7 +70,7 @@ namespace Light.Serialization.Json.TokenParsers
                 return ParseResult.FromDeferredReference(metadataParseResult.ReferencePreservationInfo.Id);
 
             var typeToConstruct = metadataParseResult.CollectionTypeToConstruct;
-            // Check if the colleciton is describing an array, because they cannot be populated as collections can be (array.Add does not work that way)
+            // Check if the collection is describing an array, because they cannot be populated as collections can be (IList.Add does not work in this case)
             if (metadataParseResult.IsDescribingArrayType)
             {
                 Array array;
@@ -97,13 +97,12 @@ namespace Light.Serialization.Json.TokenParsers
                 return ParseResult.FromParsedValue(array);
             }
 
-            // If it is not an array, then create the collection and populate it
+            // If it is not an array, then create the collection via the meta factory and populate it
             var collection = _metaFactory.CreateCollection(typeToConstruct);
 
             if (metadataParseResult.ReferencePreservationInfo.IsEmpty == false)
                 context.ObjectReferencePreserver.AddDeserializedObject(metadataParseResult.ReferencePreservationInfo.Id, collection);
 
-            // Check if the specified collection type is an array type because these cannot be populated using the IList interface
             var itemType = typeToConstruct.IsConstructedGenericType ? typeToConstruct.GenericTypeArguments[0] : typeof(object);
             PopulateCollection(collection, itemType, currentToken, context);
 
@@ -121,6 +120,20 @@ namespace Light.Serialization.Json.TokenParsers
             {
                 value.MustNotBeNull(nameof(value));
                 _metadataParser = value;
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets the meta factory used to create collection instances.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
+        public IMetaFactory MetaFactory
+        {
+            get { return _metaFactory; }
+            set
+            {
+                value.MustNotBeNull(nameof(value));
+                _metaFactory = value;
             }
         }
 
@@ -204,7 +217,7 @@ namespace Light.Serialization.Json.TokenParsers
                     case JsonTokenType.EndOfArray:
                         return;
                     default:
-                        throw new JsonDocumentException($"Expected value delimiter or end of array in JSON document, but found {currentToken}.", currentToken);
+                        throw new JsonDocumentException($"Expected value delimiter or end of array in JSON array, but found {currentToken}.", currentToken);
                 }
             }
         }

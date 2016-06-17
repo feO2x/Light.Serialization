@@ -9,13 +9,13 @@ using Light.Serialization.Abstractions;
 namespace Light.Serialization.Json.ComplexTypeConstruction
 {
     /// <summary>
-    ///     Represents the default Metafactory that uses Dictionary of TKey, TValue as default dictionaries, List of T as default collections
-    ///     and simple constructor, property, and field injection for complex objects.
+    ///     Represents the default <see cref="IMetaFactory" /> that uses <see cref="Dictionary{TKey,TValue}" /> instances as default dictionaries,
+    ///     <see cref="List{T}" /> instances as default collections, and simple constructor, property, and field injection for complex objects.
     /// </summary>
     public class DefaultMetaFactory : IMetaFactory
     {
-        private readonly MethodInfo _createDefaultDictionaryMethod;
         private readonly MethodInfo _createDefaultCollectionMethod;
+        private readonly MethodInfo _createDefaultDictionaryMethod;
 
         public DefaultMetaFactory()
         {
@@ -29,8 +29,11 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         /// </summary>
         /// <param name="dictionaryTypeToConstruct">The dictioary abstraction or concrete type that should be instantiated.</param>
         /// <returns>An instance of the given concrete type, or a new instance of the default dictionary type when the requested type is a dictionary abstraction.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="dictionaryTypeToConstruct" /> is null.</exception>
         public IDictionary CreateDictionary(Type dictionaryTypeToConstruct)
         {
+            dictionaryTypeToConstruct.MustNotBeNull(nameof(dictionaryTypeToConstruct));
+
             var dictionary = TryToInstantiateWithDefaultConstructor<IDictionary>(dictionaryTypeToConstruct.GetTypeInfo());
             if (dictionary != null)
                 return dictionary;
@@ -48,8 +51,11 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         /// </summary>
         /// <param name="collectionTypeToConstruct">The collection abstraction or concrete type that should be instantiated.</param>
         /// <returns>An instance of the given concrete type, or a new instance of the default collection type when the requested type is a collection abstraction.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="collectionTypeToConstruct" /> is null.</exception>
         public IList CreateCollection(Type collectionTypeToConstruct)
         {
+            collectionTypeToConstruct.MustNotBeNull(nameof(collectionTypeToConstruct));
+
             var collection = TryToInstantiateWithDefaultConstructor<IList>(collectionTypeToConstruct.GetTypeInfo());
             if (collection != null)
                 return collection;
@@ -68,6 +74,7 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         /// <param name="typeCreationDescription">The concrete type to be instantiated.</param>
         /// <param name="deserializedChildValues">The dictionary containing all deserialized values for the object to be created.</param>
         /// <returns>The instantiated object.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeCreationDescription" /> is null.</exception>
         public object CreateObject(TypeCreationDescription typeCreationDescription, Dictionary<InjectableValueDescription, object> deserializedChildValues)
         {
             typeCreationDescription.MustNotBeNull(nameof(typeCreationDescription));
@@ -93,6 +100,7 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
             if (newObject == null)
                 throw new DeserializationException($"The specified type {typeCreationDescription.TargetType.FullName} cannot be created with the given type info."); // TODO: add the deserialized values to this exception message
 
+            // TODO: we should implement some logic to check if an InjectableValueDescription was utilized before in the constructor.
             SetPropertiesAndFields:
             foreach (var injectablePropertyInfo in deserializedChildValues.Keys.Where(i => i.Kind == InjectableValueKind.PropertySetter))
             {
@@ -118,11 +126,17 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
             return (T) defaultConstructor?.Invoke(null);
         }
 
+        /// <summary>
+        ///     Creates the default <see cref="Dictionary{TKey,TValue}" /> instance.
+        /// </summary>
         protected virtual IDictionary CreateDefaultDictionary<TKey, TValue>()
         {
             return new Dictionary<TKey, TValue>();
         }
 
+        /// <summary>
+        ///     Creates the default <see cref="List{T}" /> instance.
+        /// </summary>
         protected virtual IList CreateDefaultCollection<T>()
         {
             return new List<T>();

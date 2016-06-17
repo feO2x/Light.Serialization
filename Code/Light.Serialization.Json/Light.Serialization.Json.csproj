@@ -47,6 +47,7 @@
     <Compile Include="BuilderHelpers\ISetCollectionMetadataInstructor.cs" />
     <Compile Include="BuilderHelpers\ISetJsonStringToPrimitiveParsers.cs" />
     <Compile Include="BuilderHelpers\ISetKeyNormalizer.cs" />
+    <Compile Include="BuilderHelpers\ISetMetaFactory.cs" />
     <Compile Include="BuilderHelpers\ISetNameToTypeMapping.cs" />
     <Compile Include="BuilderHelpers\ISetObjectMetadataParser.cs" />
     <Compile Include="BuilderHelpers\ISetPrimitiveTypeFormatters.cs" />

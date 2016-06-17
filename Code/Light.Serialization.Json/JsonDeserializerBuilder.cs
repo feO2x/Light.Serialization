@@ -17,8 +17,8 @@ namespace Light.Serialization.Json
     /// </summary>
     public sealed class JsonDeserializerBuilder : BaseBuilderWithPropertyInjectionPool<JsonDeserializerBuilder>
     {
-        private readonly IMetaFactory _metaFactory = new DefaultMetaFactory();
         private IArrayMetadataParser _arrayMetadataParser;
+        private IMetaFactory _metaFactory = new DefaultMetaFactory();
         private INameToTypeMapping _nameToTypeMapping;
         private IObjectMetadataParser _objectMetadataParser;
         private IJsonReaderFactory _readerFactory = new JsonReaderFactory();
@@ -27,7 +27,7 @@ namespace Light.Serialization.Json
         private ITypeDescriptionService _typeDescriptionService;
 
         /// <summary>
-        ///     Creates a new instance of JsonDeserializerBuilder.
+        ///     Creates a new instance of <see cref="JsonDeserializerBuilder" />.
         /// </summary>
         public JsonDeserializerBuilder()
         {
@@ -201,6 +201,20 @@ namespace Light.Serialization.Json
                                                                    .OfType<IJsonStringToPrimitiveParser>()
                                                                    .ToList();
             ConfigureAll<ISetJsonStringToPrimitiveParsers>(o => o.JsonStringToPrimitiveParsers = jsonStringToPrimitiveParser);
+        }
+
+        /// <summary>
+        ///     Configures the builder to inject the specified <see cref="IMetaFactory" /> instance in the resulting deserialization object graph.
+        /// </summary>
+        /// <param name="metaFactory">The new meta factory.</param>
+        /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="metaFactory"/> is null.</exception>
+        public JsonDeserializerBuilder WithMetaFactory(IMetaFactory metaFactory)
+        {
+            metaFactory.MustNotBeNull(nameof(metaFactory));
+
+            Pool.SetFieldAndReplaceInPool(ref _metaFactory, metaFactory);
+            return ConfigureAll<ISetMetaFactory>(o => o.MetaFactory = metaFactory);
         }
 
         /// <summary>
