@@ -103,6 +103,7 @@
     <Compile Include="SerializationTests\CustomRuleTests.cs" />
     <Compile Include="SerializationTests\EndlessRecursionTests.cs" />
     <Compile Include="SerializationTests\HumanReadableJsonTests.cs" />
+    <Compile Include="DeserializationTests\IgnoreTypesInMetadataSectionTests.cs" />
     <Compile Include="SerializationTests\NullableTests.cs" />
     <Compile Include="DeserializationTests\ObjectReferencePreservationTests.cs" />
     <Compile Include="SerializationTests\TimeSpanTests.cs" />

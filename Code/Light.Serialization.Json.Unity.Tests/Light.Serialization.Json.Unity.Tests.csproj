@@ -116,6 +116,9 @@
     <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\GuidTests.cs">
       <Link>DeserializationTests\GuidTests.cs</Link>
     </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\IgnoreTypesInMetadataSectionTests.cs">
+      <Link>DeserializationTests\IgnoreTypesInMetadataSectionTests.cs</Link>
+    </Compile>
     <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\IntegerTypesTests.cs">
       <Link>DeserializationTests\IntegerTypesTests.cs</Link>
     </Compile>

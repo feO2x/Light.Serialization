@@ -68,6 +68,11 @@ namespace Light.Serialization.Json.Tests
             return _builder.Build();
         }
 
+        public void IgnoreTypesInMetadataSection()
+        {
+            _builder.IgnoreTypeInformationInMetadataSections();
+        }
+
         public T GetDeserializedJsonFromStream<T>(TextReader textReader)
         {
             var testTarget = _builder.Build();

@@ -11,11 +11,8 @@ namespace Light.Serialization.Json.ObjectMetadata
     ///     Represents the base class for metadata parsers. Provides the <see cref="ParseType" /> method for parsing
     ///     JSON metadata to .NET types.
     /// </summary>
-    public abstract class BaseMetadataParser : BaseMetadata, ISetNameToTypeMapping
+    public abstract class BaseMetadataParser : BaseMetadata, ISetNameToTypeMapping, ISetIgnoreMetadataTypeInformation
     {
-        // ReSharper disable once InconsistentNaming
-        protected INameToTypeMapping _nameToTypeMapping;
-
         /// <summary>
         ///     Initializes a new instance of BaseMetadataParser.
         /// </summary>
@@ -26,6 +23,15 @@ namespace Light.Serialization.Json.ObjectMetadata
             nameToTypeMapping.MustNotBeNull(nameof(nameToTypeMapping));
 
             _nameToTypeMapping = nameToTypeMapping;
+        }
+
+        /// <summary>
+        ///     Gets or sets the value indicating whether type information should be ignored in the metadata section. This value defaults to false.
+        /// </summary>
+        public bool IsIgnoringMetadataTypeInformation
+        {
+            get { return _isIgnoringMetadataTypeInformation; }
+            set { _isIgnoringMetadataTypeInformation = value; }
         }
 
         /// <summary>
@@ -154,5 +160,10 @@ namespace Light.Serialization.Json.ObjectMetadata
 
             return genericType.MakeGenericType(genericTypeArguments);
         }
+
+        // ReSharper disable InconsistentNaming
+        protected INameToTypeMapping _nameToTypeMapping;
+        protected bool _isIgnoringMetadataTypeInformation;
+        // ReSharper restore InconsistentNaming
     }
 }

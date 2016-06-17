@@ -166,7 +166,7 @@ namespace Light.Serialization.Json.Unity
                 .RegisterType<IMetaFactory, UnityMetaFactoryAdapter>(new ContainerControlledLifetimeManager())
 
                 // Metadata parsers
-                .RegisterType<IObjectMetadataParser, ComplexObjectMetadataParser>(new ContainerControlledLifetimeManager())
+                .RegisterType<IObjectMetadataParser, ObjectMetadataParser>(new ContainerControlledLifetimeManager())
                 .RegisterType<IArrayMetadataParser, ArrayMetadataParser>(new ContainerControlledLifetimeManager())
                 .RegisterType<INameToTypeMapping, SimpleNameToTypeMapping>(new ContainerControlledLifetimeManager())
 

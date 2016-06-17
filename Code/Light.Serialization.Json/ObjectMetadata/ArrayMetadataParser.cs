@@ -63,7 +63,9 @@ namespace Light.Serialization.Json.ObjectMetadata
                 else if (tokenString == _concreteTypeSymbol)
                 {
                     jsonReader.ReadAndExpectValueDelimiterToken();
-                    collectionTypeInfo = ParseCollectionType(context);
+                    var actualCollectionTypeInfo = ParseCollectionType(context);
+                    if (_isIgnoringMetadataTypeInformation == false)
+                        collectionTypeInfo = actualCollectionTypeInfo;
                 }
 
                 // No metadata token found - this means the end of the metadata section in the complex JSON object was reached

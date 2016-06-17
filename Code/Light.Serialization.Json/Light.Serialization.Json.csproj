@@ -45,6 +45,7 @@
     <Compile Include="BuilderHelpers\ISetArrayMetadataParser.cs" />
     <Compile Include="BuilderHelpers\ISetCharacterEscaper.cs" />
     <Compile Include="BuilderHelpers\ISetCollectionMetadataInstructor.cs" />
+    <Compile Include="BuilderHelpers\ISetIgnoreMetadataTypeInformation.cs" />
     <Compile Include="BuilderHelpers\ISetJsonStringToPrimitiveParsers.cs" />
     <Compile Include="BuilderHelpers\ISetKeyNormalizer.cs" />
     <Compile Include="BuilderHelpers\ISetMetaFactory.cs" />
@@ -84,7 +85,7 @@
     <Compile Include="ObjectMetadata\BaseMetadata.cs" />
     <Compile Include="ObjectMetadata\BaseMetadataInstructor.cs" />
     <Compile Include="ObjectMetadata\BaseMetadataParser.cs" />
-    <Compile Include="ObjectMetadata\ComplexObjectMetadataParser.cs" />
+    <Compile Include="ObjectMetadata\ObjectMetadataParser.cs" />
     <Compile Include="ObjectMetadata\DeferredReferenceForCollection.cs" />
     <Compile Include="ObjectMetadata\DeferredReferenceForDictionary.cs" />
     <Compile Include="ObjectMetadata\DeferredReferenceForObject.cs" />

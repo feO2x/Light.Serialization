@@ -33,7 +33,7 @@ namespace Light.Serialization.Json
         public JsonDeserializerBuilder()
         {
             _nameToTypeMapping = new SimpleNameToTypeMapping();
-            _objectMetadataParser = Pool.Register(new ComplexObjectMetadataParser(_nameToTypeMapping));
+            _objectMetadataParser = Pool.Register(new ObjectMetadataParser(_nameToTypeMapping));
             _arrayMetadataParser = Pool.Register(new ArrayMetadataParser(_nameToTypeMapping));
             _typeDescriptionService = Pool.Register(new DefaultTypeDescriptionServiceWithCaching(new Dictionary<Type, TypeCreationDescription>()));
 
@@ -289,7 +289,16 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="JsonDeserializer"/> with the specified configuration.
+        ///     Configures the metadata parsers to ignore type information in the JSON document. The actual types are then derived from the requested object graph.
+        /// </summary>
+        /// <returns>The builder for method chaining.</returns>
+        public JsonDeserializerBuilder IgnoreTypeInformationInMetadataSections()
+        {
+            return ConfigureAll<ISetIgnoreMetadataTypeInformation>(o => o.IsIgnoringMetadataTypeInformation = true);
+        }
+
+        /// <summary>
+        ///     Creates a new instance of <see cref="JsonDeserializer" /> with the specified configuration.
         /// </summary>
         public JsonDeserializer Build()
         {

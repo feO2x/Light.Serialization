@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using FluentAssertions;
 using Light.Serialization.Abstractions;
 using Light.Serialization.Json.LowLevelReading;
@@ -70,6 +71,12 @@ namespace Light.Serialization.Json.Tests
         public JsonDeserializer GetDeserializer()
         {
             return Container.Resolve<JsonDeserializer>();
+        }
+
+        public void IgnoreTypesInMetadataSection()
+        {
+            Container.Resolve<ArrayMetadataParser>().IsIgnoringMetadataTypeInformation = true;
+            Container.Resolve<ObjectMetadataParser>().IsIgnoringMetadataTypeInformation = true;
         }
 
         public void CheckDeserializerThrowsExceptionWithMessage<T>(string json, string exceptionMessage)
