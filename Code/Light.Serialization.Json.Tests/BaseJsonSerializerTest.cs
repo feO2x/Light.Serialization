@@ -79,5 +79,10 @@ namespace Light.Serialization.Json.Tests
 
             _jsonSerializerBuilder.WithTypeToNameMapping(domainFriendlyNameMapping);
         }
+
+        protected JsonSerializer GetSerializer()
+        {
+            return _jsonSerializerBuilder.Build();
+        }
     }
 }

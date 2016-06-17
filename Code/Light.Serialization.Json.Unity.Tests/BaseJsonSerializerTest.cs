@@ -82,5 +82,10 @@ namespace Light.Serialization.Json.Tests
             else
                 _container.UseDomainFriendlyNames(options);
         }
+
+        protected JsonSerializer GetSerializer()
+        {
+            return _container.Resolve<JsonSerializer>();
+        }
     }
 }

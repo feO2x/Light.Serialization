@@ -15,10 +15,23 @@ namespace Light.Serialization.Json
     /// </summary>
     public sealed class JsonSerializer : ISerializer
     {
+        /// <summary>
+        ///     Gets the default limit for recursion which is 300 levels.
+        /// </summary>
+        public const int DefaultRecursionLevelLimit = 300;
+
+        /// <summary>
+        ///     Gets the minimum level limit for recursion which is 3.
+        /// </summary>
+        public const int MinimumRecursionLevelLimit = 3;
+
         private readonly IDictionary<Type, IJsonWriterInstructor> _instructorCache;
         private readonly IJsonWriterFactory _writerFactory;
         private readonly IReadOnlyList<IJsonWriterInstructor> _writerInstructors;
         private IJsonWriter _jsonWriter;
+        private int _recursionLevel;
+
+        private int _recursionLevelLimit = DefaultRecursionLevelLimit;
         private List<object> _serializedObjects;
 
         /// <summary>
@@ -40,6 +53,20 @@ namespace Light.Serialization.Json
             _writerInstructors = writerInstructors;
             _writerFactory = writerFactory;
             _instructorCache = instructorCache;
+        }
+
+        /// <summary>
+        ///     Gets or sets the limit where the JSON serializer ends the recursive algorithm. This value defaults to 300.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="value" /> is less than 3.</exception>
+        public int RecursionLevelLimit
+        {
+            get { return _recursionLevelLimit; }
+            set
+            {
+                value.MustNotBeLessThan(MinimumRecursionLevelLimit);
+                _recursionLevelLimit = value;
+            }
         }
 
         /// <summary>
@@ -80,6 +107,9 @@ namespace Light.Serialization.Json
 
         private void SerializeObject(object @object)
         {
+            if (++_recursionLevel == _recursionLevelLimit)
+                throw new SerializationException($"The serializer probably is in an endless recursion - therefore the serialization process was stopped at recursion level {_recursionLevelLimit}.");
+
             if (@object == null)
             {
                 _jsonWriter.WriteNull();
@@ -101,6 +131,7 @@ namespace Light.Serialization.Json
             }
 
             targetWriterInstructor.Serialize(new JsonSerializationContext(@object, actualType, SerializeObject, _jsonWriter, _serializedObjects));
+            --_recursionLevel;
         }
 
         private IJsonWriterInstructor FindTargetInstructor(object @object, Type objectType)

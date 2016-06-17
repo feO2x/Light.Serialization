@@ -101,6 +101,7 @@
     <Compile Include="SerializationTests\DelegateTests.cs" />
     <Compile Include="SerializationTests\DictionaryTests.cs" />
     <Compile Include="SerializationTests\CustomRuleTests.cs" />
+    <Compile Include="SerializationTests\EndlessRecursionTests.cs" />
     <Compile Include="SerializationTests\HumanReadableJsonTests.cs" />
     <Compile Include="SerializationTests\NullableTests.cs" />
     <Compile Include="DeserializationTests\ObjectReferencePreservationTests.cs" />
