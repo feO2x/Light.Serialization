@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Light.GuardClauses;
+using Light.GuardClauses.Exceptions;
 using Light.Serialization.Json.BuilderHelpers;
 using Light.Serialization.Json.Caching;
 using Light.Serialization.Json.ComplexTypeDecomposition;
@@ -81,9 +82,7 @@ namespace Light.Serialization.Json
             characterEscaper.MustNotBeNull(nameof(characterEscaper));
 
             Pool.SetFieldAndReplaceInPool(ref _characterEscaper, characterEscaper);
-            ConfigureAll<ISetCharacterEscaper>(o => o.CharacterEscaper = characterEscaper);
-
-            return this;
+            return ConfigureAll<ISetCharacterEscaper>(o => o.CharacterEscaper = characterEscaper);
         }
 
         /// <summary>
@@ -97,9 +96,7 @@ namespace Light.Serialization.Json
             typeAnalyzer.MustNotBeNull(nameof(typeAnalyzer));
 
             Pool.SetFieldAndReplaceInPool(ref _typeAnalyzer, typeAnalyzer);
-            ConfigureAll<ISetTypeAnalyzer>(o => o.TypeAnalyzer = typeAnalyzer);
-
-            return this;
+            return ConfigureAll<ISetTypeAnalyzer>(o => o.TypeAnalyzer = typeAnalyzer);
         }
 
         /// <summary>
@@ -108,9 +105,14 @@ namespace Light.Serialization.Json
         /// <param name="formatters">The list containing all formatters to be used.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="formatters" /> is null.</exception>
-        public JsonSerializerBuilder WithPrimitiveTypeFormatters(IList<IPrimitiveTypeFormatter> formatters)
+        /// <exception cref="EmptyCollectionException">Thrown when <paramref name="formatters"/> contains no items.</exception>
+        public JsonSerializerBuilder WithPrimitiveTypeFormatters(IEnumerable<IPrimitiveTypeFormatter> formatters)
         {
+            // ReSharper disable PossibleMultipleEnumeration
+            formatters.MustNotBeNullOrEmpty(nameof(formatters));
+
             return WithPrimitiveTypeFormatters(formatters.ToDictionary(f => f.TargetType));
+            // ReSharper restore PossibleMultipleEnumeration
         }
 
         /// <summary>
@@ -119,17 +121,16 @@ namespace Light.Serialization.Json
         /// <param name="formattersMapping">The dictionary containing all formatters to be used.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="formattersMapping" /> is null.</exception>
+        /// <exception cref="EmptyCollectionException">Thrown when <paramref name="formattersMapping"/> is empty.</exception>
         public JsonSerializerBuilder WithPrimitiveTypeFormatters(IDictionary<Type, IPrimitiveTypeFormatter> formattersMapping)
         {
-            formattersMapping.MustNotBeNull(nameof(formattersMapping));
+            formattersMapping.MustNotBeNullOrEmpty(nameof(formattersMapping));
 
             Pool.RemoveAll(_primitiveTypeFormattersMapping.Values);
             _primitiveTypeFormattersMapping = formattersMapping;
             Pool.RegisterAll(formattersMapping.Values);
 
-            ConfigureAll<ISetPrimitiveTypeFormatters>(o => o.PrimitiveTypeFormattersMapping = _primitiveTypeFormattersMapping);
-
-            return this;
+            return ConfigureAll<ISetPrimitiveTypeFormatters>(o => o.PrimitiveTypeFormattersMapping = _primitiveTypeFormattersMapping);
         }
 
         /// <summary>
@@ -284,9 +285,7 @@ namespace Light.Serialization.Json
             metadataInstructor.MustNotBeNull(nameof(metadataInstructor));
 
             Pool.SetFieldAndReplaceInPool(ref _objectMetadataInstructor, metadataInstructor);
-            ConfigureAll<ISetObjectMetadataInstructor>(o => o.MetadataInstructor = metadataInstructor);
-
-            return this;
+            return ConfigureAll<ISetObjectMetadataInstructor>(o => o.MetadataInstructor = metadataInstructor);
         }
 
         /// <summary>
@@ -300,9 +299,7 @@ namespace Light.Serialization.Json
             metadataInstructor.MustNotBeNull(nameof(metadataInstructor));
 
             Pool.SetFieldAndReplaceInPool(ref _collectionMetadataInstructor, metadataInstructor);
-            ConfigureAll<ISetCollectionMetadataInstructor>(o => o.MetadataInstructor = metadataInstructor);
-
-            return this;
+            return ConfigureAll<ISetCollectionMetadataInstructor>(o => o.MetadataInstructor = metadataInstructor);
         }
 
         /// <summary>
@@ -343,8 +340,7 @@ namespace Light.Serialization.Json
         /// <returns>The builder for method chaining.</returns>
         public JsonSerializerBuilder DisableObjectReferencePreservation()
         {
-            ConfigureAll<ISetObjectReferencePreservationStatus>(o => o.IsSerializingObjectIds = false);
-            return this;
+            return ConfigureAll<ISetObjectReferencePreservationStatus>(o => o.IsSerializingObjectIds = false);
         }
 
         /// <summary>
@@ -353,8 +349,7 @@ namespace Light.Serialization.Json
         /// <returns>The builder for method chaining.</returns>
         public JsonSerializerBuilder EnableObjectReferencePreservation()
         {
-            ConfigureAll<ISetObjectReferencePreservationStatus>(o => o.IsSerializingObjectIds = true);
-            return this;
+            return ConfigureAll<ISetObjectReferencePreservationStatus>(o => o.IsSerializingObjectIds = true);
         }
 
         /// <summary>
@@ -363,8 +358,7 @@ namespace Light.Serialization.Json
         /// <returns>The builder for method chaining.</returns>
         public JsonSerializerBuilder DisableTypeMetadata()
         {
-            ConfigureAll<ISetTypeInfoSerializationStatus>(o => o.IsSerializingTypeInfo = false);
-            return this;
+            return ConfigureAll<ISetTypeInfoSerializationStatus>(o => o.IsSerializingTypeInfo = false);
         }
 
         /// <summary>
@@ -373,8 +367,7 @@ namespace Light.Serialization.Json
         /// <returns>The builder for method chaining.</returns>
         public JsonSerializerBuilder EnableTypeMetadata()
         {
-            ConfigureAll<ISetTypeInfoSerializationStatus>(o => o.IsSerializingTypeInfo = true);
-            return this;
+            return ConfigureAll<ISetTypeInfoSerializationStatus>(o => o.IsSerializingTypeInfo = true);
         }
 
         /// <summary>
@@ -388,10 +381,7 @@ namespace Light.Serialization.Json
             typeToNameMapping.MustNotBeNull(nameof(typeToNameMapping));
 
             Pool.SetFieldAndReplaceInPool(ref _typeToNameMapping, typeToNameMapping);
-
-            ConfigureAll<ISetTypeToNameMapping>(o => o.TypeToNameMapping = typeToNameMapping);
-
-            return this;
+            return ConfigureAll<ISetTypeToNameMapping>(o => o.TypeToNameMapping = typeToNameMapping);
         }
 
         /// <summary>
@@ -405,9 +395,7 @@ namespace Light.Serialization.Json
             keyNormalizer.MustNotBeNull(nameof(keyNormalizer));
 
             Pool.SetFieldAndReplaceInPool(ref _keyNormalizer, keyNormalizer);
-            ConfigureAll<ISetKeyNormalizer>(o => o.KeyNormalizer = keyNormalizer);
-
-            return this;
+            return ConfigureAll<ISetKeyNormalizer>(o => o.KeyNormalizer = keyNormalizer);
         }
 
         /// <summary>
@@ -430,8 +418,7 @@ namespace Light.Serialization.Json
         {
             createWhitespaceFormatter.MustNotBeNull(nameof(createWhitespaceFormatter));
 
-            ConfigureAll<ISetWhitespaceFormatterCreationDelegate>(o => o.CreateWhitespaceFormatter = createWhitespaceFormatter);
-            return this;
+            return ConfigureAll<ISetWhitespaceFormatterCreationDelegate>(o => o.CreateWhitespaceFormatter = createWhitespaceFormatter);
         }
 
         /// <summary>
