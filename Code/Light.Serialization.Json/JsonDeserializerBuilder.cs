@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Light.GuardClauses;
+using Light.GuardClauses.Exceptions;
 using Light.Serialization.Json.BuilderHelpers;
 using Light.Serialization.Json.Caching;
 using Light.Serialization.Json.ComplexTypeConstruction;
 using Light.Serialization.Json.LowLevelReading;
 using Light.Serialization.Json.ObjectMetadata;
-using Light.Serialization.Json.TokenParserFactories;
 using Light.Serialization.Json.TokenParsers;
 
 namespace Light.Serialization.Json
@@ -17,13 +17,13 @@ namespace Light.Serialization.Json
     /// </summary>
     public sealed class JsonDeserializerBuilder : BaseBuilderWithPropertyInjectionPool<JsonDeserializerBuilder>
     {
-        private IObjectMetadataParser _objectMetadataParser;
         private readonly IMetaFactory _metaFactory = new DefaultMetaFactory();
-        private readonly List<IJsonTokenParserFactory> _tokenParserFactories;
         private IArrayMetadataParser _arrayMetadataParser;
         private INameToTypeMapping _nameToTypeMapping;
+        private IObjectMetadataParser _objectMetadataParser;
         private IJsonReaderFactory _readerFactory = new JsonReaderFactory();
         private Dictionary<JsonTokenTypeCombination, IJsonTokenParser> _tokenParserCache = new Dictionary<JsonTokenTypeCombination, IJsonTokenParser>();
+        private List<IJsonTokenParserFactory> _tokenParserFactories;
         private ITypeDescriptionService _typeDescriptionService;
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace Light.Serialization.Json
             _typeDescriptionService = Pool.Register(new DefaultTypeDescriptionServiceWithCaching(new Dictionary<Type, TypeCreationDescription>()));
 
             _tokenParserFactories = new List<IJsonTokenParserFactory>().AddDefaultTokenParserFactories(_metaFactory, _objectMetadataParser, _arrayMetadataParser, _typeDescriptionService);
-            Pool.RegisterAll(_tokenParserFactories.OfType<SingletonFactory>().Select(f => f.Create()));
+            Pool.RegisterAll(_tokenParserFactories.OfType<SingletonFactory>().Select(f => f.Instance));
             Pool.RegisterAll(_tokenParserFactories.Where(f => f.GetType() != typeof(SingletonFactory)));
         }
 
@@ -55,6 +55,12 @@ namespace Light.Serialization.Json
             return ConfigureAll<ISetNameToTypeMapping>(o => o.NameToTypeMapping = mapping);
         }
 
+        /// <summary>
+        ///     Configures the builder to inject the specified <see cref="IObjectMetadataParser" /> instance in the resulting deserializer object graph.
+        /// </summary>
+        /// <param name="metadataParser">The parser for metadata sections in complex JSON objects.</param>
+        /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="metadataParser" /> is null.</exception>
         public JsonDeserializerBuilder WithObjectMetadataParser(IObjectMetadataParser metadataParser)
         {
             metadataParser.MustNotBeNull(nameof(metadataParser));
@@ -64,9 +70,9 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Exchanges the existing <see cref="IArrayMetadataParser" /> instance with the specified one.
+        ///     Configures the builder to inject the specified <see cref="IArrayMetadataParser" /> instance in the resulting deserializer object graph.
         /// </summary>
-        /// <param name="metadataParser">The new array metadata parser.</param>
+        /// <param name="metadataParser">The parser for metadata sections in JSON arrays.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="metadataParser" /> is null.</exception>
         public JsonDeserializerBuilder WithArrayMetadataParser(IArrayMetadataParser metadataParser)
@@ -81,14 +87,12 @@ namespace Light.Serialization.Json
         /// <param name="typeDescriptionService">The type description service to be used.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeDescriptionService" /> is null.</exception>
-        public JsonDeserializerBuilder TypeDescriptionService(ITypeDescriptionService typeDescriptionService)
+        public JsonDeserializerBuilder WithTypeDescriptionService(ITypeDescriptionService typeDescriptionService)
         {
             typeDescriptionService.MustNotBeNull(nameof(typeDescriptionService));
 
-            _typeDescriptionService = typeDescriptionService;
-            ConfigureSingletonParser<ISetTypeDescriptionService>(parser => parser.TypeDescriptionService = typeDescriptionService); // TODO: this wouldn't work if the target parser is not a singleton
-
-            return this;
+            Pool.SetFieldAndReplaceInPool(ref _typeDescriptionService, typeDescriptionService);
+            return ConfigureAll<ISetTypeDescriptionService>(o => o.TypeDescriptionService = typeDescriptionService);
         }
 
         /// <summary>
@@ -167,6 +171,36 @@ namespace Light.Serialization.Json
 
             _tokenParserCache = cache;
             return this;
+        }
+
+        /// <summary>
+        ///     Configures the builder to use the specified factories to create <see cref="IJsonTokenParser" /> instances.
+        /// </summary>
+        /// <param name="factories">The list containing all factories for the JSON token parsers. Keep in mind that the order of the parsers usually matter for the deserialization process.</param>
+        /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="factories" /> is null.</exception>
+        /// <exception cref="EmptyCollectionException">Thrown when <paramref name="factories" /> has no items.</exception>
+        public JsonDeserializerBuilder WithTokenParserFactories(List<IJsonTokenParserFactory> factories)
+        {
+            factories.MustNotBeNullOrEmpty(nameof(factories));
+
+            Pool.RemoveAll(_tokenParserFactories);
+            Pool.RemoveAll(_tokenParserFactories.OfType<SingletonFactory>().Select(f => f.Instance));
+            _tokenParserFactories = factories;
+            Pool.RegisterAll(factories.OfType<SingletonFactory>().Select(f => f.Instance));
+            Pool.RegisterAll(factories.Where(f => f.GetType() != typeof(SingletonFactory)));
+            UpdateJsonStringToPrimitiveParsers();
+
+            return this;
+        }
+
+        private void UpdateJsonStringToPrimitiveParsers()
+        {
+            var jsonStringToPrimitiveParser = _tokenParserFactories.OfType<SingletonFactory>()
+                                                                   .Select(f => f.Instance)
+                                                                   .OfType<IJsonStringToPrimitiveParser>()
+                                                                   .ToList();
+            ConfigureAll<ISetJsonStringToPrimitiveParsers>(o => o.JsonStringToPrimitiveParsers = jsonStringToPrimitiveParser);
         }
 
         /// <summary>

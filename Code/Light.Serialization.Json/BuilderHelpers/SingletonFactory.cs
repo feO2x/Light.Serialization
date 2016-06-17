@@ -1,9 +1,8 @@
 ﻿using System;
 using Light.GuardClauses;
-using Light.Serialization.Json.BuilderHelpers;
 using Light.Serialization.Json.TokenParsers;
 
-namespace Light.Serialization.Json.TokenParserFactories
+namespace Light.Serialization.Json.BuilderHelpers
 {
     public sealed class SingletonFactory : IJsonTokenParserFactory, IGetSingletonInstance<IJsonTokenParser>
     {

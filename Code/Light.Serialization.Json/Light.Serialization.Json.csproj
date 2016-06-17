@@ -45,6 +45,7 @@
     <Compile Include="BuilderHelpers\ISetArrayMetadataParser.cs" />
     <Compile Include="BuilderHelpers\ISetCharacterEscaper.cs" />
     <Compile Include="BuilderHelpers\ISetCollectionMetadataInstructor.cs" />
+    <Compile Include="BuilderHelpers\ISetJsonStringToPrimitiveParsers.cs" />
     <Compile Include="BuilderHelpers\ISetKeyNormalizer.cs" />
     <Compile Include="BuilderHelpers\ISetNameToTypeMapping.cs" />
     <Compile Include="BuilderHelpers\ISetObjectMetadataParser.cs" />
@@ -63,9 +64,9 @@
     <Compile Include="ObjectMetadata\DeferredReferenceForArray.cs" />
     <Compile Include="ObjectMetadata\DeferredReferenceForMultidimensionalArray.cs" />
     <Compile Include="ObjectMetadata\IArrayMetadataParser.cs" />
-    <Compile Include="TokenParserFactories\IJsonTokenParserFactory.cs" />
-    <Compile Include="TokenParserFactories\JsonStringInheritanceParserFactory.cs" />
-    <Compile Include="TokenParserFactories\SingletonFactory.cs" />
+    <Compile Include="BuilderHelpers\IJsonTokenParserFactory.cs" />
+    <Compile Include="BuilderHelpers\JsonStringInheritanceParserFactory.cs" />
+    <Compile Include="BuilderHelpers\SingletonFactory.cs" />
     <Compile Include="Caching\ValueProvidersCacheDecorator.cs" />
     <Compile Include="ComplexTypeConstruction\ConstructorDescription.cs" />
     <Compile Include="ComplexTypeConstruction\DefaultMetaFactory.cs" />
