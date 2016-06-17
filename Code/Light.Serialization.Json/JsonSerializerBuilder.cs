@@ -26,6 +26,7 @@ namespace Light.Serialization.Json
         private IJsonKeyNormalizer _keyNormalizer = new FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer();
         private IMetadataInstructor _objectMetadataInstructor;
         private IDictionary<Type, IPrimitiveTypeFormatter> _primitiveTypeFormattersMapping;
+        private int _recursionLimit = JsonSerializer.DefaultRecursionLevelLimit;
         private IReadableValuesTypeAnalyzer _typeAnalyzer = new ValueProvidersCacheDecorator(new PublicPropertiesAndFieldsAnalyzer(), new Dictionary<Type, IList<IValueProvider>>());
         private ITypeToNameMapping _typeToNameMapping = new SimpleNameToTypeMapping();
         private IJsonWriterFactory _writerFactory;
@@ -105,7 +106,7 @@ namespace Light.Serialization.Json
         /// <param name="formatters">The list containing all formatters to be used.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="formatters" /> is null.</exception>
-        /// <exception cref="EmptyCollectionException">Thrown when <paramref name="formatters"/> contains no items.</exception>
+        /// <exception cref="EmptyCollectionException">Thrown when <paramref name="formatters" /> contains no items.</exception>
         public JsonSerializerBuilder WithPrimitiveTypeFormatters(IEnumerable<IPrimitiveTypeFormatter> formatters)
         {
             // ReSharper disable PossibleMultipleEnumeration
@@ -121,7 +122,7 @@ namespace Light.Serialization.Json
         /// <param name="formattersMapping">The dictionary containing all formatters to be used.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="formattersMapping" /> is null.</exception>
-        /// <exception cref="EmptyCollectionException">Thrown when <paramref name="formattersMapping"/> is empty.</exception>
+        /// <exception cref="EmptyCollectionException">Thrown when <paramref name="formattersMapping" /> is empty.</exception>
         public JsonSerializerBuilder WithPrimitiveTypeFormatters(IDictionary<Type, IPrimitiveTypeFormatter> formattersMapping)
         {
             formattersMapping.MustNotBeNullOrEmpty(nameof(formattersMapping));
@@ -435,11 +436,25 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
+        ///     Configures the builder to inject the specified recursion level limit into the resulting <see cref="JsonSerializer" /> instance.
+        ///     The default recursion level limit is 300.
+        /// </summary>
+        /// <param name="recursionLimit">The new recursion level limit.</param>
+        /// <returns>The builder for method chaininig.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="recursionLimit" /> is less than 3.</exception>
+        public JsonSerializerBuilder WithRecursionLevelLimit(int recursionLimit)
+        {
+            recursionLimit.MustNotBeLessThan(JsonSerializer.MinimumRecursionLevelLimit, nameof(recursionLimit));
+            _recursionLimit = recursionLimit;
+            return this;
+        }
+
+        /// <summary>
         ///     Creates a new instance of <see cref="JsonSerializer" /> using the specified builder settings.
         /// </summary>
         public JsonSerializer Build()
         {
-            return new JsonSerializer(_writerInstructors, _writerFactory, _instructorCache);
+            return new JsonSerializer(_writerInstructors, _writerFactory, _instructorCache) { RecursionLevelLimit = _recursionLimit };
         }
     }
 }

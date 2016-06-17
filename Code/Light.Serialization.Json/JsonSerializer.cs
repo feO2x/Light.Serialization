@@ -64,7 +64,7 @@ namespace Light.Serialization.Json
             get { return _recursionLevelLimit; }
             set
             {
-                value.MustNotBeLessThan(MinimumRecursionLevelLimit);
+                value.MustNotBeLessThan(MinimumRecursionLevelLimit, nameof(value));
                 _recursionLevelLimit = value;
             }
         }
