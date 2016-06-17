@@ -10,7 +10,7 @@ namespace Light.Serialization.Json.ObjectMetadata
     public sealed class ArrayMetadataParser : BaseMetadataParser, IArrayMetadataParser
     {
         /// <summary>
-        ///     Creates a new instance of ArrayMetadataParser.
+        ///     Creates a new instance of <see cref="ArrayMetadataParser"/>.
         /// </summary>
         /// <param name="nameToTypeMapping">The object that can map JSON type names to .NET types.</param>
         /// <exception cref="ArgumentNullException">Thrown when <see cref="nameToTypeMapping" /> is null.</exception>

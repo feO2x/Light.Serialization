@@ -113,6 +113,7 @@ namespace Light.Serialization.Json.ObjectMetadata
 
         /// <summary>
         ///     Gets or sets the value that is used to mark the JSON string containing the rank of a .NET array.
+        ///     This value defaults to "arrayRank".
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
         /// <exception cref="EmptyStringException">Thrown when <paramref name="value" /> is an empty string.</exception>
@@ -129,6 +130,7 @@ namespace Light.Serialization.Json.ObjectMetadata
 
         /// <summary>
         ///     Gets or sets the symbol that is used to mark the JSON number describing the length of a .NET array.
+        ///     This value defaults to "arrayLength".
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
         /// <exception cref="EmptyStringException">Thrown when <paramref name="value" /> is an empty string.</exception>

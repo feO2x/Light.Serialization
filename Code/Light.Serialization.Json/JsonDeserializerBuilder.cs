@@ -276,7 +276,20 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Creates the JsonDeserializer with the specified configuration.
+        ///     Configures all instances that derive from the <see cref="BaseMetadata" /> class in the deserialization object graph with the specified delegate (usually metadata parsers).
+        /// </summary>
+        /// <param name="configureMetadataParser">The delegate that configures the <see cref="BaseMetadata" /> instance.</param>
+        /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureMetadataParser" /> is null.</exception>
+        public JsonDeserializerBuilder ConfigureMetadataParsers(Action<BaseMetadata> configureMetadataParser)
+        {
+            configureMetadataParser.MustNotBeNull(nameof(configureMetadataParser));
+
+            return ConfigureAll(configureMetadataParser);
+        }
+
+        /// <summary>
+        ///     Creates a new instance of <see cref="JsonDeserializer"/> with the specified configuration.
         /// </summary>
         public JsonDeserializer Build()
         {
