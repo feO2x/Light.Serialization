@@ -221,12 +221,31 @@ namespace Light.Serialization.Json
             if (targetIndex == _tokenParserFactories.Count - 1)
                 _tokenParserFactories.Add(factory);
             else
-                _tokenParserFactories.Insert(targetIndex, factory);
+                _tokenParserFactories.Insert(targetIndex + 1, factory);
 
             RegisterFactory(factory);
             return this;
         }
 
+        /// <summary>
+        ///     Adds the specified factory before the one that creates the token parser with the given type T.
+        /// </summary>
+        /// <typeparam name="T">The type of the token parser the factory creates. The specified factory is placed after the selected one.</typeparam>
+        /// <param name="factory">The factory that will be inserted in the list of token parser factories.</param>
+        /// <returns>The builder for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="factory" /> is null.</exception>
+        public JsonDeserializerBuilder WithTokenParserFactoryBefore<T>(IJsonTokenParserFactory factory) where T : IJsonTokenParser
+        {
+            factory.MustNotBeNull(nameof(factory));
+
+            var targetIndex = _tokenParserFactories.IndexOf(f => f.ParserType == typeof(T));
+            targetIndex.MustNotBe(-1, exception: () => new ArgumentException($"A factory that creates a token parser of type \"{typeof(T)}\" could not be found."));
+
+            _tokenParserFactories.Insert(targetIndex, factory);
+
+            RegisterFactory(factory);
+            return this;
+        }
 
         private void RegisterFactory(IJsonTokenParserFactory factory)
         {
