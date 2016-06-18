@@ -108,7 +108,7 @@
     <Compile Include="DeserializationTests\ObjectReferencePreservationTests.cs" />
     <Compile Include="SerializationTests\TimeSpanTests.cs" />
     <Compile Include="SerializationTests\PrimitiveValuesTests.cs" />
-    <Compile Include="SerializationTests\TypeTests.cs" />
+    <Compile Include="SerializationTests\TypeAndTypeInfoTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

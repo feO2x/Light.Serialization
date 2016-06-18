@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using Light.GuardClauses;
 using Light.GuardClauses.Exceptions;
 using Light.Serialization.Json.BuilderHelpers;
@@ -53,7 +54,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// </summary>
         public bool IsSuitableFor(object @object, Type actualType)
         {
-            return @object is Type;
+            return @object is Type || @object is TypeInfo;
         }
 
         /// <summary>
@@ -76,7 +77,8 @@ namespace Light.Serialization.Json.WriterInstructors
 
             writer.WriteKey(_typeKey);
 
-            _metadataInstructor.SerializeType((Type) serializationContext.ObjectToBeSerialized, serializationContext.Writer);
+            var type = serializationContext.ObjectToBeSerialized as Type ?? ((TypeInfo) serializationContext.ObjectToBeSerialized).AsType();
+            _metadataInstructor.SerializeType(type, serializationContext.Writer);
             writer.EndObject();
         }
 

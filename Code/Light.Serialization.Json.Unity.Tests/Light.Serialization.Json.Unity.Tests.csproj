@@ -176,8 +176,8 @@
     <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\TimeSpanTests.cs">
       <Link>SerializationTests\TimeSpanTests.cs</Link>
     </Compile>
-    <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\TypeTests.cs">
-      <Link>SerializationTests\TypeTests.cs</Link>
+    <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\TypeAndTypeInfoTests.cs">
+      <Link>SerializationTests\TypeAndTypeInfoTests.cs</Link>
     </Compile>
     <Compile Include="BaseJsonDeserializerTest.cs" />
     <Compile Include="BaseJsonSerializerTest.cs" />
