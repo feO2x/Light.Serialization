@@ -140,7 +140,7 @@
     <Compile Include="ObjectMetadata\ReferencePreservationInfo.cs" />
     <Compile Include="ObjectMetadata\TypeNameToJsonNameScanner.cs" />
     <Compile Include="ObjectMetadata\SimpleNameToTypeMapping.cs" />
-    <Compile Include="ObjectMetadata\ComplexObjectMetadataInstructor.cs" />
+    <Compile Include="ObjectMetadata\ObjectMetadataInstructor.cs" />
     <Compile Include="TokenParsers\CollectionParser.cs" />
     <Compile Include="TokenParsers\BaseIso8601DateTimeParser.cs" />
     <Compile Include="TokenParsers\ComplexObjectParser.cs" />

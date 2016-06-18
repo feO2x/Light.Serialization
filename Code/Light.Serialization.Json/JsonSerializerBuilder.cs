@@ -44,7 +44,7 @@ namespace Light.Serialization.Json
             Pool.RegisterAll(_primitiveTypeFormattersMapping.Values);
 
             _collectionMetadataInstructor = Pool.Register(new ArrayMetadataInstructor(_typeToNameMapping));
-            _objectMetadataInstructor = Pool.Register(new ComplexObjectMetadataInstructor(_typeToNameMapping));
+            _objectMetadataInstructor = Pool.Register(new ObjectMetadataInstructor(_typeToNameMapping));
 
             _writerInstructors = new List<IJsonWriterInstructor>().AddDefaultWriterInstructors(_primitiveTypeFormattersMapping,
                                                                                                _typeAnalyzer,

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using FluentAssertions;
 using Light.Serialization.Abstractions;
 using Light.Serialization.Json.LowLevelReading;
@@ -44,7 +43,7 @@ namespace Light.Serialization.Json.Tests
             return testTarget.Deserialize(json, requestedType);
         }
 
-        public void ConfigureDefaultDomainFriendlyNames(Action<TypeNameToJsonNameScanner.IScanningOptions> configureAdditionalTypes = null)
+        public void UseDomainFriendlyNames(Action<TypeNameToJsonNameScanner.IScanningOptions> configureAdditionalTypes = null)
         {
             var domainFriendlyNameMapping = DomainFriendlyNameMapping.CreateWithDefaultTypeMappings();
 

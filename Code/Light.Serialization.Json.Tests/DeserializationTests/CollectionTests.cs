@@ -70,7 +70,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         [MemberData(nameof(AbstractCollectionReferenceData))]
         public void AbstractCollectionReference(string json, ICollection expected)
         {
-            ConfigureDefaultDomainFriendlyNames();
+            UseDomainFriendlyNames();
             var actual = GetDeserializedJson<ICollection>(json);
 
             actual.Should().BeEquivalentTo(expected);
@@ -110,7 +110,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         [Fact(DisplayName = "The deserializer must be able to parse JSON arrays to .NET multidimensional arrays.")]
         public void MultidimensionalArray()
         {
-            ConfigureDefaultDomainFriendlyNames();
+            UseDomainFriendlyNames();
 
             var expected = new int[2, 4];
             expected[0, 0] = 11;
@@ -151,7 +151,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         [Fact(DisplayName = "The deserializer must be able to parse nested JSON arrays as .NET jagged arrays when they are referenced via a collection abstraction.")]
         public void JaggedArraysReferencedViaAbstraction()
         {
-            ConfigureDefaultDomainFriendlyNames();
+            UseDomainFriendlyNames();
 
             var expected = new int[2][];
             expected[0] = new[] { -1, 89 };
@@ -168,7 +168,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         [Fact(DisplayName = "The deserializer must be able to parse multidimensional JSON arrays that are placed inside a dictionary.")]
         public void MultidimensionalArraysInDictionary()
         {
-            ConfigureDefaultDomainFriendlyNames();
+            UseDomainFriendlyNames();
 
             var expected = new Dictionary<string, int[,]>();
             var firstArray = new int[2, 3];

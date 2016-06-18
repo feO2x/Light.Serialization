@@ -11,7 +11,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         [Fact(DisplayName = "The deserializer must be able to ignore the $type metadata section and create the requested type instead.")]
         public void TypesIgnored()
         {
-            ConfigureDefaultDomainFriendlyNames();
+            UseDomainFriendlyNames();
             IgnoreTypesInMetadataSection();
             const string json = "[\"$type\", { \"name\": \"observableGenericList\", \"typeArguments\": [\"int32\"] }, 1, 2, 3, 4]";
 

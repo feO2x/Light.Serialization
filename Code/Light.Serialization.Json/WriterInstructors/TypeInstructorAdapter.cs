@@ -67,7 +67,7 @@ namespace Light.Serialization.Json.WriterInstructors
 
             writer.BeginObject();
 
-            var shouldSerializeData = _metadataInstructor.SerializeMetadata(serializationContext);
+            var shouldSerializeData = _metadataInstructor.SerializeMetadata(new JsonSerializationContext(serializationContext.ObjectToBeSerialized, typeof(Type), serializationContext.SerializeChild, serializationContext.Writer, serializationContext.SerializedObjects));
             if (shouldSerializeData == false)
             {
                 writer.EndObject();
