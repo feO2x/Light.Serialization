@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Light.GuardClauses;
 using Light.Serialization.Abstractions;
 using Light.Serialization.Json.Caching;
@@ -13,11 +14,12 @@ namespace Light.Serialization.Json
     /// <summary>
     ///     Represents an object that can deserialize JSON documents.
     /// </summary>
-    public sealed class JsonDeserializer : IDeserializer
+    public sealed class JsonDeserializer : IDeserializer, IRecursiveDeserializer
     {
         private readonly Dictionary<JsonTokenTypeCombination, IJsonTokenParser> _cache;
         private readonly IJsonReaderFactory _jsonReaderFactory;
         private readonly IReadOnlyList<IJsonTokenParser> _tokenParsers;
+        private readonly List<ISwitchParserForComplexObject> _switchableParsersForComplexObjects;
         private IJsonReader _jsonReader;
         private ObjectReferencePreserver _objectReferencePreserver;
 
@@ -39,6 +41,7 @@ namespace Light.Serialization.Json
             _jsonReaderFactory = jsonReaderFactory;
             _tokenParsers = tokenParsers;
             _cache = cache;
+            _switchableParsersForComplexObjects = _tokenParsers.OfType<ISwitchParserForComplexObject>().ToList();
         }
 
         /// <summary>
@@ -107,7 +110,7 @@ namespace Light.Serialization.Json
         {
             IJsonTokenParser parser;
             var tokenTypeCombination = new JsonTokenTypeCombination(token.JsonType, requestedType);
-            var deserializationContext = new JsonDeserializationContext(token, requestedType, _jsonReader, DeserializeJsonToken, _objectReferencePreserver);
+            var deserializationContext = new JsonDeserializationContext(token, requestedType, _jsonReader, this, _objectReferencePreserver);
 
             lock (_cache)
             {
@@ -131,6 +134,22 @@ namespace Light.Serialization.Json
             }
 
             return parser.ParseValue(deserializationContext);
+        }
+
+        ParseResult IRecursiveDeserializer.DeserializeToken(JsonToken token, Type requestedType)
+        {
+            return DeserializeJsonToken(token, requestedType);
+        }
+
+        ISwitchParserForComplexObject IRecursiveDeserializer.FindParserForType(Type typeToBeConstructed)
+        {
+            foreach (var switchableParser in _switchableParsersForComplexObjects)
+            {
+                if (switchableParser.ShouldDeserialize(typeToBeConstructed))
+                    return switchableParser;
+            }
+
+            return null;
         }
     }
 }

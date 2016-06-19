@@ -29,7 +29,7 @@ namespace Light.Serialization.Json.TokenParsers
         /// <summary>
         ///     Gets the delegate that can be used to deserialize a JSON token.
         /// </summary>
-        private readonly Func<JsonToken, Type, ParseResult> _deserializeToken;
+        private readonly IRecursiveDeserializer _deserializer;
 
         /// <summary>
         ///     Gets the list containing all deserialized objects if Object Reference Preservation is turned on.
@@ -42,24 +42,24 @@ namespace Light.Serialization.Json.TokenParsers
         /// <param name="token">The token to be deserialized.</param>
         /// <param name="requestedType">The requested type of the token.</param>
         /// <param name="jsonReader">The object that is able to read single tokens from a JSON document.</param>
-        /// <param name="deserializeToken">The delegate that can be used to deserialize a JSON token.</param>
+        /// <param name="deserializer">The delegate that can be used to deserialize a JSON token.</param>
         /// <param name="objectReferencePreserver">The object used to hold all deserialized objects and to set deferred references.</param>
         /// <exception cref="ArgumentNullException">Thrown when any parameter is null.</exception>
         public JsonDeserializationContext(JsonToken token,
                                           Type requestedType,
                                           IJsonReader jsonReader,
-                                          Func<JsonToken, Type, ParseResult> deserializeToken,
+                                          IRecursiveDeserializer deserializer,
                                           ObjectReferencePreserver objectReferencePreserver)
         {
             requestedType.MustNotBeNull(nameof(requestedType));
             jsonReader.MustNotBeNull(nameof(jsonReader));
-            deserializeToken.MustNotBeNull(nameof(deserializeToken));
+            deserializer.MustNotBeNull(nameof(deserializer));
             objectReferencePreserver.MustNotBeNull(nameof(objectReferencePreserver));
 
             Token = token;
             RequestedType = requestedType;
             JsonReader = jsonReader;
-            _deserializeToken = deserializeToken;
+            _deserializer = deserializer;
             ObjectReferencePreserver = objectReferencePreserver;
         }
 
@@ -71,7 +71,7 @@ namespace Light.Serialization.Json.TokenParsers
         /// <exception cref="InvalidOperationException">Thrown when the deserialized value is a deferred reference.</exception>
         public T DeserializeToken<T>(JsonToken token)
         {
-            var parseResult = _deserializeToken(token, typeof(T));
+            var parseResult = _deserializer.DeserializeToken(token, typeof(T));
             CheckForDeferredReference(token, parseResult);
 
             return (T) parseResult.ParsedValue;
@@ -91,7 +91,12 @@ namespace Light.Serialization.Json.TokenParsers
         /// <param name="requestedType">The .NET type the token should be deserialized to.</param>
         public ParseResult DeserializeToken(JsonToken token, Type requestedType)
         {
-            return _deserializeToken(token, requestedType);
+            return _deserializer.DeserializeToken(token, requestedType);
+        }
+
+        public ISwitchParserForComplexObject GetParserCorrespondingToType(Type typeToBeConstructed)
+        {
+            return _deserializer.FindParserForType(typeToBeConstructed);
         }
     }
 }

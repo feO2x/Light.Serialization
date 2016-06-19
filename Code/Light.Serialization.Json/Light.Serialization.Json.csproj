@@ -112,6 +112,8 @@
     <Compile Include="IntegerMetadata\SignedIntegerTypeInfo.cs" />
     <Compile Include="IntegerMetadata\SignedIntegerTypes.cs" />
     <Compile Include="IntegerMetadata\UnsignedIntegerTypeInfo.cs" />
+    <Compile Include="TokenParsers\IRecursiveDeserializer.cs" />
+    <Compile Include="TokenParsers\ISwitchParserForComplexObject.cs" />
     <Compile Include="TokenParsers\JsonDeserializationContext.cs" />
     <Compile Include="JsonDeserializer.cs" />
     <Compile Include="Caching\JsonTokenTypeCombination.cs" />

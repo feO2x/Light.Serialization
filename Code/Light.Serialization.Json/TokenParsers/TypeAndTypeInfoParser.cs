@@ -11,7 +11,7 @@ namespace Light.Serialization.Json.TokenParsers
     /// <summary>
     ///     Represents an <see cref="IJsonTokenParser" /> that can parse <see cref="Type" /> and <see cref="TypeInfo" /> instances.
     /// </summary>
-    public sealed class TypeAndTypeInfoParser : IJsonTokenParser, ISetTypeParser
+    public sealed class TypeAndTypeInfoParser : IJsonTokenParser, ISwitchParserForComplexObject, ISetTypeParser
     {
         private ITypeParser _metadataParser;
         private string _typeSymbol = "type";
@@ -75,14 +75,27 @@ namespace Light.Serialization.Json.TokenParsers
             if (metadataParseResult.ReferencePreservationInfo.IsDeferredReference)
                 return ParseResult.FromDeferredReference(metadataParseResult.ReferencePreservationInfo.Id);
 
+            return ParseValue(metadataParseResult, context, currentToken);
+        }
+
+        private ParseResult ParseValue(ObjectMetadataParseResult metadataParseResult, JsonDeserializationContext context, JsonToken currentToken)
+        {
             currentToken.MustBeComplexObjectKey();
             var typeKey = context.DeserializeToken<string>(currentToken);
             if (typeKey != _typeSymbol)
                 throw new JsonDocumentException($"Expected key \"{_typeSymbol}\" in complex JSON object describing a Type or TypeInfo instance, but found {typeKey}.", currentToken);
 
-            reader.ReadAndExpectPairDelimiterToken();
+            context.JsonReader.ReadAndExpectPairDelimiterToken();
             var type = _metadataParser.ParseType(context);
-            return context.RequestedType == typeof(TypeInfo) ? ParseResult.FromParsedValue(type.GetTypeInfo()) : ParseResult.FromParsedValue(type);
+            
+            object returnValue = type;
+            if (context.RequestedType == typeof(TypeInfo))
+                returnValue = type.GetTypeInfo();
+
+            if (metadataParseResult.ReferencePreservationInfo.IsEmpty == false)
+                context.ObjectReferencePreserver.AddDeserializedObject(metadataParseResult.ReferencePreservationInfo.Id, returnValue);
+
+            return ParseResult.FromParsedValue(returnValue);
         }
 
         /// <summary>
@@ -97,6 +110,16 @@ namespace Light.Serialization.Json.TokenParsers
                 value.MustNotBeNull(nameof(value));
                 _metadataParser = value;
             }
+        }
+
+        bool ISwitchParserForComplexObject.ShouldDeserialize(Type typeToBeConstructed)
+        {
+            return typeToBeConstructed == typeof(Type);
+        }
+
+        ParseResult ISwitchParserForComplexObject.PerformSwitch(ObjectMetadataParseResult metadataParseResult, JsonDeserializationContext context, JsonToken currentToken)
+        {
+            return ParseValue(metadataParseResult, context, currentToken);
         }
     }
 }

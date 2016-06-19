@@ -72,12 +72,16 @@ namespace Light.Serialization.Json.TokenParsers
             if (metadataParseResult.ReferencePreservationInfo.IsDeferredReference)
                 return ParseResult.FromDeferredReference(metadataParseResult.ReferencePreservationInfo.Id);
 
-            // If the type reconstructed from the metadata section is a Dictionary, we have to switch to the DictionaryParser here
-            if (metadataParseResult.TypeToConstruct.IsDictionaryType())
-                return DictionaryParser.ParseDictionary(metadataParseResult, context, currentToken, _metaFactory);
+            // Check if the type to be constructed should actually be handled by another parser
+            if (context.RequestedType != metadataParseResult.TypeToBeConstructed)
+            {
+                var otherParser = context.GetParserCorrespondingToType(metadataParseResult.TypeToBeConstructed);
+                if (otherParser != null)
+                    return otherParser.PerformSwitch(metadataParseResult, context, currentToken);
+            }
 
             // Get the type creation description for the type that should be constructed.
-            var typeCreationDescription = _typeDescriptionService.GetTypeCreationDescription(metadataParseResult.TypeToConstruct);
+            var typeCreationDescription = _typeDescriptionService.GetTypeCreationDescription(metadataParseResult.TypeToBeConstructed);
 
             // Check if there is any data left to deserialized
             if (currentToken.JsonType == JsonTokenType.EndOfObject)

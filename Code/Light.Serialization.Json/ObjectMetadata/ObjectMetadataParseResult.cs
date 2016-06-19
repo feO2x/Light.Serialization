@@ -12,16 +12,16 @@ namespace Light.Serialization.Json.ObjectMetadata
         /// <summary>
         ///     Gets the type that should be constructed.
         /// </summary>
-        public readonly Type TypeToConstruct;
+        public readonly Type TypeToBeConstructed;
 
         /// <summary>
         ///     Gets the information about Object-Reference-Preservation.
         /// </summary>
         public readonly ReferencePreservationInfo ReferencePreservationInfo;
 
-        private ObjectMetadataParseResult(Type typeToConstruct, ReferencePreservationInfo referencePreservationInfo)
+        private ObjectMetadataParseResult(Type typeToBeConstructed, ReferencePreservationInfo referencePreservationInfo)
         {
-            TypeToConstruct = typeToConstruct;
+            TypeToBeConstructed = typeToBeConstructed;
             ReferencePreservationInfo = referencePreservationInfo;
         }
 
