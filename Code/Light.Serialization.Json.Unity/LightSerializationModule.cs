@@ -111,7 +111,7 @@ namespace Light.Serialization.Json.Unity
                                                                                                                       new Dictionary<Type, IList<IValueProvider>>())))
                 // Metadata instructors for complex .NET types and collections
                 .RegisterType<IMetadataInstructor, ObjectMetadataInstructor>(KnownNames.ObjectMetadataInstructor, new ContainerControlledLifetimeManager())
-                .RegisterType<IObjectMetadataInstructor>(new InjectionFactory(c => c.Resolve<ObjectMetadataInstructor>(KnownNames.ObjectMetadataInstructor)))
+                .RegisterType<ITypeMetadataInstructor>(new InjectionFactory(c => c.Resolve<ObjectMetadataInstructor>(KnownNames.ObjectMetadataInstructor)))
                 .RegisterType<IMetadataInstructor, ArrayMetadataInstructor>(KnownNames.CollectionMetadataInstructor, new ContainerControlledLifetimeManager())
 
                 // Type to name mapping
@@ -160,6 +160,7 @@ namespace Light.Serialization.Json.Unity
                 .RegisterTypeWithTypeName<IJsonTokenParser, GuidParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonStringToPrimitiveParser, GuidParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonTokenParser, JsonStringInheritanceParser>()
+                .RegisterTypeWithTypeName<IJsonTokenParser, TypeAndTypeInfoParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonTokenParser, CollectionParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonTokenParser, DictionaryParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonTokenParser, ComplexObjectParser>(new ContainerControlledLifetimeManager())
@@ -169,6 +170,7 @@ namespace Light.Serialization.Json.Unity
 
                 // Metadata parsers
                 .RegisterType<IObjectMetadataParser, ObjectMetadataParser>(new ContainerControlledLifetimeManager())
+                .RegisterType<ITypeParser>(new InjectionFactory(c => c.Resolve<ObjectMetadataParser>()))
                 .RegisterType<IArrayMetadataParser, ArrayMetadataParser>(new ContainerControlledLifetimeManager())
                 .RegisterType<INameToTypeMapping, SimpleNameToTypeMapping>(new ContainerControlledLifetimeManager())
 

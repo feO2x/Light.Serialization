@@ -24,7 +24,7 @@ namespace Light.Serialization.Json
         private IMetadataInstructor _collectionMetadataInstructor;
         private IDictionary<Type, IJsonWriterInstructor> _instructorCache;
         private IJsonKeyNormalizer _keyNormalizer = new FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer();
-        private IObjectMetadataInstructor _objectMetadataInstructor;
+        private ITypeMetadataInstructor _objectMetadataInstructor;
         private IDictionary<Type, IPrimitiveTypeFormatter> _primitiveTypeFormattersMapping;
         private int _recursionLimit = JsonSerializer.DefaultRecursionLevelLimit;
         private IReadableValuesTypeAnalyzer _typeAnalyzer = new ValueProvidersCacheDecorator(new PublicPropertiesAndFieldsAnalyzer(), new Dictionary<Type, IList<IValueProvider>>());
@@ -281,7 +281,7 @@ namespace Light.Serialization.Json
         /// <param name="metadataInstructor">The new metadata instructor for complex JSON objects.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="metadataInstructor" /> is null.</exception>
-        public JsonSerializerBuilder WithObjectMetadataInstructor(IObjectMetadataInstructor metadataInstructor)
+        public JsonSerializerBuilder WithObjectMetadataInstructor(ITypeMetadataInstructor metadataInstructor)
         {
             metadataInstructor.MustNotBeNull(nameof(metadataInstructor));
 

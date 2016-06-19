@@ -21,7 +21,7 @@ namespace Light.Serialization.Json
         private IArrayMetadataParser _arrayMetadataParser;
         private IMetaFactory _metaFactory = new DefaultMetaFactory();
         private INameToTypeMapping _nameToTypeMapping;
-        private IObjectMetadataParser _objectMetadataParser;
+        private ITypeParser _objectMetadataParser;
         private IJsonReaderFactory _readerFactory = new JsonReaderFactory();
         private Dictionary<JsonTokenTypeCombination, IJsonTokenParser> _tokenParserCache = new Dictionary<JsonTokenTypeCombination, IJsonTokenParser>();
         private List<IJsonTokenParserFactory> _tokenParserFactories;
@@ -62,7 +62,7 @@ namespace Light.Serialization.Json
         /// <param name="metadataParser">The parser for metadata sections in complex JSON objects.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="metadataParser" /> is null.</exception>
-        public JsonDeserializerBuilder WithObjectMetadataParser(IObjectMetadataParser metadataParser)
+        public JsonDeserializerBuilder WithObjectMetadataParser(ITypeParser metadataParser)
         {
             metadataParser.MustNotBeNull(nameof(metadataParser));
 

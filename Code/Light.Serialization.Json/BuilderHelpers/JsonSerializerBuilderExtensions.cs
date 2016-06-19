@@ -61,7 +61,7 @@ namespace Light.Serialization.Json.BuilderHelpers
                                                                            IDictionary<Type, IPrimitiveTypeFormatter> primitiveTypeToFormattersMapping,
                                                                            IReadableValuesTypeAnalyzer readableValuesTypeAnalyzer,
                                                                            IMetadataInstructor collectionMetadataInstructor,
-                                                                           IObjectMetadataInstructor objectMetadataInstructor)
+                                                                           ITypeMetadataInstructor objectMetadataInstructor)
             where TCollection : class, IList<IJsonWriterInstructor>
         {
             targetList.MustNotBeNull(nameof(targetList));

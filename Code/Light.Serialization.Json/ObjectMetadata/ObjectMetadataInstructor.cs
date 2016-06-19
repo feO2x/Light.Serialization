@@ -8,7 +8,7 @@ namespace Light.Serialization.Json.ObjectMetadata
     /// <summary>
     ///     Represents an Metadata Instructor that serializes ids and type information in the metadata section of a complex JSON object.
     /// </summary>
-    public sealed class ObjectMetadataInstructor : BaseMetadataInstructor, IObjectMetadataInstructor
+    public sealed class ObjectMetadataInstructor : BaseMetadataInstructor, ITypeMetadataInstructor
     {
         /// <summary>
         ///     Creates a new instance of <see cref="ObjectMetadataInstructor" />.
@@ -40,7 +40,7 @@ namespace Light.Serialization.Json.ObjectMetadata
             serializationContext.Writer.WriteDelimiter();
         }
 
-        void IObjectMetadataInstructor.SerializeType(Type type, IJsonWriter writer)
+        void ITypeMetadataInstructor.SerializeType(Type type, IJsonWriter writer)
         {
             type.MustNotBeNull(nameof(type));
             writer.MustNotBeNull(nameof(type));

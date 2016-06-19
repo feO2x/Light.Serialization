@@ -17,7 +17,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// </summary>
         public const string DefaultTypeKey = "\"type\"";
 
-        private IObjectMetadataInstructor _metadataInstructor;
+        private ITypeMetadataInstructor _metadataInstructor;
         private string _typeKey = DefaultTypeKey;
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// </summary>
         /// <param name="metadataInstructor">The metadata instructor that can write the metadata section of a complex JSON object.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="metadataInstructor" /> is null.</exception>
-        public TypeInstructorAdapter(IObjectMetadataInstructor metadataInstructor)
+        public TypeInstructorAdapter(ITypeMetadataInstructor metadataInstructor)
         {
             metadataInstructor.MustNotBeNull(nameof(metadataInstructor));
 
@@ -86,7 +86,7 @@ namespace Light.Serialization.Json.WriterInstructors
         ///     Gets or sets the metadata instructor.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
-        public IObjectMetadataInstructor MetadataInstructor
+        public ITypeMetadataInstructor MetadataInstructor
         {
             get { return _metadataInstructor; }
             set

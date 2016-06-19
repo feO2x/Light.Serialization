@@ -25,7 +25,7 @@ namespace Light.Serialization.Json.BuilderHelpers
         /// <returns>The collection for method chaining.</returns>
         public static TCollection AddDefaultTokenParserFactories<TCollection>(this TCollection collection,
                                                                               IMetaFactory metaFactory,
-                                                                              IObjectMetadataParser complexObjectMetadataParser,
+                                                                              ITypeParser complexObjectMetadataParser,
                                                                               IArrayMetadataParser arrayMetadataParser,
                                                                               ITypeDescriptionService typeDescriptionService)
             where TCollection : IList<IJsonTokenParserFactory>
@@ -45,6 +45,7 @@ namespace Light.Serialization.Json.BuilderHelpers
             collection.Add(new SingletonFactory(new StringParser()));
             collection.Add(new SingletonFactory(new GuidParser()));
             collection.Add(new JsonStringInheritanceParserFactory(collection.Select(f => f.Create()).OfType<IJsonStringToPrimitiveParser>().ToList()));
+            collection.Add(new SingletonFactory(new TypeAndTypeInfoParser(complexObjectMetadataParser)));
             collection.Add(new SingletonFactory(new CollectionParser(metaFactory, arrayMetadataParser)));
             collection.Add(new SingletonFactory(new DictionaryParser(metaFactory, complexObjectMetadataParser)));
             collection.Add(new SingletonFactory(new ComplexObjectParser(metaFactory, typeDescriptionService, complexObjectMetadataParser)));

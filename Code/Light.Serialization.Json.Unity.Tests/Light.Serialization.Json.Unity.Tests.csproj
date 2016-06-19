@@ -137,6 +137,9 @@
     <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\TimeSpanTests.cs">
       <Link>DeserializationTests\TimeSpanTests.cs</Link>
     </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\TypeAndTypeInfoTests.cs">
+      <Link>DeserializationTests\TypeAndTypeInfoTests.cs</Link>
+    </Compile>
     <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\WhitespaceTests.cs">
       <Link>DeserializationTests\WhitespaceTests.cs</Link>
     </Compile>

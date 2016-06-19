@@ -83,6 +83,7 @@
     <Compile Include="DeserializationTests\CollectionTests.cs" />
     <Compile Include="DeserializationTests\DictionaryTests.cs" />
     <Compile Include="DeserializationTests\StreamingTests.cs" />
+    <Compile Include="DeserializationTests\TypeAndTypeInfoTests.cs" />
     <Compile Include="FrameworkExtensionTests\StringExtensionsTests.cs" />
     <Compile Include="DeserializationTests\WhitespaceTests.cs" />
     <Compile Include="DeserializationTests\TimeSpanTests.cs" />

@@ -55,6 +55,7 @@
     <Compile Include="BuilderHelpers\ISetTypeAnalyzer.cs" />
     <Compile Include="BuilderHelpers\ISetTypeDescriptionService.cs" />
     <Compile Include="BuilderHelpers\ISetTypeInstructor.cs" />
+    <Compile Include="BuilderHelpers\ISetTypeParser.cs" />
     <Compile Include="BuilderHelpers\ISetTypeToNameMapping.cs" />
     <Compile Include="BuilderHelpers\ISetWhitespaceFormatterCreationDelegate.cs" />
     <Compile Include="BuilderHelpers\PropertyInjectionPool.cs" />
@@ -86,7 +87,8 @@
     <Compile Include="ObjectMetadata\BaseMetadata.cs" />
     <Compile Include="ObjectMetadata\BaseMetadataInstructor.cs" />
     <Compile Include="ObjectMetadata\BaseMetadataParser.cs" />
-    <Compile Include="ObjectMetadata\IObjectMetadataInstructor.cs" />
+    <Compile Include="ObjectMetadata\ITypeMetadataInstructor.cs" />
+    <Compile Include="ObjectMetadata\ITypeParser.cs" />
     <Compile Include="ObjectMetadata\ObjectMetadataParser.cs" />
     <Compile Include="ObjectMetadata\DeferredReferenceForCollection.cs" />
     <Compile Include="ObjectMetadata\DeferredReferenceForDictionary.cs" />
@@ -169,6 +171,7 @@
     <Compile Include="TokenParsers\SignedIntegerParser.cs" />
     <Compile Include="TokenParsers\StringParser.cs" />
     <Compile Include="TokenParsers\TimeSpanParser.cs" />
+    <Compile Include="TokenParsers\TypeAndTypeInfoParser.cs" />
     <Compile Include="TokenParsers\UnsignedIntegerParser.cs" />
     <Compile Include="WriterInstructors\IJsonWriterInstructor.cs" />
     <Compile Include="WriterInstructors\JsonSerializationContext.cs" />

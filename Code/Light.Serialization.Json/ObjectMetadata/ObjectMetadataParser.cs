@@ -8,7 +8,7 @@ namespace Light.Serialization.Json.ObjectMetadata
     /// <summary>
     ///     Represents an object that parses the metadata section of complex JSON objects.
     /// </summary>
-    public sealed class ObjectMetadataParser : BaseMetadataParser, IObjectMetadataParser
+    public sealed class ObjectMetadataParser : BaseMetadataParser, ITypeParser
     {
         /// <summary>
         ///     Creates a new instance of <see cref="ObjectMetadataParser"/>.
@@ -89,6 +89,11 @@ namespace Light.Serialization.Json.ObjectMetadata
 
                 currentToken = jsonReader.ReadNextToken();
             }
+        }
+
+        Type ITypeParser.ParseType(JsonDeserializationContext context)
+        {
+            return ParseType(context);
         }
     }
 }
