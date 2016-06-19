@@ -85,5 +85,15 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
                 new object[] { "{\"type\": \"abstractGenericSet\"}", typeof(ISet<>).GetTypeInfo() },
                 new object[] { "{\"type\": { \"name\": \"genericList\", \"typeArguments\": [\"int32\"] }}", typeof(List<int>).GetTypeInfo() },
             };
+
+        [Fact(DisplayName = "The deserializer must be able deserialize type instances when the requested type is object.")]
+        public void TypeReferencedAsObject()
+        {
+            UseDomainFriendlyNames();
+            const string json = "{ \"$type\": \"type\", \"type\": \"int32\"}";
+            var expected = typeof(int);
+
+            CompareDeserializedJsonToExpected<object>(json, expected);
+        }
     }
 }
