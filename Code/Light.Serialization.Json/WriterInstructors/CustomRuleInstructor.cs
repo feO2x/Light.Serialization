@@ -8,12 +8,12 @@ using Light.Serialization.Json.ObjectMetadata;
 namespace Light.Serialization.Json.WriterInstructors
 {
     /// <summary>
-    ///     Represents a JSON Writer Instructor that has a fixed set of value providers for a certain complex type.
-    ///     Instances of this class are created i.a. when defining custom serialization rules for certain types.
+    ///     Represents a JSON Writer Instructor that has a fixed set of value readers for a certain complex type.
+    ///     Instances of this class are created i.e. when defining custom serialization rules for certain types.
     /// </summary>
     public sealed class CustomRuleInstructor : IJsonWriterInstructor, ISetObjectMetadataInstructor
     {
-        private readonly IList<IValueProvider> _valueProviders;
+        private readonly List<IValueReader> _valueReaders;
 
         /// <summary>
         ///     Gets the type that this instructor is customized for.
@@ -26,17 +26,17 @@ namespace Light.Serialization.Json.WriterInstructors
         ///     Creates a new instance of <see cref="CustomRuleInstructor" />.
         /// </summary>
         /// <param name="targetType">The complex type that this instructor can serialize.</param>
-        /// <param name="valueProviders">The set of value providers used to read values from instances of the target type.</param>
+        /// <param name="valueReaders">The set of value readers used to read values from instances of the target type.</param>
         /// <param name="metadataInstructor">The object used to serialize the metadata section of the complex object.</param>
         /// <exception cref="ArgumentNullException">Thrown when any of the parameters is null.</exception>
-        public CustomRuleInstructor(Type targetType, IList<IValueProvider> valueProviders, IMetadataInstructor metadataInstructor)
+        public CustomRuleInstructor(Type targetType, List<IValueReader> valueReaders, IMetadataInstructor metadataInstructor)
         {
-            valueProviders.MustNotBeNull(nameof(valueProviders));
+            valueReaders.MustNotBeNull(nameof(valueReaders));
             targetType.MustNotBeNull(nameof(targetType));
             metadataInstructor.MustNotBeNull(nameof(metadataInstructor));
 
             TargetType = targetType;
-            _valueProviders = valueProviders;
+            _valueReaders = valueReaders;
             _metadataInstructor = metadataInstructor;
         }
 
@@ -54,7 +54,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// <param name="serializationContext">The serialization context for the object to be serialized.</param>
         public void Serialize(JsonSerializationContext serializationContext)
         {
-            ComplexObjectHelper.SerializeComplexObject(serializationContext, _valueProviders, _metadataInstructor);
+            ComplexObjectHelper.SerializeComplexObject(serializationContext, _valueReaders, _metadataInstructor);
         }
 
         /// <summary>

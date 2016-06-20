@@ -27,7 +27,7 @@ namespace Light.Serialization.Json
         private ITypeMetadataInstructor _objectMetadataInstructor;
         private IDictionary<Type, IPrimitiveTypeFormatter> _primitiveTypeFormattersMapping;
         private int _recursionLimit = JsonSerializer.DefaultRecursionLevelLimit;
-        private IReadableValuesTypeAnalyzer _typeAnalyzer = new ValueProvidersCacheDecorator(new PublicPropertiesAndFieldsAnalyzer(), new Dictionary<Type, IList<IValueProvider>>());
+        private IReadableValuesTypeAnalyzer _typeAnalyzer = new ValueReadersCacheDecorator(new PublicPropertiesAndFieldsAnalyzer(), new Dictionary<Type, List<IValueReader>>());
         private ITypeToNameMapping _typeToNameMapping = new SimpleNameToTypeMapping();
         private IJsonWriterFactory _writerFactory;
 
@@ -89,7 +89,7 @@ namespace Light.Serialization.Json
         /// <summary>
         ///     Configures the builder to use the specified type analyzer CustomRuleInstructors and the ComplexObjectInstructor.
         /// </summary>
-        /// <param name="typeAnalyzer">The object that creates value providers for the given type.</param>
+        /// <param name="typeAnalyzer">The object that creates value readers for the given type.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeAnalyzer" /> is null.</exception>
         public JsonSerializerBuilder WithTypeAnalyzer(IReadableValuesTypeAnalyzer typeAnalyzer)
@@ -270,7 +270,7 @@ namespace Light.Serialization.Json
                 Pool.Remove(existingInstructor);
             }
 
-            _writerInstructors.Insert(0, Pool.Register(new CustomRuleInstructor(typeof(T), newRule.CreateValueProviders(), _objectMetadataInstructor)));
+            _writerInstructors.Insert(0, Pool.Register(new CustomRuleInstructor(typeof(T), newRule.CreateValueReaders(), _objectMetadataInstructor)));
 
             return this;
         }

@@ -62,9 +62,9 @@ namespace Light.Serialization.Json.SerializationRules
         }
 
         /// <summary>
-        ///     Creates the value providers that are able to read all values specified in this rule.
+        ///     Creates the value readers that are able to read all values specified in this rule.
         /// </summary>
-        public abstract IList<IValueProvider> CreateValueProviders();
+        public abstract List<IValueReader> CreateValueReaders();
     }
 
     /// <summary>
@@ -79,8 +79,9 @@ namespace Light.Serialization.Json.SerializationRules
         /// <summary>
         ///     Creates a new instance of Rule of T.
         /// </summary>
-        /// <param name="typeAnalyzer">The type analyzer used to create the value providers when calling <see cref="CreateValueProviders" />.</param>
-        public Rule(IReadableValuesTypeAnalyzer typeAnalyzer) : base(typeof (T))
+        /// <param name="typeAnalyzer">The type analyzer used to create the value readers when calling <see cref="CreateValueReaders" />.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeAnalyzer" /> is null.</exception>
+        public Rule(IReadableValuesTypeAnalyzer typeAnalyzer) : base(typeof(T))
         {
             typeAnalyzer.MustNotBeNull(nameof(typeAnalyzer));
 
@@ -221,24 +222,24 @@ namespace Light.Serialization.Json.SerializationRules
         }
 
         /// <summary>
-        ///     Creates and filters the value providers according to this serialization rule.
+        ///     Creates and filters the value readers according to this serialization rule.
         /// </summary>
-        public override IList<IValueProvider> CreateValueProviders()
+        public override List<IValueReader> CreateValueReaders()
         {
-            var valueProviders = _typeAnalyzer.AnalyzeType(TargetType);
+            var valueReaders = _typeAnalyzer.AnalyzeType(TargetType);
 
             var i = 0;
-            while (i < valueProviders.Count)
+            while (i < valueReaders.Count)
             {
-                if (_targetMembersToSerialize.Contains(valueProviders[i].Name) == false)
+                if (_targetMembersToSerialize.Contains(valueReaders[i].Name) == false)
                 {
-                    valueProviders.RemoveAt(i);
+                    valueReaders.RemoveAt(i);
                     continue;
                 }
                 i++;
             }
 
-            return valueProviders;
+            return valueReaders;
         }
     }
 }

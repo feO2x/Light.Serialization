@@ -70,8 +70,8 @@ namespace Light.Serialization.Json.WriterInstructors
         /// <param name="serializationContext">The serialization context for the object to be serialized.</param>
         public void Serialize(JsonSerializationContext serializationContext)
         {
-            var valueProviders = _typeAnalyzer.AnalyzeType(serializationContext.ActualType);
-            ComplexObjectHelper.SerializeComplexObject(serializationContext, valueProviders, _metadataInstructor);
+            var valueReaders = _typeAnalyzer.AnalyzeType(serializationContext.ActualType);
+            ComplexObjectHelper.SerializeComplexObject(serializationContext, valueReaders, _metadataInstructor);
         }
     }
 }

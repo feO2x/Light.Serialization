@@ -107,8 +107,8 @@ namespace Light.Serialization.Json.Unity
 
                 // Type analyzer for complex .NET types
                 .RegisterType<IReadableValuesTypeAnalyzer>(new ContainerControlledLifetimeManager(),
-                                                           new InjectionFactory(c => new ValueProvidersCacheDecorator(new PublicPropertiesAndFieldsAnalyzer(),
-                                                                                                                      new Dictionary<Type, IList<IValueProvider>>())))
+                                                           new InjectionFactory(c => new ValueReadersCacheDecorator(new PublicPropertiesAndFieldsAnalyzer(),
+                                                                                                                    new Dictionary<Type, List<IValueReader>>())))
                 // Metadata instructors for complex .NET types and collections
                 .RegisterType<IMetadataInstructor, ObjectMetadataInstructor>(KnownNames.ObjectMetadataInstructor, new ContainerControlledLifetimeManager())
                 .RegisterType<ITypeMetadataInstructor>(new InjectionFactory(c => c.Resolve<ObjectMetadataInstructor>(KnownNames.ObjectMetadataInstructor)))

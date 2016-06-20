@@ -73,7 +73,7 @@
     <Compile Include="BuilderHelpers\IJsonTokenParserFactory.cs" />
     <Compile Include="BuilderHelpers\JsonStringInheritanceParserFactory.cs" />
     <Compile Include="BuilderHelpers\SingletonFactory.cs" />
-    <Compile Include="Caching\ValueProvidersCacheDecorator.cs" />
+    <Compile Include="Caching\ValueReadersCacheDecorator.cs" />
     <Compile Include="ComplexTypeConstruction\ConstructorDescription.cs" />
     <Compile Include="ComplexTypeConstruction\DefaultMetaFactory.cs" />
     <Compile Include="ComplexTypeConstruction\DefaultTypeDescriptionService.cs" />
@@ -97,11 +97,11 @@
     <Compile Include="ObjectMetadata\ObjectMetadataParseResult.cs" />
     <Compile Include="ComplexTypeConstruction\TypeCreationDescription.cs" />
     <Compile Include="ComplexTypeDecomposition\IReadableValuesTypeAnalyzer.cs" />
-    <Compile Include="ComplexTypeDecomposition\IValueProvider.cs" />
-    <Compile Include="ComplexTypeDecomposition\IValueProviderFactory.cs" />
+    <Compile Include="ComplexTypeDecomposition\IValueReader.cs" />
+    <Compile Include="ComplexTypeDecomposition\IValueReaderFactory.cs" />
     <Compile Include="ComplexTypeDecomposition\PublicPropertiesAndFieldsAnalyzer.cs" />
-    <Compile Include="ComplexTypeDecomposition\ValueProviderFactoryUsingLambdas.cs" />
-    <Compile Include="ComplexTypeDecomposition\ValueProviderUsingLambda.cs" />
+    <Compile Include="ComplexTypeDecomposition\ValueReaderFactoryUsingLambdas.cs" />
+    <Compile Include="ComplexTypeDecomposition\ValueReaderUsingLambda.cs" />
     <Compile Include="FrameworkExtensions\CharExtensions.cs" />
     <Compile Include="FrameworkExtensions\ExpressionExtensions.cs" />
     <Compile Include="FrameworkExtensions\ReflectionExtensions.cs" />

@@ -28,9 +28,9 @@ namespace Light.Serialization.Json.Unity
             var newRule = container.Resolve<Rule<T>>();
             configureRule(newRule);
             var customInstructor = new CustomRuleInstructor(newRule.TargetType,
-                                                            newRule.CreateValueProviders(),
+                                                            newRule.CreateValueReaders(),
                                                             container.Resolve<IMetadataInstructor>(KnownNames.ObjectMetadataInstructor));
-            container.RegisterInstance(typeof (T).FullName, customInstructor);
+            container.RegisterInstance(typeof(T).FullName, customInstructor);
             return container;
         }
 
@@ -47,8 +47,8 @@ namespace Light.Serialization.Json.Unity
             container.MustNotBeNull(nameof(container));
             rule.MustNotBeNull(nameof(rule));
 
-            var customInstructor = new CustomRuleInstructor(rule.TargetType, rule.CreateValueProviders(), container.Resolve<IMetadataInstructor>());
-            container.RegisterInstance(typeof (T).FullName, customInstructor);
+            var customInstructor = new CustomRuleInstructor(rule.TargetType, rule.CreateValueReaders(), container.Resolve<IMetadataInstructor>());
+            container.RegisterInstance(typeof(T).FullName, customInstructor);
             return container;
         }
     }

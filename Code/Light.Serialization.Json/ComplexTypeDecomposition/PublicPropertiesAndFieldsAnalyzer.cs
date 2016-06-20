@@ -6,37 +6,38 @@ using Light.GuardClauses;
 namespace Light.Serialization.Json.ComplexTypeDecomposition
 {
     /// <summary>
-    ///     Represents a type analyzer that creates value providers for all public properties and public fields of a certain type.
+    ///     Represents a type analyzer that creates <see cref="IValueReader" /> instances for all public properties and public fields of a certain type.
     /// </summary>
     public sealed class PublicPropertiesAndFieldsAnalyzer : IReadableValuesTypeAnalyzer
     {
-        private IValueProviderFactory _valueProviderFactory = new ValueProviderFactoryUsingLambdas();
+        private IValueReaderFactory _valueReaderFactory = new ValueReaderFactoryUsingLambdas();
 
         /// <summary>
-        ///     Gets or sets the factory that is used to create IValueProvider instances. This value defaults to ValueProviderFactoryUsingLambdas.
+        ///     Gets or sets the factory that is used to create <see cref="IValueReader" /> instances.
+        ///     This value defaults to an instance of <see cref="ValueReaderFactoryUsingLambdas" />.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
-        public IValueProviderFactory ValueProviderFactory
+        public IValueReaderFactory ValueReaderFactory
         {
-            get { return _valueProviderFactory; }
+            get { return _valueReaderFactory; }
             set
             {
                 value.MustNotBeNull(nameof(value));
-                _valueProviderFactory = value;
+                _valueReaderFactory = value;
             }
         }
 
         /// <summary>
-        ///     Analyzes the specified type and returns value providers describing all public properties and fields.
+        ///     Analyzes the specified type and returns <see cref="IValueReader" /> instances for each property and field that is public and non-static.
         /// </summary>
         /// <param name="type">The type to be analyzed.</param>
-        /// <returns>The value providers that can be used to read values from all public properties and fields.</returns>
+        /// <returns>The objects that can be used to read values from all public instance properties and fields.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="type" /> is null.</exception>
-        public IList<IValueProvider> AnalyzeType(Type type)
+        public List<IValueReader> AnalyzeType(Type type)
         {
             type.MustNotBeNull(nameof(type));
 
-            var valueProviders = new List<IValueProvider>();
+            var valueReaders = new List<IValueReader>();
 
             // ReSharper disable LoopCanBeConvertedToQuery
             foreach (var propertyInfo in type.GetRuntimeProperties())
@@ -46,17 +47,17 @@ namespace Light.Serialization.Json.ComplexTypeDecomposition
 
                 var getMethod = propertyInfo.GetMethod;
                 if (getMethod.IsPublic && getMethod.IsStatic == false)
-                    valueProviders.Add(_valueProviderFactory.Create(type, propertyInfo));
+                    valueReaders.Add(_valueReaderFactory.Create(type, propertyInfo));
             }
 
             foreach (var fieldInfo in type.GetRuntimeFields())
             {
                 if (fieldInfo.IsPublic && fieldInfo.IsStatic == false)
-                    valueProviders.Add(_valueProviderFactory.Create(type, fieldInfo));
+                    valueReaders.Add(_valueReaderFactory.Create(type, fieldInfo));
             }
             // ReSharper restore LoopCanBeConvertedToQuery
 
-            return valueProviders;
+            return valueReaders;
         }
     }
 }

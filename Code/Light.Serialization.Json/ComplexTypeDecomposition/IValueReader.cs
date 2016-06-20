@@ -5,7 +5,7 @@ namespace Light.Serialization.Json.ComplexTypeDecomposition
     /// <summary>
     ///     Represents the abstraction of an object that can be used to read a single value from another object.
     /// </summary>
-    public interface IValueProvider
+    public interface IValueReader
     {
         /// <summary>
         ///     Gets the name of the member whose value is read.
@@ -22,6 +22,6 @@ namespace Light.Serialization.Json.ComplexTypeDecomposition
         /// </summary>
         /// <param name="object">The objects whose child value will be read.</param>
         /// <returns>The read value of the object.</returns>
-        object GetValue(object @object);
+        object ReadValue(object @object);
     }
 }
