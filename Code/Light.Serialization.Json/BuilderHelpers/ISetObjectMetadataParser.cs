@@ -4,7 +4,7 @@ using Light.Serialization.Json.ObjectMetadata;
 namespace Light.Serialization.Json.BuilderHelpers
 {
     /// <summary>
-    ///     Represents the abstraction of setting an <see cref="IObjectMetadataParser" /> on a target object.
+    ///     Represents the abstraction of setting an <see cref="IObjectMetadataParser" /> instance via property injection.
     /// </summary>
     public interface ISetObjectMetadataParser
     {

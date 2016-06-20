@@ -4,7 +4,7 @@ using Light.Serialization.Json.PrimitiveTypeFormatters;
 namespace Light.Serialization.Json.BuilderHelpers
 {
     /// <summary>
-    ///     Represents the abstraction to inject a character escaper via a property set method.
+    ///     Represents the abstraction of setting an <see cref="ICharacterEscaper" /> instance via property injection.
     /// </summary>
     public interface ISetCharacterEscaper
     {

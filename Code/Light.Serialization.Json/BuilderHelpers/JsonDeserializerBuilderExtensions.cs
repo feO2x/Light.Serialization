@@ -8,7 +8,7 @@ using Light.Serialization.Json.TokenParsers;
 namespace Light.Serialization.Json.BuilderHelpers
 {
     /// <summary>
-    ///     Provides extension methods for the <see cref="JsonDeserializerBuilder" />.
+    ///     Provides extension methods to populate collections with the default instances of <see cref="IJsonTokenParserFactory" />.
     /// </summary>
     public static class JsonDeserializerBuilderExtensions
     {

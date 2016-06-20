@@ -4,7 +4,7 @@ using Light.Serialization.Json.ComplexTypeDecomposition;
 namespace Light.Serialization.Json.BuilderHelpers
 {
     /// <summary>
-    ///     Represents the abstraction to inject a readable values type analyzer via a property set method.
+    ///     Represents the abstraction of setting an <see cref="IReadableValuesTypeAnalyzer" /> instance via property injection.
     /// </summary>
     public interface ISetTypeAnalyzer
     {

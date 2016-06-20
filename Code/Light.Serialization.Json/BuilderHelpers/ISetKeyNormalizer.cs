@@ -4,7 +4,7 @@ using Light.Serialization.Json.LowLevelWriting;
 namespace Light.Serialization.Json.BuilderHelpers
 {
     /// <summary>
-    ///     Represents the abstraction to inject a key normalizer via a property set method.
+    ///     Represents the abstraction of setting an <see cref="IJsonKeyNormalizer" /> instance via property injection.
     /// </summary>
     public interface ISetKeyNormalizer
     {

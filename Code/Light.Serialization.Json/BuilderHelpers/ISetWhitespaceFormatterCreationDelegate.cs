@@ -4,7 +4,7 @@ using Light.Serialization.Json.LowLevelWriting;
 namespace Light.Serialization.Json.BuilderHelpers
 {
     /// <summary>
-    ///     Represents an abstraction to set a delegate that creates an instance of <see cref="IJsonWhitespaceFormatter" />.
+    ///     Represents an abstraction of setting a delegate that creates an instance of <see cref="IJsonWhitespaceFormatter" />.
     /// </summary>
     public interface ISetWhitespaceFormatterCreationDelegate
     {

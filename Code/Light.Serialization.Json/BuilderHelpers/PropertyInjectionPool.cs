@@ -21,6 +21,7 @@ namespace Light.Serialization.Json.BuilderHelpers
         ///     Creates a new instance of <see cref="PropertyInjectionPool" /> with the given list of objects.
         /// </summary>
         /// <param name="objects">The list that contains the objects that are managed by the pool.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="objects" /> is null.</exception>
         public PropertyInjectionPool(List<object> objects)
         {
             objects.MustNotBeNull(nameof(objects));
@@ -29,7 +30,7 @@ namespace Light.Serialization.Json.BuilderHelpers
         }
 
         /// <summary>
-        ///     Gets a read-only collection of the objects that are managed by the pool.
+        ///     Gets a read-only list of the objects that are managed by the pool.
         /// </summary>
         public IReadOnlyList<object> Objects => _objects;
 

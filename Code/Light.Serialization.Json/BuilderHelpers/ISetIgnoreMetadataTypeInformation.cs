@@ -1,7 +1,7 @@
 ﻿namespace Light.Serialization.Json.BuilderHelpers
 {
     /// <summary>
-    ///     Represents the abstraction of setting the information that type information in metadata sections of the JSON document should be ignored.
+    ///     Represents the abstraction of setting the value that type information in metadata sections of the JSON document should be ignored.
     /// </summary>
     public interface ISetIgnoreMetadataTypeInformation
     {

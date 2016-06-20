@@ -9,7 +9,7 @@ using Light.Serialization.Json.WriterInstructors;
 namespace Light.Serialization.Json.BuilderHelpers
 {
     /// <summary>
-    ///     Provides extension methods to populate collections with the default instances of JSON writer instructors and primitive type formatters.
+    ///     Provides extension methods to populate collections with the default instances of <see cref="IJsonWriterInstructor"/> and <see cref="IPrimitiveTypeFormatter"/>.
     /// </summary>
     public static class JsonSerializerBuilderExtensions
     {

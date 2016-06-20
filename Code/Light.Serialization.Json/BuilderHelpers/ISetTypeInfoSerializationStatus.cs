@@ -1,7 +1,7 @@
 namespace Light.Serialization.Json.BuilderHelpers
 {
     /// <summary>
-    ///     Represents the abstraction used to enable or disable type information
+    ///     Represents the abstraction used to enable or disable type information.
     /// </summary>
     public interface ISetTypeInfoSerializationStatus
     {

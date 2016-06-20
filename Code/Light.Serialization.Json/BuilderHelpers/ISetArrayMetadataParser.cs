@@ -4,7 +4,7 @@ using Light.Serialization.Json.ObjectMetadata;
 namespace Light.Serialization.Json.BuilderHelpers
 {
     /// <summary>
-    ///     Represents the abstraction of setting an array metadata parser via property injection.
+    ///     Represents the abstraction of setting an <see cref="IArrayMetadataParser" /> via property injection.
     /// </summary>
     public interface ISetArrayMetadataParser
     {

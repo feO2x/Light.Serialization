@@ -5,7 +5,7 @@ using Light.Serialization.Json.PrimitiveTypeFormatters;
 namespace Light.Serialization.Json.BuilderHelpers
 {
     /// <summary>
-    ///     Represents the abstraction to inject a primitive type formatters dictionary via a property set method.
+    ///     Represents the abstraction of setting a primitive type formatters dictionary via property injection.
     /// </summary>
     public interface ISetPrimitiveTypeFormatters
     {
