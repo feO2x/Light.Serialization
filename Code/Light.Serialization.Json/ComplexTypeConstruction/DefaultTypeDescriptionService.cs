@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using Light.GuardClauses;
 using Light.GuardClauses.Exceptions;
@@ -31,7 +32,8 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
             if (typeInfo.IsAbstract || typeInfo.IsInterface)
                 throw new DeserializationException($"The specified type {type.FullName} is abstract and cannot be deserialized");
 
-            var typeCreationDescription = new TypeCreationDescription(type);
+            var injectableValueDescriptions = new List<InjectableValueDescription>();
+            var constructorDescriptions = new List<ConstructorDescription>();
             foreach (var constructorInfo in typeInfo.DeclaredConstructors)
             {
                 if (constructorInfo.IsStatic || constructorInfo.IsPublic == false)
@@ -42,15 +44,15 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
                 {
                     var normalizedParameterName = NormalizeName(parameterInfo.Name);
 
-                    var parameterDescription = typeCreationDescription.GetInjectableValueDescriptionFromNormalizedName(normalizedParameterName);
+                    var parameterDescription = injectableValueDescriptions.FirstOrDefault(ivd => ivd.NormalizedName == normalizedParameterName);
                     if (parameterDescription == null)
                     {
                         parameterDescription = InjectableValueDescription.FromConstructorParameter(normalizedParameterName, parameterInfo);
-                        typeCreationDescription.AddInjectableValueDescription(parameterDescription);
+                        injectableValueDescriptions.Add(parameterDescription);
                     }
                     parameterDescriptions.Add(parameterDescription);
                 }
-                typeCreationDescription.AddConstructorDescription(new ConstructorDescription(constructorInfo, parameterDescriptions));
+                constructorDescriptions.Add(new ConstructorDescription(constructorInfo, parameterDescriptions));
             }
 
             foreach (var propertyInfo in type.GetRuntimeProperties())
@@ -60,11 +62,11 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
                     continue;
 
                 var normalizedPropertyName = NormalizeName(propertyInfo.Name);
-                var targetDescription = typeCreationDescription.GetInjectableValueDescriptionFromNormalizedName(normalizedPropertyName);
+                var targetDescription = injectableValueDescriptions.FirstOrDefault(ivd => ivd.NormalizedName == normalizedPropertyName);
                 if (targetDescription == null)
                 {
                     targetDescription = InjectableValueDescription.FromProperty(normalizedPropertyName, propertyInfo);
-                    typeCreationDescription.AddInjectableValueDescription(targetDescription);
+                    injectableValueDescriptions.Add(targetDescription);
                 }
                 else
                     targetDescription.AddPropertyName(propertyInfo);
@@ -76,17 +78,17 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
                     continue;
 
                 var normalizedFieldName = NormalizeName(fieldInfo.Name);
-                var targetDescription = typeCreationDescription.GetInjectableValueDescriptionFromNormalizedName(normalizedFieldName);
+                var targetDescription = injectableValueDescriptions.FirstOrDefault(ivd => ivd.NormalizedName == normalizedFieldName);
                 if (targetDescription == null)
                 {
                     targetDescription = InjectableValueDescription.FromField(normalizedFieldName, fieldInfo);
-                    typeCreationDescription.AddInjectableValueDescription(targetDescription);
+                    injectableValueDescriptions.Add(targetDescription);
                 }
                 else
                     targetDescription.AddFieldInfo(fieldInfo);
             }
 
-            return typeCreationDescription;
+            return new TypeCreationDescription(type, constructorDescriptions, injectableValueDescriptions);
         }
 
         /// <summary>

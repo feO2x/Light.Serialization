@@ -11,8 +11,22 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
     /// </summary>
     public sealed class TypeCreationDescription
     {
-        private readonly List<ConstructorDescription> _constructorDescriptions = new List<ConstructorDescription>();
-        private readonly Dictionary<string, InjectableValueDescription> _injectableValueDescriptions = new Dictionary<string, InjectableValueDescription>();
+        private readonly Dictionary<string, InjectableValueDescription> _injectableValueDescriptions;
+
+        /// <summary>
+        ///     Gets the descriptions of all the constructors of the specified type.
+        /// </summary>
+        public readonly List<ConstructorDescription> ConstructorDescriptions;
+
+        /// <summary>
+        ///     Gets all injetable value descriptions that allow field injection.
+        /// </summary>
+        public readonly List<InjectableValueDescription> FieldDescriptions;
+
+        /// <summary>
+        ///     Gets all injectable value descriptions that allow property injection.
+        /// </summary>
+        public readonly List<InjectableValueDescription> PropertyDescriptions;
 
         /// <summary>
         ///     Gets the type that is described by this instance.
@@ -23,28 +37,21 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         ///     Creates a new instance of TypeCreationDescription.
         /// </summary>
         /// <param name="targetType">The type that will be described.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="targetType" /> is null.</exception>
-        public TypeCreationDescription(Type targetType)
+        /// <param name="constructorDescriptions">The list containing all descriptions for the constructors of the target type.</param>
+        /// <param name="injectableValueDescriptions">The list containing all <see cref="InjectableValueDescription" /> instances for this type.</param>
+        /// <exception cref="ArgumentNullException">Thrown when any parameter is null.</exception>
+        public TypeCreationDescription(Type targetType, List<ConstructorDescription> constructorDescriptions, List<InjectableValueDescription> injectableValueDescriptions)
         {
             targetType.MustNotBeNull(nameof(targetType));
+            constructorDescriptions.MustNotBeNull(nameof(constructorDescriptions));
+            injectableValueDescriptions.MustNotBeNull(nameof(injectableValueDescriptions));
 
             TargetType = targetType;
+            ConstructorDescriptions = constructorDescriptions;
+            _injectableValueDescriptions = injectableValueDescriptions.ToDictionary(injectableValueDescription => injectableValueDescription.NormalizedName);
+            PropertyDescriptions = injectableValueDescriptions.Where(injectableValueDescription => injectableValueDescription.PropertyInfo != null).ToList();
+            FieldDescriptions = injectableValueDescriptions.Where(injectableValueDescription => injectableValueDescription.FieldInfo != null).ToList();
         }
-
-        /// <summary>
-        ///     Gets the descriptions of all constructors of the target type that are registered with this instance.
-        /// </summary>
-        public IReadOnlyList<ConstructorDescription> ConstructorDescriptions => _constructorDescriptions;
-
-        /// <summary>
-        ///     Gets all injectable value descriptions that allow property injection.
-        /// </summary>
-        public IEnumerable<InjectableValueDescription> PropertyDescriptions => _injectableValueDescriptions.Values.Where(d => (d.Kind & InjectableValueKind.PropertySetter) != 0);
-
-        /// <summary>
-        ///     Gets all injetable value descriptions that allow field injection.
-        /// </summary>
-        public IEnumerable<InjectableValueDescription> FieldDescriptions => _injectableValueDescriptions.Values.Where(d => (d.Kind & InjectableValueKind.SettableField) != 0);
 
         /// <summary>
         ///     Gets the injectable value description that corresponds to the given normalized name.
@@ -56,29 +63,6 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
             InjectableValueDescription description;
             _injectableValueDescriptions.TryGetValue(normalizedName, out description);
             return description;
-        }
-
-        /// <summary>
-        ///     Adds the specified injectable value description to this type creation description instance.
-        /// </summary>
-        /// <param name="description">The description to be added.</param>
-        public void AddInjectableValueDescription(InjectableValueDescription description)
-        {
-            description.MustNotBeNull(nameof(description));
-
-            _injectableValueDescriptions.Add(description.NormalizedName, description);
-        }
-
-        /// <summary>
-        ///     Adds the specified constructor description to this type creation description instance.
-        /// </summary>
-        /// <param name="description">The description to be added.</param>
-        public void AddConstructorDescription(ConstructorDescription description)
-        {
-            description.MustNotBeNull(nameof(description));
-            description.MustNotBeOneOf(_constructorDescriptions, nameof(description));
-
-            _constructorDescriptions.Add(description);
         }
     }
 }
