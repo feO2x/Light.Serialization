@@ -5,7 +5,7 @@ using Light.Serialization.Json.FrameworkExtensions;
 namespace Light.Serialization.Json.LowLevelReading
 {
     /// <summary>
-    ///     Represents a JSON reader that creates JSON tokens from a character buffer.
+    ///     Represents an <see cref="IJsonReader"/> that creates JSON tokens from an <see cref="ICharacterStream"/>.
     /// </summary>
     public sealed class JsonReader : IJsonReader
     {
@@ -14,7 +14,7 @@ namespace Light.Serialization.Json.LowLevelReading
         /// <summary>
         ///     Creates a new instance of <see cref="JsonReader" />.
         /// </summary>
-        /// <param name="stream">The buffer to be read from.</param>
+        /// <param name="stream">The stream to be read from.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="stream" /> is null.</exception>
         public JsonReader(ICharacterStream stream)
         {
@@ -24,7 +24,7 @@ namespace Light.Serialization.Json.LowLevelReading
         }
 
         /// <summary>
-        ///     Reads the next token of the underlying character buffer.
+        ///     Reads the next token of the underlying character stream.
         /// </summary>
         /// <returns>The next JSON token in the document.</returns>
         public JsonToken ReadNextToken()

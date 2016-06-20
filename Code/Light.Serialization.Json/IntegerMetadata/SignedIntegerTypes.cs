@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Light.GuardClauses;
 using Light.GuardClauses.Exceptions;
+using Light.Serialization.Json.TokenParsers;
 
 namespace Light.Serialization.Json.IntegerMetadata
 {
     /// <summary>
-    ///     Represents an object describing all different .NET signed integer types for the SignedIntegerParser.
+    ///     Represents an object describing all different .NET signed integer types for the <see cref="SignedIntegerParser" />.
     /// </summary>
     public sealed class SignedIntegerTypes
     {
@@ -23,7 +24,7 @@ namespace Light.Serialization.Json.IntegerMetadata
         public readonly Dictionary<Type, SignedIntegerTypeInfo> IntegerTypeInfos;
 
         /// <summary>
-        ///     Creates a new instance of SignedIntegerTypes.
+        ///     Creates a new instance of <see cref="SignedIntegerTypes" />.
         /// </summary>
         /// <param name="integerTypeInfos">The mapping from .NET numeric type to signed integer type info.</param>
         /// <param name="defaultType">The default type that should be used when a JSON number should be serialized to object or ValueType.</param>

@@ -2,16 +2,17 @@
 using System.Text.RegularExpressions;
 using Light.GuardClauses;
 using Light.GuardClauses.Exceptions;
+using Light.Serialization.Json.TokenParsers;
 
 namespace Light.Serialization.Json.IntegerMetadata
 {
     /// <summary>
-    ///     Represents an info object that describes a .NET signed integer type for the SignedIntegerParser.
+    ///     Represents an info object that describes a .NET signed integer type for the <see cref="SignedIntegerParser" />.
     /// </summary>
     public sealed class SignedIntegerTypeInfo
     {
         /// <summary>
-        ///     Gets the delagate that is used to downcast a long value to the .NET numeric type that this info object describes.
+        ///     Gets the delagate that is used to downcast a <see cref="long"/> value to the .NET numeric type that this info object describes.
         /// </summary>
         public readonly Func<long, object> DowncastValue;
 

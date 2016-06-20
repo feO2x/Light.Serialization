@@ -10,7 +10,7 @@ using Light.GuardClauses.FrameworkExtensions;
 namespace Light.Serialization.Json.FrameworkExtensions
 {
     /// <summary>
-    ///     Provides extension methods for TypeInfo instances.
+    ///     Provides extension methods for <see cref="TypeInfo" /> instances.
     /// </summary>
     public static class ReflectionExtensions
     {
@@ -42,7 +42,7 @@ namespace Light.Serialization.Json.FrameworkExtensions
         }
 
         /// <summary>
-        ///     Checks if the specified type is in the same inheritance hierarchy as IDictionary or IDictionary of TKey, TValue.
+        ///     Checks if the specified type is in the same inheritance hierarchy as <see cref="IDictionary" /> or <see cref="IDictionary{TKey,TValue}" />.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="type" /> is null.</exception>
         public static bool IsDictionaryType(this Type type)
@@ -66,7 +66,7 @@ namespace Light.Serialization.Json.FrameworkExtensions
         }
 
         /// <summary>
-        ///     Checks if the specified type is in the same inheritance hierarchy as IList or IList of T.
+        ///     Checks if the specified type is in the same inheritance hierarchy as <see cref="IList" /> or <see cref="IList{T}" />.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="type" /> is null.</exception>
         public static bool IsCollectionType(this Type type)

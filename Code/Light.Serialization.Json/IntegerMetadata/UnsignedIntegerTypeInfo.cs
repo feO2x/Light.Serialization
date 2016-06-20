@@ -4,16 +4,17 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Light.GuardClauses;
 using Light.GuardClauses.Exceptions;
+using Light.Serialization.Json.TokenParsers;
 
 namespace Light.Serialization.Json.IntegerMetadata
 {
     /// <summary>
-    ///     Represents an info object that describes a .NET unsigned integer type for the UnsignedIntegerParser.
+    ///     Represents an info object that describes a .NET unsigned integer type for the <see cref="UnsignedIntegerParser" />.
     /// </summary>
     public sealed class UnsignedIntegerTypeInfo
     {
         /// <summary>
-        ///     Gets the delegate that can be used to downcast the value from ulong to the target unsigned integer type.
+        ///     Gets the delegate that can be used to downcast the value from <see cref="ulong" /> to the target unsigned integer type.
         /// </summary>
         public readonly Func<ulong, object> DowncastValue;
 
@@ -28,7 +29,7 @@ namespace Light.Serialization.Json.IntegerMetadata
         public readonly Type Type;
 
         /// <summary>
-        ///     Creates a new intance of UnsignedIntegerTypeInfo.
+        ///     Creates a new intance of <see cref="UnsignedIntegerTypeInfo" />.
         /// </summary>
         /// <param name="type">The .NET unsigned integer type.</param>
         /// <param name="maximumAsString">The maximum of the unsigned integer type as a string.</param>
@@ -47,7 +48,7 @@ namespace Light.Serialization.Json.IntegerMetadata
         }
 
         /// <summary>
-        ///     Creates the default mapping of .NET unsigned integer type to UnsignedIntegerTypeInfo for the following types: uint, ulong, ushort, and byte.
+        ///     Creates the default mapping of .NET unsigned integer type to <see cref="UnsignedIntegerTypeInfo" /> instances for the following types: uint, ulong, ushort, and byte.
         /// </summary>
         public static Dictionary<Type, UnsignedIntegerTypeInfo> CreateDefaultUnsignedIntegerTypes()
         {
