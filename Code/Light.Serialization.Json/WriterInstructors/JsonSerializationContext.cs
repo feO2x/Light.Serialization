@@ -62,5 +62,16 @@ namespace Light.Serialization.Json.WriterInstructors
             Writer = writer;
             SerializedObjects = serializedObjects;
         }
+
+        /// <summary>
+        ///     Creates a new instance of <see cref="JsonSerializationContext" /> with the specified type as <see cref="ActualType" />.
+        /// </summary>
+        /// <param name="type">The new type of the context.</param>
+        /// <returns>The new <see cref="JsonSerializationContext" /> instance.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="type" /> is null.</exception>
+        public JsonSerializationContext CloneWithNewType(Type type)
+        {
+            return new JsonSerializationContext(ObjectToBeSerialized, type, SerializeChild, Writer, SerializedObjects);
+        }
     }
 }

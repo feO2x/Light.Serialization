@@ -3,7 +3,7 @@
 namespace Light.Serialization.Json.BuilderHelpers
 {
     /// <summary>
-    ///     Represents the abstraction of setting a <see cref="ITypeMetadataInstructor" /> instance via property injection.
+    ///     Represents the abstraction of setting an <see cref="ITypeMetadataInstructor" /> instance via property injection.
     /// </summary>
     public interface ISetTypeInstructor
     {

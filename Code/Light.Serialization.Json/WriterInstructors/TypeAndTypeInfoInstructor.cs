@@ -10,7 +10,7 @@ namespace Light.Serialization.Json.WriterInstructors
     /// <summary>
     ///     Represents an <see cref="IJsonWriterInstructor" /> that can serialize <see cref="Type" /> instances.
     /// </summary>
-    public sealed class TypeInstructorAdapter : IJsonWriterInstructor, ISetTypeInstructor
+    public sealed class TypeAndTypeInfoInstructor : IJsonWriterInstructor, ISetTypeInstructor
     {
         /// <summary>
         ///     Gets the default type key which is "type".
@@ -21,11 +21,11 @@ namespace Light.Serialization.Json.WriterInstructors
         private string _typeKey = DefaultTypeKey;
 
         /// <summary>
-        ///     Creates a new instance of <see cref="TypeInstructorAdapter" />.
+        ///     Creates a new instance of <see cref="TypeAndTypeInfoInstructor" />.
         /// </summary>
         /// <param name="metadataInstructor">The metadata instructor that can write the metadata section of a complex JSON object.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="metadataInstructor" /> is null.</exception>
-        public TypeInstructorAdapter(ITypeMetadataInstructor metadataInstructor)
+        public TypeAndTypeInfoInstructor(ITypeMetadataInstructor metadataInstructor)
         {
             metadataInstructor.MustNotBeNull(nameof(metadataInstructor));
 
@@ -68,7 +68,7 @@ namespace Light.Serialization.Json.WriterInstructors
 
             writer.BeginObject();
 
-            var shouldSerializeData = _metadataInstructor.SerializeMetadata(new JsonSerializationContext(serializationContext.ObjectToBeSerialized, typeof(Type), serializationContext.SerializeChild, serializationContext.Writer, serializationContext.SerializedObjects));
+            var shouldSerializeData = _metadataInstructor.SerializeMetadata(serializationContext.CloneWithNewType(typeof(Type)));
             if (shouldSerializeData == false)
             {
                 writer.EndObject();

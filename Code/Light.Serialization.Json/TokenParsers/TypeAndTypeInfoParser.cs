@@ -13,8 +13,14 @@ namespace Light.Serialization.Json.TokenParsers
     /// </summary>
     public sealed class TypeAndTypeInfoParser : IJsonTokenParser, ISwitchParserForComplexObject, ISetTypeParser
     {
+        /// <summary>
+        ///     Gets the default type key which is "type".
+        /// </summary>
+        public const string DefaultTypeKey = "type";
+
         private ITypeParser _metadataParser;
-        private string _typeSymbol = "type";
+
+        private string _typeSymbol = DefaultTypeKey;
 
         /// <summary>
         ///     Creates a new instance of <see cref="TypeAndTypeInfoParser" />.
@@ -78,26 +84,6 @@ namespace Light.Serialization.Json.TokenParsers
             return ParseValue(metadataParseResult, context, currentToken);
         }
 
-        private ParseResult ParseValue(ObjectMetadataParseResult metadataParseResult, JsonDeserializationContext context, JsonToken currentToken)
-        {
-            currentToken.MustBeComplexObjectKey();
-            var typeKey = context.DeserializeToken<string>(currentToken);
-            if (typeKey != _typeSymbol)
-                throw new JsonDocumentException($"Expected key \"{_typeSymbol}\" in complex JSON object describing a Type or TypeInfo instance, but found {typeKey}.", currentToken);
-
-            context.JsonReader.ReadAndExpectPairDelimiterToken();
-            var type = _metadataParser.ParseType(context);
-            
-            object returnValue = type;
-            if (context.RequestedType == typeof(TypeInfo))
-                returnValue = type.GetTypeInfo();
-
-            if (metadataParseResult.ReferencePreservationInfo.IsEmpty == false)
-                context.ObjectReferencePreserver.AddDeserializedObject(metadataParseResult.ReferencePreservationInfo.Id, returnValue);
-
-            return ParseResult.FromParsedValue(returnValue);
-        }
-
         /// <summary>
         ///     Gets or sets the metadata parser.
         /// </summary>
@@ -120,6 +106,26 @@ namespace Light.Serialization.Json.TokenParsers
         ParseResult ISwitchParserForComplexObject.PerformSwitch(ObjectMetadataParseResult metadataParseResult, JsonDeserializationContext context, JsonToken currentToken)
         {
             return ParseValue(metadataParseResult, context, currentToken);
+        }
+
+        private ParseResult ParseValue(ObjectMetadataParseResult metadataParseResult, JsonDeserializationContext context, JsonToken currentToken)
+        {
+            currentToken.MustBeComplexObjectKey();
+            var typeKey = context.DeserializeToken<string>(currentToken);
+            if (typeKey != _typeSymbol)
+                throw new JsonDocumentException($"Expected key \"{_typeSymbol}\" in complex JSON object describing a Type or TypeInfo instance, but found \"{typeKey}\".", currentToken);
+
+            context.JsonReader.ReadAndExpectPairDelimiterToken();
+            var type = _metadataParser.ParseType(context);
+
+            object returnValue = type;
+            if (context.RequestedType == typeof(TypeInfo))
+                returnValue = type.GetTypeInfo();
+
+            if (metadataParseResult.ReferencePreservationInfo.IsEmpty == false)
+                context.ObjectReferencePreserver.AddDeserializedObject(metadataParseResult.ReferencePreservationInfo.Id, returnValue);
+
+            return ParseResult.FromParsedValue(returnValue);
         }
     }
 }

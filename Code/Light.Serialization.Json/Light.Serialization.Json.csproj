@@ -210,7 +210,7 @@
     <Compile Include="WriterInstructors\DictionaryInstructor.cs" />
     <Compile Include="WriterInstructors\EnumInstructor.cs" />
     <Compile Include="WriterInstructors\PrimitiveValueInstructor.cs" />
-    <Compile Include="WriterInstructors\TypeInstructorAdapter.cs" />
+    <Compile Include="WriterInstructors\TypeAndTypeInfoInstructor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

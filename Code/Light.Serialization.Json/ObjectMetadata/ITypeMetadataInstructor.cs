@@ -4,7 +4,7 @@ using Light.Serialization.Json.LowLevelWriting;
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents an <see cref="IMetadataInstructor"/> that can also serialize <see cref="Type"/> instances.
+    ///     Represents an <see cref="IMetadataInstructor"/> for complex JSON objects that can also serialize <see cref="Type"/> instances.
     /// </summary>
     public interface ITypeMetadataInstructor : IMetadataInstructor
     {

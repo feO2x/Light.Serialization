@@ -34,7 +34,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
             Action act = () => GetDeserializer().Deserialize<Type>(invalidJson);
 
             act.ShouldThrow<JsonDocumentException>()
-               .And.Message.Should().Contain($"Expected key \"type\" in complex JSON object describing a Type or TypeInfo instance, but found {misspelledKey}.");
+               .And.Message.Should().Contain($"Expected key \"type\" in complex JSON object describing a Type or TypeInfo instance, but found \"{misspelledKey}\".");
         }
 
         [Theory(DisplayName = "The deserializer must be able to parse Type instances from their Domain-Friendly Names.")]

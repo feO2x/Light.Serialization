@@ -68,7 +68,7 @@ namespace Light.Serialization.Json.BuilderHelpers
 
             targetList.Add(new PrimitiveValueInstructor(primitiveTypeToFormattersMapping));
             targetList.Add(new EnumInstructor());
-            targetList.Add(new TypeInstructorAdapter(objectMetadataInstructor));
+            targetList.Add(new TypeAndTypeInfoInstructor(objectMetadataInstructor));
             targetList.Add(new DictionaryInstructor(primitiveTypeToFormattersMapping, objectMetadataInstructor));
             targetList.Add(new CollectionInstructor(collectionMetadataInstructor));
             targetList.Add(new ComplexObjectInstructor(readableValuesTypeAnalyzer, objectMetadataInstructor));

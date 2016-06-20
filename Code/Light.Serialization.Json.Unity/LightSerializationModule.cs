@@ -51,7 +51,7 @@ namespace Light.Serialization.Json.Unity
                 .RegisterType<IReadOnlyList<IJsonWriterInstructor>, IJsonWriterInstructor[]>()
                 .RegisterTypeWithTypeName<IJsonWriterInstructor, PrimitiveValueInstructor>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonWriterInstructor, EnumInstructor>(new ContainerControlledLifetimeManager())
-                .RegisterTypeWithTypeName<IJsonWriterInstructor, TypeInstructorAdapter>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonWriterInstructor, TypeAndTypeInfoInstructor>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonWriterInstructor, DictionaryInstructor>(new InjectionFactory(c => new DictionaryInstructor(c.Resolve<IDictionary<Type, IPrimitiveTypeFormatter>>(),
                                                                                                                                           c.Resolve<IMetadataInstructor>(KnownNames.ObjectMetadataInstructor))),
                                                                                        new ContainerControlledLifetimeManager())
