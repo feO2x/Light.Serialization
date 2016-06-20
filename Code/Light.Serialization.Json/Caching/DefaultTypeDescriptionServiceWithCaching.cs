@@ -7,8 +7,10 @@ namespace Light.Serialization.Json.Caching
 {
     /// <summary>
     ///     Represents a <see cref="DefaultTypeDescriptionService" /> that uses caching.
+    ///     Access to the cache is synchronized, thus a single instance of this class can
+    ///     be shared in several deserialization object graphs.
     /// </summary>
-    public class DefaultTypeDescriptionServiceWithCaching : DefaultTypeDescriptionService
+    public sealed class DefaultTypeDescriptionServiceWithCaching : DefaultTypeDescriptionService
     {
         private readonly Dictionary<Type, TypeCreationDescription> _typeCreationDescriptionCache;
 
@@ -25,7 +27,7 @@ namespace Light.Serialization.Json.Caching
         }
 
         /// <summary>
-        ///     Tries to get a <see cref="TypeCreationDescription" /> instance from the cache. If this is not possible,
+        ///     Tries to get the target <see cref="TypeCreationDescription" /> instance from the cache. If this is not possible,
         ///     the base class is used to create the instance.
         /// </summary>
         public override TypeCreationDescription GetTypeCreationDescription(Type type)

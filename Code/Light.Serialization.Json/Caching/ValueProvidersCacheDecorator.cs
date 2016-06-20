@@ -7,7 +7,7 @@ namespace Light.Serialization.Json.Caching
 {
     /// <summary>
     ///     Represents a cache decorator for collections of value providers, belonging to a certain type.
-    ///     Access to the cache is synchronized, thus the cache can be shared in several instances.
+    ///     Access to the cache is synchronized, thus the cache can be shared in several serialization object graphs.
     /// </summary>
     public sealed class ValueProvidersCacheDecorator : IReadableValuesTypeAnalyzer
     {

@@ -10,6 +10,7 @@ namespace Light.Serialization.Json.Caching
     /// <summary>
     ///     Represents a combination of JSON token type and .NET type.
     ///     Instances of this type are used to choose an <see cref="IJsonTokenParser" /> from the cache.
+    ///     This class behaves like a DDD Value Object.
     /// </summary>
     public struct JsonTokenTypeCombination : IEquatable<JsonTokenTypeCombination>
     {
@@ -44,7 +45,7 @@ namespace Light.Serialization.Json.Caching
         }
 
         /// <summary>
-        ///     Checks if the other JsonTokenTypeCombination has the same token type and .NET type.
+        ///     Checks if the other <see cref="JsonTokenTypeCombination" /> instance has the same token type and .NET type.
         /// </summary>
         /// <param name="other">The other instance to be compared.</param>
         /// <returns>True if both instances have the same token type and .NET type, else false.</returns>
@@ -55,7 +56,7 @@ namespace Light.Serialization.Json.Caching
         }
 
         /// <summary>
-        ///     Checks if the other instance is a JsonTokenTypeCombination, and if it contains the same values as this one.
+        ///     Checks if the other instance is a <see cref="JsonTokenTypeCombination" /> instance, and if it contains the same values as this one.
         /// </summary>
         /// <param name="obj">The object to be compared.</param>
         /// <returns>True if <paramref name="obj" /> is a JsonTokenTypeCombination and both instances have the same token type and .NET type, else false.</returns>
@@ -72,7 +73,7 @@ namespace Light.Serialization.Json.Caching
         }
 
         /// <summary>
-        ///     Gets the hash code of this JsonTokenTypeCombination.
+        ///     Gets the hash code of this <see cref="JsonTokenTypeCombination" />.
         /// </summary>
         public override int GetHashCode()
         {
