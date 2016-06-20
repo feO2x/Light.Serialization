@@ -6,7 +6,7 @@ using Light.GuardClauses;
 namespace Light.Serialization.Json.ComplexTypeConstruction
 {
     /// <summary>
-    ///     Describes a constructor that can be invoked using Injectable Value Descriptions.
+    ///     Describes a constructor that can be invoked using <see cref="InjectableValue" /> instances.
     /// </summary>
     public sealed class ConstructorDescription
     {
@@ -16,15 +16,15 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         public readonly ConstructorInfo ConstructorInfo;
 
         /// <summary>
-        ///     Gets the list of constructor parameters as injectable value descriptions.
+        ///     Gets the list of constructor parameters as instances of <see cref="InjectableValueDescription"/>.
         /// </summary>
-        public List<InjectableValueDescription> ConstructorParameters;
+        public readonly List<InjectableValueDescription> ConstructorParameters;
 
         /// <summary>
-        ///     Creates a new instance of ConstructorDescription.
+        ///     Creates a new instance of <see cref="ConstructorDescription"/>.
         /// </summary>
         /// <param name="constructorInfo">The described constructor info.</param>
-        /// <param name="constructorParameters">The parameter infos as injectable value descriptions.</param>
+        /// <param name="constructorParameters">The parameter infos as instances of <see cref="InjectableValueDescription"/>.</param>
         public ConstructorDescription(ConstructorInfo constructorInfo, List<InjectableValueDescription> constructorParameters)
         {
             constructorInfo.MustNotBeNull(nameof(constructorInfo));

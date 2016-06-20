@@ -7,10 +7,15 @@ using Light.GuardClauses.Exceptions;
 namespace Light.Serialization.Json.ComplexTypeConstruction
 {
     /// <summary>
-    ///     Represents an object that describes how a value can be injected to a certain type (via constructor, property, or field injection).
+    ///     Represents an object that describes how a value can be injected into a certain type (via constructor, property, or field injection).
     /// </summary>
     public sealed class InjectableValueDescription
     {
+        /// <summary>
+        ///     Gets the value indicating whether the deserialized value is not a member of the target type.
+        /// </summary>
+        public readonly bool IsUnknownOnTargetType;
+
         /// <summary>
         ///     Gets the normalized name that uniquely identifies the injectable value.
         /// </summary>
@@ -23,17 +28,18 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
 
         private ParameterInfo _constructorParameterInfo;
         private FieldInfo _fieldInfo;
-        private InjectableValueKind _kind;
         private PropertyInfo _propertyInfo;
 
-        private InjectableValueDescription(string normalizedName, Type type)
+        private InjectableValueDescription(string normalizedName, Type type, bool isUnknownOnTargetType = false)
         {
             normalizedName.MustNotBeNullOrEmpty(nameof(normalizedName));
             type.MustNotBeNull(nameof(type));
 
             NormalizedName = normalizedName;
             Type = type;
+            IsUnknownOnTargetType = isUnknownOnTargetType;
         }
+
 
         /// <summary>
         ///     Gets the parameter info when the injectable value can be passed in via constructor injection.
@@ -51,11 +57,6 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         public FieldInfo FieldInfo => _fieldInfo;
 
         /// <summary>
-        ///     Gets the kind of the injectable value.
-        /// </summary>
-        public InjectableValueKind Kind => _kind;
-
-        /// <summary>
         ///     Adds a constructor parameter info to this injectable value description.
         /// </summary>
         /// <param name="parameterInfo">The info that describes how the value can be injected via constructor injection.</param>
@@ -65,7 +66,6 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         {
             CheckParameterInfo(parameterInfo);
 
-            _kind |= InjectableValueKind.ConstructorParameter;
             _constructorParameterInfo = parameterInfo;
         }
 
@@ -88,7 +88,6 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         {
             CheckPropertyInfo(propertyInfo);
 
-            _kind |= InjectableValueKind.PropertySetter;
             _propertyInfo = propertyInfo;
         }
 
@@ -115,7 +114,6 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         {
             CheckFieldInfo(fieldInfo);
 
-            _kind |= InjectableValueKind.SettableField;
             _fieldInfo = fieldInfo;
         }
 
@@ -131,11 +129,6 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
                 throw new ArgumentException($"The specified FieldInfo {fieldInfo} of type {fieldInfo.DeclaringType} is read-only and cannot be used for field injection.");
             if (fieldInfo.FieldType != Type)
                 throw new ArgumentException($"The specified FieldInfo {fieldInfo} of type {fieldInfo.DeclaringType} does not have the same type {Type} as this injectable value description.");
-        }
-
-        private void AddUnknownValue()
-        {
-            _kind = InjectableValueKind.UnknownOnTargetObject;
         }
 
         /// <summary>
@@ -193,9 +186,7 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         /// <exception cref="EmptyStringException">Thrown when <paramref name="normalizedName" />is an empty string.</exception>
         public static InjectableValueDescription FromUnknownValue(string normalizedName, Type type)
         {
-            var injectableValueDescription = new InjectableValueDescription(normalizedName, type);
-            injectableValueDescription.AddUnknownValue();
-            return injectableValueDescription;
+            return new InjectableValueDescription(normalizedName, type, true);
         }
 
         /// <summary>
@@ -224,7 +215,7 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         [Conditional(Check.CompileAssertionsSymbol)]
         private void CheckIfValueIsInjectableThroughField(object targetObject)
         {
-            if ((_kind & InjectableValueKind.SettableField) == 0)
+            if (_fieldInfo == null)
                 throw new InvalidOperationException($"You try to set a field value on {NormalizedName}, but there is no such field on type {targetObject.GetType().FullName}.");
         }
 
@@ -240,13 +231,13 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
             targetObject.MustNotBeNull(nameof(targetObject));
             CheckIfValueIsInjectableThroughProperty(targetObject);
 
-            PropertyInfo.SetValue(targetObject, value);
+            _propertyInfo.SetValue(targetObject, value);
         }
 
         [Conditional(Check.CompileAssertionsSymbol)]
         private void CheckIfValueIsInjectableThroughProperty(object targetObject)
         {
-            if ((_kind & InjectableValueKind.PropertySetter) == 0)
+            if (_propertyInfo == null)
                 throw new InvalidOperationException($"You try to set a property value on {NormalizedName}, but there is no such property on type {targetObject.GetType().FullName}.");
         }
 
@@ -259,9 +250,9 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         /// <exception cref="InvalidOperationException">Thrown when this injectable value description is not associated with a property info or field info.</exception>
         public void SetPropertyOrField(object targetObject, object value)
         {
-            if (PropertyInfo != null)
-                PropertyInfo.SetValue(targetObject, value);
-            else if (FieldInfo != null)
+            if (_propertyInfo != null)
+                _propertyInfo.SetValue(targetObject, value);
+            else if (_fieldInfo != null)
                 _fieldInfo.SetValue(targetObject, value);
             else
                 throw new InvalidOperationException($"You try to set a property or field value on {NormalizedName}, but there is no possiblity to do so on type {targetObject.GetType().FullName}.");

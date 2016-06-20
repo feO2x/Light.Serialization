@@ -11,7 +11,7 @@ using Light.Serialization.Json.FrameworkExtensions;
 namespace Light.Serialization.Json.ComplexTypeConstruction
 {
     /// <summary>
-    ///     Represents the default <see cref="ITypeDescriptionService" /> that includes all constructors, settable instance properties, and settable instance fields in a type creation description.
+    ///     Represents the default <see cref="ITypeDescriptionService" /> that includes all constructors, settable instance properties, and settable instance fields in a <see cref="TypeCreationDescription" />.
     /// </summary>
     public class DefaultTypeDescriptionService : ITypeDescriptionService
     {
@@ -26,14 +26,15 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         {
             type.MustNotBeNull(nameof(type));
 
+            // Check if the target type can be instantiated
             var typeInfo = type.GetTypeInfo();
             CheckIfTypeIsInstantiatable(typeInfo);
 
-            if (typeInfo.IsAbstract || typeInfo.IsInterface)
-                throw new DeserializationException($"The specified type {type.FullName} is abstract and cannot be deserialized");
-
             var injectableValueDescriptions = new List<InjectableValueDescription>();
             var constructorDescriptions = new List<ConstructorDescription>();
+
+            // Check the constructors of the type and produce constructor descriptions out of them
+            // TODO: types might not solely be constructed via one of their constructors, but maybe via static methods or in other ways
             foreach (var constructorInfo in typeInfo.DeclaredConstructors)
             {
                 if (constructorInfo.IsStatic || constructorInfo.IsPublic == false)
@@ -55,6 +56,9 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
                 constructorDescriptions.Add(new ConstructorDescription(constructorInfo, parameterDescriptions));
             }
 
+            CheckIfTypeHasConstructor(constructorDescriptions, type);
+
+            // Check the properties of the target type
             foreach (var propertyInfo in type.GetRuntimeProperties())
             {
                 var setMethodInfo = propertyInfo.SetMethod;
@@ -72,6 +76,7 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
                     targetDescription.AddPropertyName(propertyInfo);
             }
 
+            // Check the field infos of the target type
             foreach (var fieldInfo in type.GetRuntimeFields())
             {
                 if (fieldInfo.IsStatic || fieldInfo.IsPublic == false || fieldInfo.IsInitOnly)
@@ -108,7 +113,14 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         private static void CheckIfTypeIsInstantiatable(TypeInfo typeInfo)
         {
             if (typeInfo.IsAbstract || typeInfo.IsInterface)
-                throw new DeserializationException($"The specified type {typeInfo.FullName} is abstract and cannot be deserialized");
+                throw new DeserializationException($"The specified type {typeInfo.FullName} is abstract and cannot be deserialized.");
+        }
+
+        [Conditional(Check.CompileAssertionsSymbol)]
+        private static void CheckIfTypeHasConstructor(List<ConstructorDescription> constructorDescriptions, Type type)
+        {
+            if (constructorDescriptions.Count == 0)
+                throw new DeserializationException($"The specified type {type.FullName} does not have a public non-static constructor that can be called by the deserializer.");
         }
     }
 }

@@ -4,8 +4,8 @@ using Light.GuardClauses.Exceptions;
 namespace Light.Serialization.Json.ComplexTypeConstruction
 {
     /// <summary>
-    ///     Represents the abstraction of an object that can provide a description of how
-    ///     a certain type can be created with Constructor, Field, and Property injection.
+    ///     Represents the abstraction of an object that can provide <see cref="TypeCreationDescription" /> instances describing how
+    ///     a certain <see cref="Type" /> can be instantiated with constructor, property, and field injection.
     /// </summary>
     public interface ITypeDescriptionService
     {
@@ -18,10 +18,10 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         TypeCreationDescription GetTypeCreationDescription(Type type);
 
         /// <summary>
-        ///     Normalizes the given JSON string so that it can be used to compare it to settable type members and constructor parameters (Injectable Value Info).
+        ///     Normalizes the given JSON string so that it can be compared to settable type members and constructor parameters (i.e. the normalized name of <see cref="InjectableValueDescription" /> instances).
         /// </summary>
         /// <param name="jsonName">The JSON string to be normalized.</param>
-        /// <returns></returns>
+        /// <returns>The normalized name of the JSON string.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="jsonName" /> is null.</exception>
         /// <exception cref="EmptyStringException">Thrown when <paramref name="jsonName" /> is an empty string.</exception>
         /// <exception cref="StringIsOnlyWhiteSpaceException">Thrown when <paramref name="jsonName" />contains only whitespace.</exception>

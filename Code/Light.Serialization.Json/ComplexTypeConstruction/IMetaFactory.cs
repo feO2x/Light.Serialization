@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Light.Serialization.Json.ComplexTypeConstruction
 {
     /// <summary>
-    ///     Represents the abstraction of a factory that can create dictionaries, collections or complex objects for a given type.
+    ///     Represents the abstraction of a factory that can create dictionaries, collections or complex objects for a given <see cref="Type" /> instance.
     /// </summary>
     public interface IMetaFactory
     {
@@ -20,7 +20,7 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         IList CreateCollection(Type collectionTypeToConstruct);
 
         /// <summary>
-        ///     Creates a complex object using the given typeCreationDescription, injecting all values given in the deserializedChildValues.
+        ///     Creates a complex object using the given <see cref="TypeCreationDescription" />, injecting all values given in the <paramref name="deserializedChildValues" /> dictionary.
         /// </summary>
         object CreateObject(TypeCreationDescription typeCreationDescription, Dictionary<InjectableValueDescription, InjectableValue> deserializedChildValues);
     }

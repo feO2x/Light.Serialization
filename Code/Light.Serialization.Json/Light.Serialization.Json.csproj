@@ -79,7 +79,6 @@
     <Compile Include="ComplexTypeConstruction\DefaultTypeDescriptionService.cs" />
     <Compile Include="ComplexTypeConstruction\IMetaFactory.cs" />
     <Compile Include="ComplexTypeConstruction\InjectableValueDescription.cs" />
-    <Compile Include="ComplexTypeConstruction\InjectableValueKind.cs" />
     <Compile Include="ComplexTypeConstruction\ITypeDescriptionService.cs" />
     <Compile Include="JsonDeserializerBuilder.cs" />
     <Compile Include="BuilderHelpers\JsonDeserializerBuilderExtensions.cs" />

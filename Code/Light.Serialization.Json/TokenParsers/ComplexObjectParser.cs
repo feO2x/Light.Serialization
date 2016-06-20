@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Light.GuardClauses;
 using Light.Serialization.Json.BuilderHelpers;
 using Light.Serialization.Json.ComplexTypeConstruction;
-using Light.Serialization.Json.FrameworkExtensions;
 using Light.Serialization.Json.LowLevelReading;
 using Light.Serialization.Json.ObjectMetadata;
 
