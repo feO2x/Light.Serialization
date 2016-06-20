@@ -75,7 +75,7 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         /// <param name="deserializedChildValues">The dictionary containing all deserialized values for the object to be created.</param>
         /// <returns>The instantiated object.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeCreationDescription" /> is null.</exception>
-        public object CreateObject(TypeCreationDescription typeCreationDescription, Dictionary<InjectableValueDescription, object> deserializedChildValues)
+        public object CreateObject(TypeCreationDescription typeCreationDescription, Dictionary<InjectableValueDescription, InjectableValue> deserializedChildValues)
         {
             typeCreationDescription.MustNotBeNull(nameof(typeCreationDescription));
 
@@ -100,21 +100,53 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
             if (newObject == null)
                 throw new DeserializationException($"The specified type {typeCreationDescription.TargetType.FullName} cannot be created with the given type info."); // TODO: add the deserialized values to this exception message
 
-            // TODO: we should implement some logic to check if an InjectableValueDescription was utilized before in the constructor.
             SetPropertiesAndFields:
-            foreach (var injectablePropertyInfo in deserializedChildValues.Keys.Where(i => i.Kind == InjectableValueKind.PropertySetter))
-            {
-                injectablePropertyInfo.SetPropertyValue(newObject, deserializedChildValues[injectablePropertyInfo]);
-            }
-
-            foreach (var injectableFieldInfo in deserializedChildValues.Keys.Where(i => i.Kind == InjectableValueKind.SettableField))
-            {
-                injectableFieldInfo.SetFieldValue(newObject, deserializedChildValues[injectableFieldInfo]);
-            }
+            PerformPropertyAndFieldInjection(typeCreationDescription, deserializedChildValues, newObject);
 
             // TODO: set values that could not be matched with a constructor parameter, property setter or public field to a dictionary of some kind if possible
 
             return newObject;
+        }
+
+        /// <summary>
+        ///     Performs property and field injection on the <paramref name="newObject" /> using the <paramref name="typeCreationDescription" /> and the <paramref name="deserializedChildValues" />.
+        /// </summary>
+        /// <param name="typeCreationDescription">The object describing how a type can be created with constructor, property and field injection.</param>
+        /// <param name="deserializedChildValues">The deserialized child values from the JSON document.</param>
+        /// <param name="newObject">The object which will be populated via property and field injection.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeCreationDescription"/> or <paramref name="newObject"/> is null.</exception>
+        public static void PerformPropertyAndFieldInjection(TypeCreationDescription typeCreationDescription, Dictionary<InjectableValueDescription, InjectableValue> deserializedChildValues, object newObject)
+        {
+            if (deserializedChildValues == null)
+                return;
+            typeCreationDescription.MustNotBeNull(nameof(typeCreationDescription));
+            newObject.MustNotBeNull(nameof(newObject));
+
+            foreach (var injectablePropertyInfo in typeCreationDescription.PropertyDescriptions)
+            {
+                InjectableValue injectableValue;
+                if (deserializedChildValues.TryGetValue(injectablePropertyInfo, out injectableValue) == false)
+                    continue;
+
+                if (injectableValue.HasBeenInjectedBefore)
+                    continue;
+
+                injectablePropertyInfo.SetPropertyValue(newObject, injectableValue.Inject());
+                deserializedChildValues[injectablePropertyInfo] = injectableValue;
+            }
+
+            foreach (var injectableFieldInfo in typeCreationDescription.FieldDescriptions)
+            {
+                InjectableValue injectableValue;
+                if (deserializedChildValues.TryGetValue(injectableFieldInfo, out injectableValue) == false)
+                    continue;
+
+                if (injectableValue.HasBeenInjectedBefore)
+                    continue;
+
+                injectableFieldInfo.SetFieldValue(newObject, injectableValue.Inject());
+                deserializedChildValues[injectableFieldInfo] = injectableValue;
+            }
         }
 
         private static T TryToInstantiateWithDefaultConstructor<T>(TypeInfo typeInfo) where T : class

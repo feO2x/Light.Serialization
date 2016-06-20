@@ -40,7 +40,7 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         /// <param name="deserializedChildValues">The values that can be used to call the constructor.</param>
         /// <returns>True if the call to the constructor would succeed, else false</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="deserializedChildValues" /> is null.</exception>
-        public bool CanConstructorBeInvoked(Dictionary<InjectableValueDescription, object> deserializedChildValues)
+        public bool CanConstructorBeInvoked(Dictionary<InjectableValueDescription, InjectableValue> deserializedChildValues)
         {
             deserializedChildValues.MustNotBeNull(nameof(deserializedChildValues));
 
@@ -62,7 +62,7 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         /// <param name="deserializedChildValues">The values that can be used to call the constructor.</param>
         /// <returns>The instantiated object or null, when constructor invocation would not be possible.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="deserializedChildValues" /> is null.</exception>
-        public object TryCallConstructor(Dictionary<InjectableValueDescription, object> deserializedChildValues)
+        public object TryCallConstructor(Dictionary<InjectableValueDescription, InjectableValue> deserializedChildValues)
         {
             if (ConstructorParameters.Count == 0)
                 return ConstructorInfo.Invoke(null);
@@ -71,9 +71,12 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
                 return null;
 
             var parameters = new object[ConstructorParameters.Count];
+
             for (var i = 0; i < ConstructorParameters.Count; i++)
             {
-                parameters[i] = deserializedChildValues[ConstructorParameters[i]];
+                var injectableValue = deserializedChildValues[ConstructorParameters[i]];
+                parameters[i] = injectableValue.Inject();
+                deserializedChildValues[ConstructorParameters[i]] = injectableValue;
             }
             return ConstructorInfo.Invoke(parameters);
         }

@@ -57,7 +57,7 @@ namespace Light.Serialization.Json.Unity
         /// <param name="deserializedChildValues">The child values that were deserialized from the JSON document.</param>
         /// <returns>The instantiated object.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeCreationDescription" /> is null.</exception>
-        public object CreateObject(TypeCreationDescription typeCreationDescription, Dictionary<InjectableValueDescription, object> deserializedChildValues)
+        public object CreateObject(TypeCreationDescription typeCreationDescription, Dictionary<InjectableValueDescription, InjectableValue> deserializedChildValues)
         {
             typeCreationDescription.MustNotBeNull(nameof(typeCreationDescription));
 
@@ -76,35 +76,19 @@ namespace Light.Serialization.Json.Unity
                 var parameterOverrides = new ParameterOverrides();
                 foreach (var injectableValueDescription in targetConstructorDescription.ConstructorParameters)
                 {
-                    object parameterValue;
-                    if (deserializedChildValues == null || deserializedChildValues.TryGetValue(injectableValueDescription, out parameterValue) == false)
+                    InjectableValue injectableValue;
+                    if (deserializedChildValues == null || deserializedChildValues.TryGetValue(injectableValueDescription, out injectableValue) == false)
                         continue;
 
-                    parameterOverrides.Add(injectableValueDescription.ConstructorParameterInfo.Name, parameterValue);
+                    parameterOverrides.Add(injectableValueDescription.ConstructorParameterInfo.Name, injectableValue.Inject());
+                    deserializedChildValues[injectableValueDescription] = injectableValue;
                 }
 
                 newObject = _diContainer.Resolve(typeCreationDescription.TargetType, parameterOverrides);
             }
 
-            // Perform property and field injection if possible
-            if (deserializedChildValues != null)
-            {
-                foreach (var injectablePropertyInfo in deserializedChildValues.Keys)
-                {
-                    if ((injectablePropertyInfo.Kind & InjectableValueKind.PropertySetter) == 0)
-                        continue;
-
-                    injectablePropertyInfo.SetPropertyValue(newObject, deserializedChildValues[injectablePropertyInfo]);
-                }
-
-                foreach (var injectableFieldInfo in deserializedChildValues.Keys)
-                {
-                    if ((injectableFieldInfo.Kind & InjectableValueKind.SettableField) == 0)
-                        continue;
-
-                    injectableFieldInfo.SetFieldValue(newObject, deserializedChildValues[injectableFieldInfo]);
-                }
-            }
+            // Perform property and field injection if necessary
+            DefaultMetaFactory.PerformPropertyAndFieldInjection(typeCreationDescription, deserializedChildValues, newObject);
 
             return newObject;
         }

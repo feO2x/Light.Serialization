@@ -22,6 +22,6 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         /// <summary>
         ///     Creates a complex object using the given typeCreationDescription, injecting all values given in the deserializedChildValues.
         /// </summary>
-        object CreateObject(TypeCreationDescription typeCreationDescription, Dictionary<InjectableValueDescription, object> deserializedChildValues);
+        object CreateObject(TypeCreationDescription typeCreationDescription, Dictionary<InjectableValueDescription, InjectableValue> deserializedChildValues);
     }
 }

@@ -128,6 +128,9 @@
     <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\ObjectReferencePreservationTests.cs">
       <Link>DeserializationTests\ObjectReferencePreservationTests.cs</Link>
     </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\OptionalPropertyAndFieldInjectionTests.cs">
+      <Link>DeserializationTests\OptionalPropertyAndFieldInjectionTests.cs</Link>
+    </Compile>
     <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\StreamingTests.cs">
       <Link>DeserializationTests\StreamingTests.cs</Link>
     </Compile>

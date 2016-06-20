@@ -88,7 +88,7 @@ namespace Light.Serialization.Json.TokenParsers
                 return ParseResult.FromParsedValue(_metaFactory.CreateObject(typeCreationDescription, null));
             currentToken.MustBeComplexObjectKey();
 
-            var deserializedChildValues = new Dictionary<InjectableValueDescription, object>();
+            var deserializedChildValues = new Dictionary<InjectableValueDescription, InjectableValue>();
             List<DeferredReferenceCandidate> deferredReferences = null;
             // Run through the remaining key-value pairs of the complex JSON object and deserialize them
             while (true)
@@ -111,7 +111,7 @@ namespace Light.Serialization.Json.TokenParsers
                     deferredReferences.Add(new DeferredReferenceCandidate(injectableValueInfo, parseResult.ReferenceId));
                 }
                 else
-                    deserializedChildValues.Add(injectableValueInfo, parseResult.ParsedValue);
+                    deserializedChildValues.Add(injectableValueInfo, new InjectableValue(parseResult.ParsedValue));
 
                 if (jsonReader.ReadAndExpectEndOfObjectOrValueDelimiter() == JsonTokenType.EndOfObject)
                     break;
