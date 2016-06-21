@@ -9,79 +9,27 @@ using Light.Serialization.Json.FrameworkExtensions;
 namespace Light.Serialization.Json.SerializationRules
 {
     /// <summary>
-    ///     Represents a non-generic rule. This base class exists so that rules can be stored in a context where no generic is needed.
-    /// </summary>
-    public abstract class Rule : IEquatable<Rule>
-    {
-        /// <summary>
-        ///     Gets the type this rule is created for.
-        /// </summary>
-        public readonly Type TargetType;
-
-
-        /// <summary>
-        ///     Creates a new instance of Rule.
-        /// </summary>
-        /// <param name="targetType">The type this rule is created for.</param>
-        protected Rule(Type targetType)
-        {
-            targetType.MustNotBeNull(nameof(targetType));
-
-            TargetType = targetType;
-        }
-
-        /// <summary>
-        ///     Returns true if the other rule targets the same type as this instance.
-        /// </summary>
-        /// <param name="other">The other rule to be compared.</param>
-        /// <returns>True if the other rule has the same target type, else false.</returns>
-        public bool Equals(Rule other)
-        {
-            if (other == null)
-                return false;
-
-            return TargetType == other.TargetType;
-        }
-
-        /// <summary>
-        ///     Returns true if the other object is a rule that targets the same type as this instance.
-        /// </summary>
-        /// <param name="obj">The object to be compared.</param>
-        /// <returns>True if the other object is a rule that has the same target type, else false.</returns>
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as Rule);
-        }
-
-        /// <summary>
-        ///     Returns the hash code of the target type.
-        /// </summary>
-        public override int GetHashCode()
-        {
-            return TargetType.GetHashCode();
-        }
-
-        /// <summary>
-        ///     Creates the value readers that are able to read all values specified in this rule.
-        /// </summary>
-        public abstract List<IValueReader> CreateValueReaders();
-    }
-
-    /// <summary>
-    ///     Represents a serialization rule for the specified type.
+    ///     Represents a serialization rule for the specified type. It can be used to
+    ///     easily specify members that should or should not be serialized (by using white or black lists).
     /// </summary>
     /// <typeparam name="T">The type that should be customized for serialization.</typeparam>
-    public sealed class Rule<T> : Rule, IButWhiteListRule<T>, IAndWhiteListRule<T>, IAndBlackListRule<T>
+    public sealed class Rule<T> : IButWhiteListRule<T>, IAndWhiteListRule<T>, IAndBlackListRule<T>
     {
         private readonly List<string> _targetMembersToSerialize = new List<string>();
+
         private readonly IReadableValuesTypeAnalyzer _typeAnalyzer;
 
         /// <summary>
-        ///     Creates a new instance of Rule of T.
+        ///     Gets the type that the rule targets.
+        /// </summary>
+        public readonly Type TargetType = typeof(T);
+
+        /// <summary>
+        ///     Creates a new instance of <see cref="Rule{T}" />.
         /// </summary>
         /// <param name="typeAnalyzer">The type analyzer used to create the value readers when calling <see cref="CreateValueReaders" />.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeAnalyzer" /> is null.</exception>
-        public Rule(IReadableValuesTypeAnalyzer typeAnalyzer) : base(typeof(T))
+        public Rule(IReadableValuesTypeAnalyzer typeAnalyzer)
         {
             typeAnalyzer.MustNotBeNull(nameof(typeAnalyzer));
 
@@ -224,7 +172,7 @@ namespace Light.Serialization.Json.SerializationRules
         /// <summary>
         ///     Creates and filters the value readers according to this serialization rule.
         /// </summary>
-        public override List<IValueReader> CreateValueReaders()
+        public List<IValueReader> CreateValueReaders()
         {
             var valueReaders = _typeAnalyzer.AnalyzeType(TargetType);
 
