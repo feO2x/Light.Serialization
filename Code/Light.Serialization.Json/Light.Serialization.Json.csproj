@@ -66,6 +66,10 @@
     <Compile Include="LowLevelReading\ICharacterStream.cs" />
     <Compile Include="LowLevelReading\StringStream.cs" />
     <Compile Include="LowLevelReading\TextReaderAdapter.cs" />
+    <Compile Include="LowLevelWriting\BinaryWriterAdapter.cs" />
+    <Compile Include="LowLevelWriting\IStreamWriter.cs" />
+    <Compile Include="LowLevelWriting\StringBuilderAdapter.cs" />
+    <Compile Include="LowLevelWriting\TextWriterAdapter.cs" />
     <Compile Include="ObjectMetadata\ArrayMetadataParseResult.cs" />
     <Compile Include="ObjectMetadata\DeferredReferenceForArray.cs" />
     <Compile Include="ObjectMetadata\DeferredReferenceForMultidimensionalArray.cs" />

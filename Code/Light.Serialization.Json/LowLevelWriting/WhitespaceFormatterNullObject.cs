@@ -1,7 +1,7 @@
 ﻿namespace Light.Serialization.Json.LowLevelWriting
 {
     /// <summary>
-    ///     Represents a JSON whitespace formatter that does nothing. Use an instance of this class if you want to keep the JSON document as small as possible.
+    ///     Represents an <see cref="IJsonWhitespaceFormatter" /> that does nothing. Use an instance of this class if you want to keep the JSON document as small as possible.
     /// </summary>
     public sealed class WhitespaceFormatterNullObject : IJsonWhitespaceFormatter
     {
@@ -23,11 +23,6 @@
         }
 
         public void InsertWhitespaceBetweenKeyAndValue(IJsonWriter writer) { }
-
-        public void ResetIndentationLevel()
-        {
-            _currentIndentationLevel = 0;
-        }
 
         public static IJsonWhitespaceFormatter Create()
         {

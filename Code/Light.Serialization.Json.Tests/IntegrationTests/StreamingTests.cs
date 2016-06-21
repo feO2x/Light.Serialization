@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using FluentAssertions;
 using Light.Serialization.Json.ObjectMetadata;
 using Light.Serialization.Json.Tests.SampleTypes;
@@ -22,7 +23,7 @@ namespace Light.Serialization.Json.Tests.IntegrationTests
                                                                      .ScanTypes(o => o.UseTypes(typeof(DummyPerson)));
 
             var memoryStream = new MemoryStream();
-            var streamWriter = new StreamWriter(memoryStream);
+            var streamWriter = new StreamWriter(memoryStream, Encoding.UTF8, 4096, true);
 
             new JsonSerializerBuilder().WithTypeToNameMapping(domainFriendlyNameMapping)
                                        .Build()

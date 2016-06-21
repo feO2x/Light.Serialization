@@ -96,6 +96,7 @@
     <Compile Include="SampleTypes\Nodes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SampleTypes\Person.cs" />
+    <Compile Include="SerializationTests\BinaryJsonTests.cs" />
     <Compile Include="SerializationTests\CollectionTests.cs" />
     <Compile Include="SerializationTests\ComplexObjectTests.cs" />
     <Compile Include="SerializationTests\DateTimeOffsetTests.cs" />

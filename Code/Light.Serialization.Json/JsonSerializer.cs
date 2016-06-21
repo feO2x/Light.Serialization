@@ -11,7 +11,11 @@ using Light.Serialization.Json.WriterInstructors;
 namespace Light.Serialization.Json
 {
     /// <summary>
-    ///     Represents an object that can serialize object graphs to JSON strings.
+    ///     Represents the default <see cref="ISerializer" /> implementation for JSON documents
+    ///     that uses a recursive algorithm incorporating <see cref="IJsonWriterInstructor" /> instances.
+    ///     Each <see cref="IJsonWriterInstructor" /> is designed for a specific .NET type and knows
+    ///     how to instruct a <see cref="IJsonWriter" /> to write the type's serialized form to the
+    ///     JSON document.
     /// </summary>
     public sealed class JsonSerializer : ISerializer
     {
@@ -94,6 +98,7 @@ namespace Light.Serialization.Json
         /// <param name="objectGraphRoot">The root of the object graph to be serialized.</param>
         /// <param name="textWriter">The text writer encapsulating the stream that the JSON document is written to.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="textWriter" /> is null.</exception>
+        /// <exception cref="SerializationException">Thrown when any part of the object graph could not be serialized.</exception>
         public void Serialize(object objectGraphRoot, TextWriter textWriter)
         {
             _jsonWriter = _writerFactory.CreateFromTextWriter(textWriter);
@@ -101,6 +106,26 @@ namespace Light.Serialization.Json
 
             SerializeObject(objectGraphRoot);
 
+            _jsonWriter.Dispose();
+            _jsonWriter = null;
+            _serializedObjects = null;
+        }
+
+        /// <summary>
+        ///     Serializes the specified object graph to the stream encapsulated by the binary writer.
+        /// </summary>
+        /// <param name="objectGraphRoot">The root of the object graph to be serialized.</param>
+        /// <param name="binaryWriter">The binary writer encapsulating the stream that JSON document is written to.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="binaryWriter" /> is null.</exception>
+        /// <exception cref="SerializationException">Thrown when any part of the object graph could not be serialized.</exception>
+        public void Serialize(object objectGraphRoot, BinaryWriter binaryWriter)
+        {
+            _jsonWriter = _writerFactory.CreateFromBinaryWriter(binaryWriter);
+            _serializedObjects = new List<object>();
+
+            SerializeObject(objectGraphRoot);
+
+            _jsonWriter.Dispose();
             _jsonWriter = null;
             _serializedObjects = null;
         }
@@ -122,27 +147,23 @@ namespace Light.Serialization.Json
             {
                 if (_instructorCache.TryGetValue(actualType, out targetWriterInstructor) == false)
                 {
-                    targetWriterInstructor = FindTargetInstructor(@object, actualType);
-                    if (targetWriterInstructor == null)
-                        throw new SerializationException($"Type {actualType.FullName} cannot be serialized because there is no IJsonWriterInstructor registered that can cover this type.");
+                    foreach (var writerInstructor in _writerInstructors)
+                    {
+                        if (writerInstructor.IsSuitableFor(@object, actualType) == false)
+                            continue;
+                        targetWriterInstructor = writerInstructor;
+                        goto AddInstructorToCache;
+                    }
 
+                    throw new SerializationException($"Type {actualType.FullName} cannot be serialized because there is no IJsonWriterInstructor registered that can cover this type.");
+
+                    AddInstructorToCache:
                     _instructorCache.Add(actualType, targetWriterInstructor);
                 }
             }
 
             targetWriterInstructor.Serialize(new JsonSerializationContext(@object, actualType, SerializeObject, _jsonWriter, _serializedObjects));
             --_recursionLevel;
-        }
-
-        private IJsonWriterInstructor FindTargetInstructor(object @object, Type objectType)
-        {
-            // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (var writerInstructor in _writerInstructors)
-            {
-                if (writerInstructor.IsSuitableFor(@object, objectType))
-                    return writerInstructor;
-            }
-            return null;
         }
     }
 }

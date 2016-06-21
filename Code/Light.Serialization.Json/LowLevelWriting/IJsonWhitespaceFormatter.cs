@@ -39,10 +39,5 @@ namespace Light.Serialization.Json.LowLevelWriting
         /// <param name="writer">The object that writes the JSON document.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="writer" /> is null.</exception>
         void InsertWhitespaceBetweenKeyAndValue(IJsonWriter writer);
-
-        /// <summary>
-        ///     Resets the indentation level to zero.
-        /// </summary>
-        void ResetIndentationLevel();
     }
 }

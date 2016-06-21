@@ -6,7 +6,7 @@ namespace Light.Serialization.Json.LowLevelWriting
     /// <summary>
     ///     Represents the abstraction of an object that provides a low level API for writing a JSON document.
     /// </summary>
-    public interface IJsonWriter
+    public interface IJsonWriter : IDisposable
     {
         /// <summary>
         ///     Starts a new JSON array.

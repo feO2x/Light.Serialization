@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using Light.GuardClauses;
 using Light.GuardClauses.Exceptions;
 using Light.Serialization.Json.FrameworkExtensions;
@@ -7,28 +6,28 @@ using Light.Serialization.Json.FrameworkExtensions;
 namespace Light.Serialization.Json.LowLevelWriting
 {
     /// <summary>
-    ///     Represents the default JsonWriter inmplementation.
+    ///     Represents the default <see cref="IJsonWriter" /> implementation.
     /// </summary>
     public sealed class JsonWriter : IJsonWriter
     {
         private readonly IJsonKeyNormalizer _jsonKeyNormalizer;
-        private readonly TextWriter _textWriter;
+        private readonly IStreamWriter _streamWriter;
         private readonly IJsonWhitespaceFormatter _whitespaceFormatter;
 
         /// <summary>
-        ///     Creates a new JsonWriter instance.
+        ///     Creates a new <see cref="JsonWriter" /> instance.
         /// </summary>
-        /// <param name="textWriter">The text writer that will be written to.</param>
+        /// <param name="streamWriter">The writer that will be written to.</param>
         /// <param name="whitespaceFormatter">The formatter that controls whitespace and indenting of the JSON document.</param>
         /// <param name="jsonKeyNormalizer">The object that normalizes the keys in a complex JSON object.</param>
         /// <exception cref="ArgumentNullException">Thrown when any parameter is null.</exception>
-        public JsonWriter(TextWriter textWriter, IJsonWhitespaceFormatter whitespaceFormatter, IJsonKeyNormalizer jsonKeyNormalizer)
+        public JsonWriter(IStreamWriter streamWriter, IJsonWhitespaceFormatter whitespaceFormatter, IJsonKeyNormalizer jsonKeyNormalizer)
         {
-            textWriter.MustNotBeNull(nameof(textWriter));
+            streamWriter.MustNotBeNull(nameof(streamWriter));
             whitespaceFormatter.MustNotBeNull(nameof(whitespaceFormatter));
             jsonKeyNormalizer.MustNotBeNull(nameof(jsonKeyNormalizer));
 
-            _textWriter = textWriter;
+            _streamWriter = streamWriter;
             _whitespaceFormatter = whitespaceFormatter;
             _jsonKeyNormalizer = jsonKeyNormalizer;
         }
@@ -39,7 +38,7 @@ namespace Light.Serialization.Json.LowLevelWriting
         /// <returns>The JSON writer for method chaining.</returns>
         public IJsonWriter BeginArray()
         {
-            _textWriter.Write(JsonSymbols.BeginOfArray);
+            _streamWriter.Write(JsonSymbols.BeginOfArray);
             _whitespaceFormatter.NewlineAndIncreaseIndent(this);
             return this;
         }
@@ -51,7 +50,7 @@ namespace Light.Serialization.Json.LowLevelWriting
         public IJsonWriter EndArray()
         {
             _whitespaceFormatter.NewlineAndDecreaseIndent(this);
-            _textWriter.Write(JsonSymbols.EndOfArray);
+            _streamWriter.Write(JsonSymbols.EndOfArray);
             return this;
         }
 
@@ -61,7 +60,7 @@ namespace Light.Serialization.Json.LowLevelWriting
         /// <returns>The JSON writer for method chaining.</returns>
         public IJsonWriter BeginObject()
         {
-            _textWriter.Write(JsonSymbols.BeginOfObject);
+            _streamWriter.Write(JsonSymbols.BeginOfObject);
             _whitespaceFormatter.NewlineAndIncreaseIndent(this);
             return this;
         }
@@ -73,7 +72,7 @@ namespace Light.Serialization.Json.LowLevelWriting
         public IJsonWriter EndObject()
         {
             _whitespaceFormatter.NewlineAndDecreaseIndent(this);
-            _textWriter.Write(JsonSymbols.EndOfObject);
+            _streamWriter.Write(JsonSymbols.EndOfObject);
             return this;
         }
 
@@ -99,8 +98,8 @@ namespace Light.Serialization.Json.LowLevelWriting
             if (key.IsSurroundedByQuotationMarks() == false)
                 key = key.SurroundWithQuotationMarks();
 
-            _textWriter.Write(key);
-            _textWriter.Write(JsonSymbols.PairDelimiter);
+            _streamWriter.Write(key);
+            _streamWriter.Write(JsonSymbols.PairDelimiter);
             _whitespaceFormatter.InsertWhitespaceBetweenKeyAndValue(this);
 
             return this;
@@ -112,7 +111,7 @@ namespace Light.Serialization.Json.LowLevelWriting
         /// <returns>The JSON writer for method chaining.</returns>
         public IJsonWriter WriteDelimiter()
         {
-            _textWriter.Write(JsonSymbols.ValueDelimiter);
+            _streamWriter.Write(JsonSymbols.ValueDelimiter);
             _whitespaceFormatter.Newline(this);
             return this;
         }
@@ -124,7 +123,7 @@ namespace Light.Serialization.Json.LowLevelWriting
         /// <returns>The JSON writer for method chaining.</returns>
         public IJsonWriter WritePrimitiveValue(string @string)
         {
-            _textWriter.Write(@string);
+            _streamWriter.Write(@string);
             return this;
         }
 
@@ -140,26 +139,26 @@ namespace Light.Serialization.Json.LowLevelWriting
 
             if (@string == string.Empty)
             {
-                _textWriter.Write(JsonSymbols.StringDelimiter);
-                _textWriter.Write(JsonSymbols.StringDelimiter);
+                _streamWriter.Write(JsonSymbols.StringDelimiter);
+                _streamWriter.Write(JsonSymbols.StringDelimiter);
                 return this;
             }
 
             if (@string[0] == JsonSymbols.StringDelimiter)
             {
-                _textWriter.Write(@string);
+                _streamWriter.Write(@string);
 
                 if (@string[@string.Length - 1] != JsonSymbols.StringDelimiter)
-                    _textWriter.Write(JsonSymbols.StringDelimiter);
+                    _streamWriter.Write(JsonSymbols.StringDelimiter);
 
                 return this;
             }
 
-            _textWriter.Write(JsonSymbols.StringDelimiter);
-            _textWriter.Write(@string);
+            _streamWriter.Write(JsonSymbols.StringDelimiter);
+            _streamWriter.Write(@string);
 
             if (@string[@string.Length - 1] != JsonSymbols.StringDelimiter)
-                _textWriter.Write(JsonSymbols.StringDelimiter);
+                _streamWriter.Write(JsonSymbols.StringDelimiter);
 
             return this;
         }
@@ -170,8 +169,16 @@ namespace Light.Serialization.Json.LowLevelWriting
         /// <returns>The JSON writer for method chaining.</returns>
         public IJsonWriter WriteNull()
         {
-            _textWriter.Write(JsonSymbols.Null);
+            _streamWriter.Write(JsonSymbols.Null);
             return this;
+        }
+
+        /// <summary>
+        ///     Disposes of the internal <see cref="IStreamWriter" /> instance.
+        /// </summary>
+        public void Dispose()
+        {
+            _streamWriter.Dispose();
         }
     }
 }

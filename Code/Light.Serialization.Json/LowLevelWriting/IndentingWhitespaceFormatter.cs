@@ -4,7 +4,7 @@ using Light.GuardClauses;
 namespace Light.Serialization.Json.LowLevelWriting
 {
     /// <summary>
-    ///     Represents a JSON whitespace formatter that produces human-readable JSON documents with newlines and indentation.
+    ///     Represents an <see cref="IJsonWhitespaceFormatter" /> that produces human-readable JSON documents with newlines and indentation.
     /// </summary>
     public sealed class IndentingWhitespaceFormatter : IJsonWhitespaceFormatter
     {
@@ -40,7 +40,7 @@ namespace Light.Serialization.Json.LowLevelWriting
             writer.MustNotBeNull(nameof(writer));
 
             writer.WritePrimitiveValue(Environment.NewLine);
-            _currentIndentationLevel++;
+            ++_currentIndentationLevel;
             WriteIndent(writer);
         }
 
@@ -67,7 +67,7 @@ namespace Light.Serialization.Json.LowLevelWriting
             writer.MustNotBeNull(nameof(writer));
 
             writer.WritePrimitiveValue(Environment.NewLine);
-            _currentIndentationLevel--;
+            --_currentIndentationLevel;
             WriteIndent(writer);
         }
 
@@ -81,14 +81,6 @@ namespace Light.Serialization.Json.LowLevelWriting
             writer.MustNotBeNull(nameof(writer));
 
             writer.WritePrimitiveValue(WhiteSpace);
-        }
-
-        /// <summary>
-        ///     Resets the indentation level to zero.
-        /// </summary>
-        public void ResetIndentationLevel()
-        {
-            _currentIndentationLevel = 0;
         }
 
         private void WriteIndent(IJsonWriter writer)

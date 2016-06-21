@@ -7,7 +7,7 @@ using Light.Serialization.Json.FrameworkExtensions;
 namespace Light.Serialization.Json.LowLevelWriting
 {
     /// <summary>
-    ///     Represents a JSON key normalizer that removes all special characters and makes the first character lowercase if necessary.
+    ///     Represents an <see cref="IJsonKeyNormalizer" /> that removes all special characters and makes the first character lowercase if necessary.
     /// </summary>
     public sealed class FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer : IJsonKeyNormalizer
     {
@@ -33,7 +33,7 @@ namespace Light.Serialization.Json.LowLevelWriting
 
             return key.MakeFirstCharacterLowercaseIfNecessary();
 
-            // This section is only used when a new string has to be created because the old one contains special or uppercase characters
+            // This section is only used when a new string has to be created because the old one contains special or uppercase characters.
             // Otherwise, the passed in string is returned (to minimize the creation of objects - your GC will thank you).
             NormalizeString:
             var numberOfSpecialCharacters = 0;

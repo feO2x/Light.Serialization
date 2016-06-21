@@ -7,7 +7,7 @@ using Light.Serialization.Json.BuilderHelpers;
 namespace Light.Serialization.Json.LowLevelWriting
 {
     /// <summary>
-    ///     Represents the factory that creates the default JSON Writer and manages all corresponding disposables.
+    ///     Represents the factory that creates <see cref="JsonWriter" /> instances.
     /// </summary>
     public sealed class JsonWriterFactory : IJsonWriterFactory, ISetWhitespaceFormatterCreationDelegate, ISetKeyNormalizer
     {
@@ -15,10 +15,10 @@ namespace Light.Serialization.Json.LowLevelWriting
         private IJsonKeyNormalizer _keyNormalizer;
 
         /// <summary>
-        ///     Creates a new instance of JsonWriterFactory.
+        ///     Creates a new instance of <see cref="JsonWriterFactory" />.
         /// </summary>
-        /// <param name="keyNormalizer">The key normalizer that will be injected into the JsonWriter.</param>
-        /// <param name="createWhitespaceFormatter">The whitespace formatter that will be injected into the JsonWriter.</param>
+        /// <param name="keyNormalizer">The key normalizer that will be injected into the <see cref="JsonWriter" />.</param>
+        /// <param name="createWhitespaceFormatter">The delegate that creates transient <see cref="IJsonWhitespaceFormatter" /> instances. These will be injected into newly created <see cref="JsonWriter" /> instances.</param>
         /// <exception cref="ArgumentNullException">Thrown when any parameter is null.</exception>
         public JsonWriterFactory(IJsonKeyNormalizer keyNormalizer, Func<IJsonWhitespaceFormatter> createWhitespaceFormatter)
         {
@@ -30,25 +30,36 @@ namespace Light.Serialization.Json.LowLevelWriting
         }
 
         /// <summary>
-        ///     Creates a new <see cref="JsonWriter" /> instance by encapsulating the specified string builder in a <see cref="StringWriter" /> instance.
+        ///     Creates a new <see cref="JsonWriter" /> instance by encapsulating the specified string builder in a <see cref="StringBuilderAdapter" /> instance.
         /// </summary>
-        /// <param name="builder">The builder that the JSON writer will write to.</param>
+        /// <param name="stringBuilder">The builder that the JSON writer will write to.</param>
         /// <returns>The new <see cref="JsonWriter" /> instance.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder" /> is null.</exception>
-        public IJsonWriter CreateFromStringBuilder(StringBuilder builder)
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="stringBuilder" /> is null.</exception>
+        public IJsonWriter CreateFromStringBuilder(StringBuilder stringBuilder)
         {
-            return new JsonWriter(new StringWriter(builder), _createWhitespaceFormatter(), _keyNormalizer);
+            return new JsonWriter(new StringBuilderAdapter(stringBuilder), _createWhitespaceFormatter(), _keyNormalizer);
         }
 
         /// <summary>
-        ///     Creates a new <see cref="JsonWriter" /> instance using the specified text writer.
+        ///     Creates a new <see cref="JsonWriter" /> instance by encapsulating the specified text writer with a <see cref="TextWriterAdapter" /> instance.
         /// </summary>
-        /// <param name="writer">The text writer that the JSON writer will use to write the document.</param>
+        /// <param name="writer">The text writer that the <see cref="JsonWriter" /> will use to write the document.</param>
         /// <returns>The new <see cref="JsonWriter" /> instance.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="writer" /> is null.</exception>
         public IJsonWriter CreateFromTextWriter(TextWriter writer)
         {
-            return new JsonWriter(writer, _createWhitespaceFormatter(), _keyNormalizer);
+            return new JsonWriter(new TextWriterAdapter(writer), _createWhitespaceFormatter(), _keyNormalizer);
+        }
+
+        /// <summary>
+        ///     Creates a new <see cref="JsonWriter" /> instance by encapsulating the specified binary writer with a <see cref="BinaryWriterAdapter" /> instance.
+        /// </summary>
+        /// <param name="writer">The binary writer that the <see cref="JsonWriter" /> will use to write the document.</param>
+        /// <returns>The new <see cref="JsonWriter" /> instance.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="writer" /> is null.</exception>
+        public IJsonWriter CreateFromBinaryWriter(BinaryWriter writer)
+        {
+            return new JsonWriter(new BinaryWriterAdapter(writer), _createWhitespaceFormatter(), _keyNormalizer);
         }
 
         /// <summary>
@@ -66,7 +77,7 @@ namespace Light.Serialization.Json.LowLevelWriting
         }
 
         /// <summary>
-        ///     Gets or Sets the delegate that creates an <see cref="IJsonWhitespaceFormatter" /> instance.
+        ///     Gets or sets the delegate that creates transient <see cref="IJsonWhitespaceFormatter" /> instances.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
         public Func<IJsonWhitespaceFormatter> CreateWhitespaceFormatter
