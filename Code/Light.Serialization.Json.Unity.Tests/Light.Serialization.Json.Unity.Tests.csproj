@@ -80,6 +80,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\BinaryJsonTests.cs">
+      <Link>DeserializationTests\BinaryJsonTests.cs</Link>
+    </Compile>
     <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\BooleanTests.cs">
       <Link>DeserializationTests\BooleanTests.cs</Link>
     </Compile>

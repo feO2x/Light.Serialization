@@ -3,6 +3,8 @@ using System.Text;
 using FluentAssertions;
 using Xunit;
 
+#pragma warning disable CS0436 // Type conflicts with imported type
+
 namespace Light.Serialization.Json.Tests.SerializationTests
 {
     public sealed class BinaryJsonTests : BaseJsonSerializerTest

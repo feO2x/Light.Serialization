@@ -5,7 +5,7 @@ using Light.Serialization.Json.FrameworkExtensions;
 namespace Light.Serialization.Json.LowLevelReading
 {
     /// <summary>
-    ///     Represents an <see cref="IJsonReader"/> that creates JSON tokens from an <see cref="ICharacterStream"/>.
+    ///     Represents an <see cref="IJsonReader" /> that creates JSON tokens from an <see cref="ICharacterStream" />.
     /// </summary>
     public sealed class JsonReader : IJsonReader
     {
@@ -65,6 +65,14 @@ namespace Light.Serialization.Json.LowLevelReading
             ReadToEndOfToken();
             var token = CreateToken(startIndex, JsonTokenType.Error);
             throw new JsonDocumentException($"The Json Reader cannot recognize the sequence {token} and therefore cannot tranlate it to a valid JsonToken", token);
+        }
+
+        /// <summary>
+        ///     Disposes of the internal stream.
+        /// </summary>
+        public void Dispose()
+        {
+            _stream.Dispose();
         }
 
         private void IgnoreWhiteSpace()

@@ -84,5 +84,10 @@ namespace Light.Serialization.Json.LowLevelReading
         ///     Gets the value indicating whether the current position has reached the end of the underlying buffer.
         /// </summary>
         public bool IsAtEndOfStream => _position == _buffer.Length;
+
+        /// <summary>
+        ///     Does nothing because no actual stream is referenced.
+        /// </summary>
+        public void Dispose() { }
     }
 }

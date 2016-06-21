@@ -6,7 +6,7 @@ namespace Light.Serialization.Json.LowLevelReading
     ///     Represents the abstraction of a character stream that the <see cref="JsonReader" />
     ///     can use to access the JSON document.
     /// </summary>
-    public interface ICharacterStream
+    public interface ICharacterStream : IDisposable
     {
         /// <summary>
         ///     Gets the internal buffer that is used by the character stream.

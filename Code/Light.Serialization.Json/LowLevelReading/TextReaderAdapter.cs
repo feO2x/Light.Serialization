@@ -105,6 +105,14 @@ namespace Light.Serialization.Json.LowLevelReading
             return true;
         }
 
+        /// <summary>
+        ///     Disposes of the text reader.
+        /// </summary>
+        public void Dispose()
+        {
+            _textReader.Dispose();
+        }
+
         private void ReadFromTextReaderIntoBuffer()
         {
             if (_pinnedIndex == -1)

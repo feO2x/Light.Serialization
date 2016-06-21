@@ -23,5 +23,13 @@ namespace Light.Serialization.Json.LowLevelReading
         /// <returns>The created JSON reader.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="textReader" /> is null.</exception>
         IJsonReader CreateFromTextReader(TextReader textReader);
+
+        /// <summary>
+        ///     Creates an <see cref="IJsonReader" /> instance from the specified binary reader that encapsulates the stream containing the JSON document.
+        /// </summary>
+        /// <param name="binaryReader">The binary reader encapsulating the stream that contains the JSON document.</param>
+        /// <returns>The created JSON reader.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="binaryReader" /> is null.</exception>
+        IJsonReader CreateFromBinaryReader(BinaryReader binaryReader);
     }
 }

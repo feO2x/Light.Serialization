@@ -92,6 +92,26 @@ namespace Light.Serialization.Json
             _jsonReader = _jsonReaderFactory.CreateFromTextReader(textReader);
             _objectReferencePreserver = new ObjectReferencePreserver();
             var returnValue = DeserializeDocument(requestedType);
+            _jsonReader.Dispose();
+            _jsonReader = null;
+            _objectReferencePreserver = null;
+            return returnValue;
+        }
+
+        public T Deserialize<T>(BinaryReader binaryReader)
+        {
+            return (T) Deserialize(binaryReader, typeof(T));
+        }
+
+        public object Deserialize(BinaryReader binaryReader, Type requestedType)
+        {
+            binaryReader.MustNotBeNull(nameof(binaryReader));
+            requestedType.MustNotBeNull(nameof(requestedType));
+
+            _jsonReader = _jsonReaderFactory.CreateFromBinaryReader(binaryReader);
+            _objectReferencePreserver = new ObjectReferencePreserver();
+            var returnValue = DeserializeDocument(requestedType);
+            _jsonReader.Dispose();
             _jsonReader = null;
             _objectReferencePreserver = null;
             return returnValue;

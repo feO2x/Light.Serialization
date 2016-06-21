@@ -69,6 +69,7 @@
   <ItemGroup>
     <Compile Include="BaseJsonDeserializerTest.cs" />
     <Compile Include="BaseJsonSerializerTest.cs" />
+    <Compile Include="DeserializationTests\BinaryJsonTests.cs" />
     <Compile Include="DeserializationTests\BooleanTests.cs" />
     <Compile Include="DeserializationTests\CharacterTests.cs" />
     <Compile Include="DeserializationTests\ComplexObjectTests.cs" />

@@ -63,6 +63,7 @@
     <Compile Include="BuilderHelpers\IGetSingletonInstance.cs" />
     <Compile Include="ComplexTypeConstruction\InjectableValue.cs" />
     <Compile Include="FrameworkExtensions\EnumerableExtensions.cs" />
+    <Compile Include="LowLevelReading\BinaryReaderAdapter.cs" />
     <Compile Include="LowLevelReading\ICharacterStream.cs" />
     <Compile Include="LowLevelReading\StringStream.cs" />
     <Compile Include="LowLevelReading\TextReaderAdapter.cs" />

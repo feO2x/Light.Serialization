@@ -12,7 +12,7 @@ namespace Light.Serialization.Json.LowLevelReading
         private int _bufferSizeForStreaming = TextReaderAdapter.DefaultBufferSize;
 
         /// <summary>
-        ///     Gets or sets the size that is used for the character buffer when the JSON document is a stream.
+        ///     Gets or sets the size that is used for the character buffer when the JSON document is a text stream.
         ///     Defaults to 2048. Must be greater than or equal to 32.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="value" /> is less than 32.</exception>
@@ -37,7 +37,7 @@ namespace Light.Serialization.Json.LowLevelReading
         }
 
         /// <summary>
-        ///     Creates a JSON reader instance from the specified JSON stream.
+        ///     Creates a <see cref="JsonReader" /> instance from the specified text reader encapsulating the JSON stream.
         /// </summary>
         /// <param name="textReader">The text reader encapsulating the stream that contains the JSON document.</param>
         /// <returns>The created JSON reader.</returns>
@@ -45,6 +45,17 @@ namespace Light.Serialization.Json.LowLevelReading
         public IJsonReader CreateFromTextReader(TextReader textReader)
         {
             return new JsonReader(new TextReaderAdapter(textReader, _bufferSizeForStreaming));
+        }
+
+        /// <summary>
+        ///     Creates a <see cref="JsonReader" /> instance from the specified binary reader encapsulating the JSON stream.
+        /// </summary>
+        /// <param name="binaryReader">The binary reader encapsulating the JSON stream.</param>
+        /// <returns>The created JSON reader.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="binaryReader" /> is null.</exception>
+        public IJsonReader CreateFromBinaryReader(BinaryReader binaryReader)
+        {
+            return new JsonReader(new BinaryReaderAdapter(binaryReader));
         }
     }
 }
