@@ -5,18 +5,18 @@ using Light.Serialization.Json.FrameworkExtensions;
 namespace Light.Serialization.Json.PrimitiveTypeFormatters
 {
     /// <summary>
-    ///     Represents a Primitive Type Formatter that serializes DateTimeOffset instances to JSON strings.
-    ///     The format of the date time corresponds to ISO 8601 (https://en.wikipedia.org/wiki/ISO_8601).
+    ///     Represents an <see cref="IPrimitiveTypeFormatter" /> that serializes .NET <see cref="DateTimeOffset" /> instances to JSON strings.
+    ///     The format of the date time values corresponds to ISO 8601 (https://en.wikipedia.org/wiki/ISO_8601).
     /// </summary>
     public sealed class DateTimeOffsetFormatter : BasePrimitiveTypeFormatter<DateTimeOffset>, IPrimitiveTypeFormatter
     {
         /// <summary>
-        ///     Creates a new intance of DateTimeOffsetFormatter.
+        ///     Creates a new intance of <see cref="DateTimeOffsetFormatter"/>.
         /// </summary>
         public DateTimeOffsetFormatter() : base(false) { }
 
         /// <summary>
-        ///     Serializes the specified date time offset value to a JSON string that conforms to ISO 8601.
+        ///     Serializes the specified <see cref="DateTimeOffset"/> value to a JSON string that conforms to ISO 8601.
         /// </summary>
         /// <param name="primitiveValue">The date time offset that will be serialized.</param>
         /// <returns>The JSON string conforming to ISO 8601.</returns>
@@ -27,7 +27,7 @@ namespace Light.Serialization.Json.PrimitiveTypeFormatters
 
             // Append the date in any case
             var stringBuilder = new StringBuilder(23);
-            stringBuilder.AppendFormat("\"{0:D4}-{1:D2}-{2:D2}", dateTimeOffset.Year, dateTimeOffset.Month, dateTimeOffset.Day);
+            stringBuilder.Append($"\"{dateTimeOffset.Year:D4}-{dateTimeOffset.Month:D2}-{dateTimeOffset.Day:D2}");
 
             bool isHourZero = dateTimeOffset.Hour == 0,
                  isMinuteZero = dateTimeOffset.Minute == 0,

@@ -4,10 +4,10 @@ using Light.Serialization.Json.FrameworkExtensions;
 
 namespace Light.Serialization.Json.PrimitiveTypeFormatters
 {
-    // Many thanks to JSON.NET (https://github.com/JamesNK/Newtonsoft.Json). I would have never figured out how to do this without it.
+    // Many thanks to JSON.NET (https://github.com/JamesNK/Newtonsoft.Json). I would have never figured out how to do this properly without it.
 
     /// <summary>
-    ///     Represents a Primitive Type Formatter that serializes double values to JSON numbers.
+    ///     Represents an <see cref="IPrimitiveTypeFormatter"/> that serializes .NET <see cref="double"/> values to JSON numbers.
     /// </summary>
     public sealed class DoubleFormatter : BasePrimitiveTypeFormatter<double>, IPrimitiveTypeFormatter
     {
@@ -17,7 +17,7 @@ namespace Light.Serialization.Json.PrimitiveTypeFormatters
         public DoubleFormatter() : base(false) { }
 
         /// <summary>
-        ///     Serializes the specified double value to a JSON number.
+        ///     Serializes the specified <see cref="double"/> value to a JSON number.
         /// </summary>
         /// <param name="primitiveValue">The double value to be serialized.</param>
         /// <returns>The JSON number as a string.</returns>

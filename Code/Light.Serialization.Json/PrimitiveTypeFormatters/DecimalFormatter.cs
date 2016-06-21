@@ -6,7 +6,7 @@ namespace Light.Serialization.Json.PrimitiveTypeFormatters
     // Many thanks to JSON.NET (https://github.com/JamesNK/Newtonsoft.Json). I would have never figured out how to do this without it.
 
     /// <summary>
-    ///     Represents a Primitive Type Formatter that serializes decimal values to JSON numbers.
+    ///     Represents <see cref="IPrimitiveTypeFormatter" /> that serializes .NET <see cref="decimal" /> values to JSON numbers.
     /// </summary>
     public sealed class DecimalFormatter : BasePrimitiveTypeFormatter<decimal>, IPrimitiveTypeFormatter
     {
@@ -16,7 +16,7 @@ namespace Light.Serialization.Json.PrimitiveTypeFormatters
         public DecimalFormatter() : base(false) { }
 
         /// <summary>
-        ///     Serializes the specified decimal value to a JSON number.
+        ///     Serializes the specified <see cref="decimal" /> value to a JSON number.
         /// </summary>
         /// <param name="primitiveValue">The decimal to be serialized.</param>
         /// <returns>The JSON number as a string.</returns>

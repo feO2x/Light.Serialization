@@ -6,7 +6,7 @@ using Light.Serialization.Json.FrameworkExtensions;
 namespace Light.Serialization.Json.PrimitiveTypeFormatters
 {
     /// <summary>
-    ///     Represents a Primitive Type Formatter that serializes .NET characters to JSON strings.
+    ///     Represents an <see cref="IPrimitiveTypeFormatter" /> that serializes .NET <see cref="char"/> instances to JSON strings.
     /// </summary>
     public sealed class CharFormatter : BasePrimitiveTypeFormatter<char>, IPrimitiveTypeFormatter, ISetCharacterEscaper
     {
@@ -23,6 +23,22 @@ namespace Light.Serialization.Json.PrimitiveTypeFormatters
         }
 
         /// <summary>
+        ///     Serializes the specified .NET character to a JSON string.
+        /// </summary>
+        /// <param name="primitiveValue">The character to be serialized.</param>
+        /// <returns>The JSON string containing the character.</returns>
+        /// <exception cref="InvalidCastException">Thrown when <paramref name="primitiveValue" /> cannot be casted to a character.</exception>
+        public string FormatPrimitiveType(object primitiveValue)
+        {
+            var value = (char) primitiveValue;
+
+            var characterBuffer = _characterEscaper.Escape(value);
+            var jsonRepresenation = characterBuffer != null ? new string(characterBuffer) : value.ToString();
+
+            return jsonRepresenation.SurroundWithQuotationMarks();
+        }
+
+        /// <summary>
         ///     Gets or sets the object that is used to escape special characters.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
@@ -34,21 +50,6 @@ namespace Light.Serialization.Json.PrimitiveTypeFormatters
                 value.MustNotBeNull(nameof(value));
                 _characterEscaper = value;
             }
-        }
-
-        /// <summary>
-        ///     Serializes the specified .NET character to a JSON string.
-        /// </summary>
-        /// <param name="primitiveValue">The character to be serialized.</param>
-        /// <returns>The JSON string containing the character.</returns>
-        public string FormatPrimitiveType(object primitiveValue)
-        {
-            var value = (char) primitiveValue;
-
-            var characterBuffer = _characterEscaper.Escape(value);
-            var jsonRepresenation = characterBuffer != null ? new string(characterBuffer) : value.ToString();
-
-            return jsonRepresenation.SurroundWithQuotationMarks();
         }
     }
 }

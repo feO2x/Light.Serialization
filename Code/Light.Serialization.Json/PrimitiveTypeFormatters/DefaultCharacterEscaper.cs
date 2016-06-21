@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Light.GuardClauses;
 
@@ -6,7 +7,7 @@ namespace Light.Serialization.Json.PrimitiveTypeFormatters
     // Many thanks to JSON.NET (https://github.com/JamesNK/Newtonsoft.Json). I would have never figured out this as fast as I could without it.
 
     /// <summary>
-    ///     Represents a Character Escaper that escapes .NET characters if
+    ///     Represents <see cref="ICharacterEscaper" /> that escapes .NET characters if
     ///     they are a quotation mark '"', a back-slash "\", a line separator "\u2028", a paragraph separator "\u2029",
     ///     or belong to the Unicode C0 or C1 block. This default list of characters can be modified during construction.
     /// </summary>
@@ -16,7 +17,7 @@ namespace Light.Serialization.Json.PrimitiveTypeFormatters
         private readonly List<char> _escapedCharacters;
 
         /// <summary>
-        ///     Creates a new instance of DefaultCharacterEscaper with the default list of escaped characters.
+        ///     Creates a new instance of <see cref="DefaultCharacterEscaper" /> with the default list of escaped characters.
         /// </summary>
         public DefaultCharacterEscaper()
         {
@@ -24,9 +25,10 @@ namespace Light.Serialization.Json.PrimitiveTypeFormatters
         }
 
         /// <summary>
-        ///     Creates a new instance of DefaultCharacterEscaper.
+        ///     Creates a new instance of <see cref="DefaultCharacterEscaper" />.
         /// </summary>
         /// <param name="escapedCharacters">The list of .NET characters that should be escaped. You can use <see cref="CreateDefaultEscapedCharacters" /> to create the default list.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="escapedCharacters" /> is null.</exception>
         public DefaultCharacterEscaper(List<char> escapedCharacters)
         {
             escapedCharacters.MustNotBeNull(nameof(escapedCharacters));

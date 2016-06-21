@@ -7,11 +7,10 @@ using Light.Serialization.Json.FrameworkExtensions;
 namespace Light.Serialization.Json.PrimitiveTypeFormatters
 {
     /// <summary>
-    ///     Represents a Primitive Type Formatter that serializes .NET strings to JSON strings.
+    ///     Represents an <see cref="IPrimitiveTypeFormatter" /> that serializes .NET <see cref="string" /> instances to JSON strings.
     /// </summary>
     public sealed class StringFormatter : BasePrimitiveTypeFormatter<string>, IPrimitiveTypeFormatter, ISetCharacterEscaper
     {
-        private static double _stringBuilderCapacityCoefficient = 2.0;
         private ICharacterEscaper _characterEscaper;
 
         /// <summary>
@@ -21,43 +20,13 @@ namespace Light.Serialization.Json.PrimitiveTypeFormatters
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="characterEscaper" /> is null.</exception>
         public StringFormatter(ICharacterEscaper characterEscaper) : base(false)
         {
+            characterEscaper.MustNotBeNull(nameof(characterEscaper));
+
             CharacterEscaper = characterEscaper;
         }
 
         /// <summary>
-        ///     Gets or sets the object that is used to escape special characters.
-        /// </summary>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
-        public ICharacterEscaper CharacterEscaper
-        {
-            get { return _characterEscaper; }
-            set
-            {
-                value.MustNotBeNull(nameof(value));
-                _characterEscaper = value;
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the coefficient value that is used to calculate the initial capacity of the string builder that is used when
-        ///     the specified string for <see cref="FormatPrimitiveType" /> contains special characters that have to be escaped.
-        ///     The formula to calculate the string builder capacity is: capacity = (int) (string.Lenght * StringBuilderCapacityCoefficient);
-        ///     The coefficient defaults to 2.0.
-        /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="value" /> is less than 1.0.</exception>
-        public static double StringBuilderCapacityCoefficient
-        {
-            get { return _stringBuilderCapacityCoefficient; }
-            set
-            {
-                value.MustNotBeLessThan(1.0,
-                                        message: "The coefficient must at least be 1.0.");
-                _stringBuilderCapacityCoefficient = value;
-            }
-        }
-
-        /// <summary>
-        ///     Serializes the specified .NET string to a JSON string. Special characters are escaped.
+        ///     Serializes the specified .NET <see cref="string" /> to a JSON string. Special characters are escaped.
         /// </summary>
         /// <param name="primitiveValue">The string to be serialized.</param>
         /// <returns>The JSON string.</returns>
@@ -77,7 +46,7 @@ namespace Light.Serialization.Json.PrimitiveTypeFormatters
             return @string.SurroundWithQuotationMarks();
 
             EscapeStringContent:
-            var stringBuilder = new StringBuilder((int) (@string.Length * _stringBuilderCapacityCoefficient));
+            var stringBuilder = new StringBuilder();
             stringBuilder.Append('"');
             stringBuilder.Append(@string.Substring(0, i));
             stringBuilder.Append(characterBuffer);
@@ -95,6 +64,20 @@ namespace Light.Serialization.Json.PrimitiveTypeFormatters
                 stringBuilder.Append(characterBuffer);
             }
             return stringBuilder.CompleteJsonStringWithQuotationMark();
+        }
+
+        /// <summary>
+        ///     Gets or sets the object that is used to escape special characters.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
+        public ICharacterEscaper CharacterEscaper
+        {
+            get { return _characterEscaper; }
+            set
+            {
+                value.MustNotBeNull(nameof(value));
+                _characterEscaper = value;
+            }
         }
     }
 }
