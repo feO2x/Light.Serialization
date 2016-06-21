@@ -5,6 +5,7 @@ namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
     ///     Represents a structure encompassing all information possible for Object Reference Preservation
+    ///     when the metadata section of a complex JSON object or JSON array is parsed.
     /// </summary>
     public struct ReferencePreservationInfo
     {
@@ -42,8 +43,8 @@ namespace Light.Serialization.Json.ObjectMetadata
         }
 
         /// <summary>
-        ///     Creates a new instance of ReferencePreservationInfo from a reference to another object that already has been deserialized.
-        ///     Usually, you want to use this info in Metadata Parsers when you hit a $ref metadata symbol.
+        ///     Creates a new instance of <see cref="ReferencePreservationInfo" /> from a reference to another object that already has been deserialized.
+        ///     Usually, you want to use this info when you hit a $ref metadata symbol.
         /// </summary>
         /// <param name="refId">The reference id to the other object.</param>
         /// <param name="deserializedObject">The reference to the already deseriailzed object.</param>
@@ -58,8 +59,9 @@ namespace Light.Serialization.Json.ObjectMetadata
         }
 
         /// <summary>
-        ///     Creates a new instance of ReferencePreservationInfo from a reference to another object that has not been fully deserialized yet.
-        ///     Usually, you want to use this info in a Metadata Parser when a complex JSON object has a reference to its parent complex JSON object.
+        ///     Creates a new instance of <see cref="ReferencePreservationInfo" /> from a reference to another object that has not been fully deserialized yet.
+        ///     Usually, you want to use this info when a complex JSON object has a reference to another object in the JSON document that has not been
+        ///     fully deserialized yet.
         /// </summary>
         /// <param name="refId">The reference id to the other object that is not fully deserialized yet.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="refId" /> is less than zero.</exception>
@@ -71,7 +73,8 @@ namespace Light.Serialization.Json.ObjectMetadata
         }
 
         /// <summary>
-        ///     Creates a new instance of ReferencePreservationInfo for an object that has not been deserialized before.
+        ///     Creates a new instance of <see cref="ReferencePreservationInfo" /> for an object that has not been deserialized before.
+        ///     Usually, you want to use this info when you hit the $id symbol in a metadata section.
         /// </summary>
         /// <param name="id">The id of the object.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="id" /> is less than zero.</exception>
@@ -83,7 +86,7 @@ namespace Light.Serialization.Json.ObjectMetadata
         }
 
         /// <summary>
-        ///     Creates a new instance of ReferencePreservationInfo for a JSON object that contains no Object Reference Preservation metadata.
+        ///     Creates a new instance of <see cref="ReferencePreservationInfo" /> for a JSON object that contains no Object Reference Preservation metadata.
         /// </summary>
         public static ReferencePreservationInfo Empty => new ReferencePreservationInfo(-1, null, false);
     }

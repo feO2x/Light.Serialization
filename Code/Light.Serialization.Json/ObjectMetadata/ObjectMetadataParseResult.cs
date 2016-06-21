@@ -4,7 +4,7 @@ using Light.GuardClauses;
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents the information that is necessary to create a dictionary, a complex .NET object
+    ///     Represents the information that is necessary to create a dictionary or a complex .NET object
     ///     from the metadata section of a complex JSON object.
     /// </summary>
     public struct ObjectMetadataParseResult

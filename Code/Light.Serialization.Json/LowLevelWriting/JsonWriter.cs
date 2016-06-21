@@ -121,7 +121,7 @@ namespace Light.Serialization.Json.LowLevelWriting
         /// </summary>
         /// <param name="string">The string to be written to the JSON document.</param>
         /// <returns>The JSON writer for method chaining.</returns>
-        public IJsonWriter WritePrimitiveValue(string @string)
+        public IJsonWriter WritePrimitive(string @string)
         {
             _streamWriter.Write(@string);
             return this;

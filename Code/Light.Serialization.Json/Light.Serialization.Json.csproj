@@ -144,7 +144,7 @@
     <Compile Include="BuilderHelpers\ISetObjectReferencePreservationStatus.cs" />
     <Compile Include="BuilderHelpers\ISetTypeInfoSerializationStatus.cs" />
     <Compile Include="ObjectMetadata\ITypeToNameMapping.cs" />
-    <Compile Include="ObjectMetadata\ListExtensions.cs" />
+    <Compile Include="FrameworkExtensions\ListExtensions.cs" />
     <Compile Include="ObjectMetadata\ObjectReferencePreserver.cs" />
     <Compile Include="ObjectMetadata\ReferencePreservationInfo.cs" />
     <Compile Include="ObjectMetadata\TypeNameToJsonNameScanner.cs" />

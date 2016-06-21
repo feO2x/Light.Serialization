@@ -39,7 +39,7 @@ namespace Light.Serialization.Json.LowLevelWriting
         {
             writer.MustNotBeNull(nameof(writer));
 
-            writer.WritePrimitiveValue(Environment.NewLine);
+            writer.WritePrimitive(Environment.NewLine);
             ++_currentIndentationLevel;
             WriteIndent(writer);
         }
@@ -53,7 +53,7 @@ namespace Light.Serialization.Json.LowLevelWriting
         {
             writer.MustNotBeNull(nameof(writer));
 
-            writer.WritePrimitiveValue(Environment.NewLine);
+            writer.WritePrimitive(Environment.NewLine);
             WriteIndent(writer);
         }
 
@@ -66,7 +66,7 @@ namespace Light.Serialization.Json.LowLevelWriting
         {
             writer.MustNotBeNull(nameof(writer));
 
-            writer.WritePrimitiveValue(Environment.NewLine);
+            writer.WritePrimitive(Environment.NewLine);
             --_currentIndentationLevel;
             WriteIndent(writer);
         }
@@ -80,14 +80,14 @@ namespace Light.Serialization.Json.LowLevelWriting
         {
             writer.MustNotBeNull(nameof(writer));
 
-            writer.WritePrimitiveValue(WhiteSpace);
+            writer.WritePrimitive(WhiteSpace);
         }
 
         private void WriteIndent(IJsonWriter writer)
         {
             for (var i = 0; i < _currentIndentationLevel; i++)
             {
-                writer.WritePrimitiveValue(IdentCharacters);
+                writer.WritePrimitive(IdentCharacters);
             }
         }
 

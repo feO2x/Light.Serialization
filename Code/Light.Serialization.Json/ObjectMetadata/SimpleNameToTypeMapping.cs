@@ -5,7 +5,7 @@ using Light.GuardClauses.Exceptions;
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents a bi-directional mapping from .NET types to JSON names that uses the Assembly Qualified Name.
+    ///     Represents a bi-directional mapping from .NET types to JSON names that uses Assembly Qualified Names.
     /// </summary>
     public sealed class SimpleNameToTypeMapping : INameToTypeMapping, ITypeToNameMapping
     {

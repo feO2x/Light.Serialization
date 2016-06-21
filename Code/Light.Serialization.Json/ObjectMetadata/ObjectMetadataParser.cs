@@ -6,12 +6,13 @@ using Light.Serialization.Json.TokenParsers;
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents an object that parses the metadata section of complex JSON objects.
+    ///     Represents the default implementation of <see cref="IObjectMetadataParser" />.
+    ///     Additionaly, this class is able to parse types, which is needed in the <see cref="TypeAndTypeInfoParser" />.
     /// </summary>
     public sealed class ObjectMetadataParser : BaseMetadataParser, ITypeParser
     {
         /// <summary>
-        ///     Creates a new instance of <see cref="ObjectMetadataParser"/>.
+        ///     Creates a new instance of <see cref="ObjectMetadataParser" />.
         /// </summary>
         /// <param name="nameToTypeMapping">The object that can map JSON type names to .NET types.</param>
         /// <exception cref="ArgumentNullException">Thrown when <see cref="nameToTypeMapping" /> is null.</exception>

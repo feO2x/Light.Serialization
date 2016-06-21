@@ -5,7 +5,7 @@ using Light.GuardClauses.Exceptions;
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents the information that is necessary to create .NET collection instance
+    ///     Represents the information that is necessary to create .NET collection instances
     ///     from the metadata section of a JSON array.
     /// </summary>
     public struct ArrayMetadataParseResult
@@ -26,7 +26,7 @@ namespace Light.Serialization.Json.ObjectMetadata
         public readonly int[] ArrayLenghts;
 
         /// <summary>
-        ///     Gets the value indicating whether this parse result describes an .NET array type.
+        ///     Gets the value indicating whether this parse result describes a .NET array type.
         /// </summary>
         public bool IsDescribingArrayType => ArrayLenghts != null || CollectionTypeToConstruct.IsArray;
 

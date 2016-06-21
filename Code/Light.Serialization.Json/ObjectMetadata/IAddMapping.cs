@@ -4,7 +4,7 @@ using Light.GuardClauses.Exceptions;
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents the abstraction to add a bidirectional one-to-one mapping from JSON name to .NET type.
+    ///     Represents the abstraction of adding a bidirectional one-to-one mapping from JSON name to .NET type.
     /// </summary>
     public interface IAddMapping
     {

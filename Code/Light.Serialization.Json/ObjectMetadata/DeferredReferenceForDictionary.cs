@@ -4,7 +4,7 @@ using Light.GuardClauses;
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents a deferred reference that inserts a value in a .NET dictionary with a specified key.
+    ///     Represents an <see cref="IDeferredReference"/> that inserts a value in a .NET dictionary with a specified key.
     /// </summary>
     public sealed class DeferredReferenceForDictionary : IDeferredReference
     {

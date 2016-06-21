@@ -43,7 +43,7 @@ namespace Light.Serialization.Json.WriterInstructors
         {
             var typeFormatter = _primitiveTypeFormattersMapping[serializationContext.ActualType];
             var stringRepresentation = typeFormatter.FormatPrimitiveType(serializationContext.ObjectToBeSerialized);
-            serializationContext.Writer.WritePrimitiveValue(stringRepresentation);
+            serializationContext.Writer.WritePrimitive(stringRepresentation);
         }
 
         /// <summary>

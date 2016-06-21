@@ -37,7 +37,7 @@ namespace Light.Serialization.Json.LowLevelWriting
         /// </summary>
         /// <param name="key">The key to be written.</param>
         /// <param name="shouldNormalizeKey">
-        ///     The boolean indicating whether the specified key should be normalized to the default JSON naming style (lowerCamelCase).
+        ///     The value indicating whether the specified key should be normalized to the default JSON naming style (lowerCamelCase).
         ///     This option is true by default. Don't use it for key types like GUIDs where normalization would change the value.
         /// </param>
         /// <returns>The JSON writer for method chaining.</returns>
@@ -57,10 +57,10 @@ namespace Light.Serialization.Json.LowLevelWriting
         /// </summary>
         /// <param name="string">The string to be written to the JSON document.</param>
         /// <returns>The JSON writer for method chaining.</returns>
-        IJsonWriter WritePrimitiveValue(string @string);
+        IJsonWriter WritePrimitive(string @string);
 
         /// <summary>
-        ///     Writes the specified string as a JSON string. It is ensured the the JSON string in the document will be surrounded by quotation marks.
+        ///     Writes the specified string as a JSON string. It is ensured that this JSON string is surrounded by quotation marks.
         /// </summary>
         /// <param name="string">The string to be written.</param>
         /// <returns>The JSON writer for method chaining.</returns>

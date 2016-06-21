@@ -4,7 +4,7 @@ using Light.Serialization.Json.WriterInstructors;
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents a metadata instructor that writes Object IDs and collection type information as the first items of a JSON array.
+    ///     Represents an <see cref="IMetadataInstructor"/> that writes Object IDs and collection type information as the first items of a JSON array.
     /// </summary>
     public sealed class ArrayMetadataInstructor : BaseMetadataInstructor
     {
@@ -20,7 +20,7 @@ namespace Light.Serialization.Json.ObjectMetadata
             serializationContext.Writer
                                 .WriteString(_referenceSymbol)
                                 .WriteDelimiter()
-                                .WritePrimitiveValue(referenceId.ToString());
+                                .WritePrimitive(referenceId.ToString());
         }
 
         protected override void SerializeObjectId(int documentIdForObject, JsonSerializationContext serializationContext)
@@ -28,7 +28,7 @@ namespace Light.Serialization.Json.ObjectMetadata
             serializationContext.Writer
                                 .WriteString(_idSymbol)
                                 .WriteDelimiter()
-                                .WritePrimitiveValue(documentIdForObject.ToString())
+                                .WritePrimitive(documentIdForObject.ToString())
                                 .WriteDelimiter();
         }
 
@@ -67,14 +67,14 @@ namespace Light.Serialization.Json.ObjectMetadata
             {
                 writer.WriteDelimiter()
                       .WriteKey(ArrayRankSymbol, false)
-                      .WritePrimitiveValue(arrayRank.ToString())
+                      .WritePrimitive(arrayRank.ToString())
                       .WriteDelimiter()
                       .WriteKey(_arrayLengthSymbol, false)
                       .BeginArray();
 
                 for (var i = 0; i < arrayRank; i++)
                 {
-                    writer.WritePrimitiveValue(array.GetLength(i).ToString());
+                    writer.WritePrimitive(array.GetLength(i).ToString());
                     if (i < arrayRank - 1)
                         writer.WriteDelimiter();
                     else
@@ -88,7 +88,7 @@ namespace Light.Serialization.Json.ObjectMetadata
             {
                 writer.WriteDelimiter()
                       .WriteKey(_arrayLengthSymbol, false)
-                      .WritePrimitiveValue(array.Length.ToString())
+                      .WritePrimitive(array.Length.ToString())
                       .EndObject();
             }
         }

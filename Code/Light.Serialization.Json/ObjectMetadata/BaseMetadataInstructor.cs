@@ -1,14 +1,14 @@
 using System;
 using Light.GuardClauses;
 using Light.Serialization.Json.BuilderHelpers;
+using Light.Serialization.Json.FrameworkExtensions;
 using Light.Serialization.Json.LowLevelWriting;
 using Light.Serialization.Json.WriterInstructors;
 
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents the base class for metadata instructors that handle object reference preservation and
-    ///     type information.
+    ///     Represents the base class for metadata instructors that handle object reference preservation and type information.
     /// </summary>
     public abstract class BaseMetadataInstructor : BaseMetadata, IMetadataInstructor, ISetObjectReferencePreservationStatus, ISetTypeInfoSerializationStatus, ISetTypeToNameMapping
     {
@@ -179,7 +179,7 @@ namespace Light.Serialization.Json.ObjectMetadata
             {
                 writer.WriteDelimiter()
                       .WriteKey(ArrayRankSymbol, false)
-                      .WritePrimitiveValue(arrayType.GetArrayRank().ToString());
+                      .WritePrimitive(arrayType.GetArrayRank().ToString());
             }
 
             writer.EndObject();

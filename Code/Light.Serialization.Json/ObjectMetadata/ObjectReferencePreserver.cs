@@ -5,7 +5,7 @@ using Light.GuardClauses;
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents the object that is used for object reference preservation and setting deferred references.
+    ///     Represents the object that is used for Object Reference Preservation and setting deferred references.
     /// </summary>
     public sealed class ObjectReferencePreserver
     {

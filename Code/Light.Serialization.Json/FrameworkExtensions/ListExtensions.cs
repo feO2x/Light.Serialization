@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Light.GuardClauses;
 
-namespace Light.Serialization.Json.ObjectMetadata
+namespace Light.Serialization.Json.FrameworkExtensions
 {
     /// <summary>
     ///     Contains an extension method for checking reference equality for a list of objects.
