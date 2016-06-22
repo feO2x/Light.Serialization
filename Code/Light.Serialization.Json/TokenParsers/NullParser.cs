@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using Light.GuardClauses;
 using Light.Serialization.Json.LowLevelReading;
 
@@ -21,7 +20,7 @@ namespace Light.Serialization.Json.TokenParsers
         public bool IsSuitableFor(JsonDeserializationContext context)
         {
             var typeInfo = context.RequestedType.GetTypeInfo();
-            return context.Token.JsonType == JsonTokenType.Null && (typeInfo.IsClass || typeInfo.IsInterface || IsNullableType(typeInfo));
+            return context.Token.JsonType == JsonTokenType.Null && (typeInfo.IsClass || typeInfo.IsInterface);
         }
 
         /// <summary>
@@ -33,14 +32,6 @@ namespace Light.Serialization.Json.TokenParsers
             context.Token.JsonType.MustBe(JsonTokenType.Null);
 
             return ParseResult.FromNull();
-        }
-
-        private static bool IsNullableType(TypeInfo typeInfo)
-        {
-            if (typeInfo.IsValueType == false && typeInfo.IsGenericType == false && typeInfo.IsGenericTypeDefinition)
-                return false;
-
-            return typeInfo.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
     }
 }

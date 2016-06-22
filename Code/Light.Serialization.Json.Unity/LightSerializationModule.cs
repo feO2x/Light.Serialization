@@ -159,6 +159,7 @@ namespace Light.Serialization.Json.Unity
                 .RegisterTypeWithTypeName<IJsonTokenParser, StringParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonTokenParser, GuidParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonStringToPrimitiveParser, GuidParser>(new ContainerControlledLifetimeManager())
+                .RegisterTypeWithTypeName<IJsonTokenParser, NullableParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonTokenParser, JsonStringInheritanceParser>()
                 .RegisterTypeWithTypeName<IJsonTokenParser, TypeAndTypeInfoParser>(new ContainerControlledLifetimeManager())
                 .RegisterTypeWithTypeName<IJsonTokenParser, CollectionParser>(new ContainerControlledLifetimeManager())

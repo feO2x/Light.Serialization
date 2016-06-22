@@ -44,6 +44,7 @@ namespace Light.Serialization.Json.BuilderHelpers
             collection.Add(new SingletonFactory(new EnumParser()));
             collection.Add(new SingletonFactory(new StringParser()));
             collection.Add(new SingletonFactory(new GuidParser()));
+            collection.Add(new SingletonFactory(new NullableParser()));
             collection.Add(new JsonStringInheritanceParserFactory(collection.Select(f => f.Create()).OfType<IJsonStringToPrimitiveParser>().ToList()));
             collection.Add(new SingletonFactory(new TypeAndTypeInfoParser(complexObjectMetadataParser)));
             collection.Add(new SingletonFactory(new CollectionParser(metaFactory, arrayMetadataParser)));

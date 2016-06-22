@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Light.GuardClauses;
 using Light.GuardClauses.Exceptions;
 using Light.Serialization.Json.LowLevelReading;
@@ -14,6 +15,7 @@ namespace Light.Serialization.Json.TokenParsers
     /// </summary>
     public sealed class JsonStringInheritanceParser : IJsonTokenParser
     {
+        private readonly List<Type> _stringInterfaces = typeof(string).GetTypeInfo().ImplementedInterfaces.ToList();
         private readonly IReadOnlyList<IJsonStringToPrimitiveParser> _stringToPrimitiveParsers;
         private object _lastParsedValue;
 
@@ -60,9 +62,7 @@ namespace Light.Serialization.Json.TokenParsers
             }
 
             // If the string could not be interpreted, then use the parsed string if possible
-            if (context.RequestedType == typeof(ValueType) ||
-                context.RequestedType == typeof(Enum) ||
-                context.RequestedType == typeof(Delegate))
+            if (context.RequestedType != typeof(object) && _stringInterfaces.Contains(context.RequestedType) == false)
                 return false;
 
             _lastParsedValue = tokenAsString;

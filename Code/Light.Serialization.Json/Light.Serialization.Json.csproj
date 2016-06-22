@@ -173,6 +173,7 @@
     <Compile Include="TokenParsers\GuidParser.cs" />
     <Compile Include="TokenParsers\IJsonStringToPrimitiveParser.cs" />
     <Compile Include="TokenParsers\IJsonTokenParser.cs" />
+    <Compile Include="TokenParsers\NullableParser.cs" />
     <Compile Include="TokenParsers\NullParser.cs" />
     <Compile Include="TokenParsers\ParseResult.cs" />
     <Compile Include="TokenParsers\SignedIntegerParser.cs" />
