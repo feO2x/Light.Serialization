@@ -18,13 +18,13 @@ namespace Light.Serialization.Json.TokenParsers
         /// </summary>
         public readonly bool IsDeferredReference;
 
-        private readonly int? _refId;
+        private readonly int? _referenceId;
 
-        private ParseResult(object parsedValue, int? refId)
+        private ParseResult(object parsedValue, int? referenceId)
         {
             ParsedValue = parsedValue;
-            _refId = refId;
-            IsDeferredReference = _refId.HasValue;
+            _referenceId = referenceId;
+            IsDeferredReference = _referenceId.HasValue;
         }
 
         /// <summary>
@@ -35,15 +35,15 @@ namespace Light.Serialization.Json.TokenParsers
         {
             get
             {
-                _refId.HasValue.MustNotBe(false, exception: () => new InvalidOperationException("Cannot get the ID when the reference is not deferred."));
+                _referenceId.MustHaveValue(exception: () => new InvalidOperationException("Cannot get the ID when the reference is not deferred."));
 
                 // ReSharper disable once PossibleInvalidOperationException
-                return _refId.Value;
+                return _referenceId.Value;
             }
         }
 
         /// <summary>
-        ///     Creates a new instance of ParseResult from completely parsed value.
+        ///     Creates a new instance of <see cref="ParseResult" /> from completely parsed value.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="parsedValue" /> is null.</exception>
         public static ParseResult FromParsedValue(object parsedValue)
@@ -54,17 +54,17 @@ namespace Light.Serialization.Json.TokenParsers
         }
 
         /// <summary>
-        ///     Creates a new instance of ParseResult from the id of a deferred reference.
+        ///     Creates a new instance of <see cref="ParseResult" /> from the id of a deferred reference.
         /// </summary>
-        public static ParseResult FromDeferredReference(int refId)
+        public static ParseResult FromDeferredReference(int referenceId)
         {
-            refId.MustNotBeLessThan(0, nameof(refId));
+            referenceId.MustNotBeLessThan(0, nameof(referenceId));
 
-            return new ParseResult(null, refId);
+            return new ParseResult(null, referenceId);
         }
 
         /// <summary>
-        ///     Creates a new instance of ParseResult that represents null.
+        ///     Creates a new instance of <see cref="ParseResult" /> that represents null.
         /// </summary>
         public static ParseResult FromNull()
         {

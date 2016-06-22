@@ -13,7 +13,7 @@ namespace Light.Serialization.Json.TokenParsers
     {
         /// <summary>
         ///     Checks if the parser implementing this interface should actually deserialize the corresponding
-        ///     compplex object in the JSON document.
+        ///     complex object in the JSON document.
         /// </summary>
         /// <param name="typeToBeConstructed">The type to be constructed that was retrieved from the metadata section of a complex JSON object.</param>
         /// <returns>True if the <see cref="ComplexObjectParser" /> instance should switch to this parser, else false.</returns>

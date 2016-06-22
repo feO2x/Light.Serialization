@@ -26,6 +26,7 @@ namespace Light.Serialization.Json.TokenParsers
         ///     Creates a new instance of <see cref="TypeAndTypeInfoParser" />.
         /// </summary>
         /// <param name="metadataParser">The object that parses the metadata section of a complex JSON object.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="metadataParser" /> is null.</exception>
         public TypeAndTypeInfoParser(ITypeParser metadataParser)
         {
             metadataParser.MustNotBeNull(nameof(metadataParser));
@@ -70,6 +71,8 @@ namespace Light.Serialization.Json.TokenParsers
         /// </summary>
         public ParseResult ParseValue(JsonDeserializationContext context)
         {
+            context.Token.JsonType.MustBe(JsonTokenType.BeginOfObject);
+
             var reader = context.JsonReader;
             var currentToken = reader.ReadNextToken();
             if (currentToken.JsonType == JsonTokenType.EndOfObject)

@@ -2,7 +2,7 @@
 {
     /// <summary>
     ///     Represents the parsing results for a JSON string that should be deserialized
-    ///     to a primitive type that is references as a base type.
+    ///     to a primitive type being referenced as a base type.
     /// </summary>
     public struct JsonStringParseResult
     {
@@ -12,7 +12,7 @@
         public readonly bool WasTokenParsedSuccessfully;
 
         /// <summary>
-        ///     Gets the parsed value or null if the object could not be parsed.
+        ///     Gets the parsed value, or null if the object could not be parsed.
         /// </summary>
         public readonly object ParsedObject;
 

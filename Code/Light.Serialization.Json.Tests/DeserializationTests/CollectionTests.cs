@@ -194,5 +194,15 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
             actual.GetType().Should().Be(expected.GetType());
             actual.ShouldAllBeEquivalentTo(expected);
         }
+
+        [Fact(DisplayName = "The deserializer must be able to parse multidimensional JSON arrays that are empty.")]
+        public void EmptyMultidimensionalArray()
+        {
+            const string json = "[]";
+
+            var deserializedArray = GetDeserializer().Deserialize<int[,]>(json);
+
+            deserializedArray.Should().BeEquivalentTo(new int[0, 0]);
+        }
     }
 }

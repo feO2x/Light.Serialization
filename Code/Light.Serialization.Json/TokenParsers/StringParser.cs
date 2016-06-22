@@ -7,7 +7,7 @@ using Light.Serialization.Json.LowLevelReading;
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents a JSON Token Parser that deserializes JSON strings to .NET strings.
+    ///     Represents an <see cref="IJsonTokenParser"/> that deserializes JSON strings to .NET <see cref="string"/> instances.
     /// </summary>
     public sealed class StringParser : IJsonTokenParser
     {
@@ -17,7 +17,7 @@ namespace Light.Serialization.Json.TokenParsers
         public bool CanBeCached => true;
 
         /// <summary>
-        ///     Checks if the specified token is a JSON string and the requested type is a .NET string.
+        ///     Checks if the specified token is a JSON string and the requested type is <see cref="string"/>.
         /// </summary>
         public bool IsSuitableFor(JsonDeserializationContext context)
         {
@@ -39,15 +39,14 @@ namespace Light.Serialization.Json.TokenParsers
         /// <exception cref="ArgumentException">Thrown when the specified token is no JSON string.</exception>
         public string ParseValue(JsonToken token)
         {
-            Check.That(token.JsonType == JsonTokenType.String,
-                       () => new ArgumentException("The specified JSON token is no JSON string."));
+            token.JsonType.MustBe(JsonTokenType.String, message: "The specified JSON token is no JSON string.");
 
             // If the token has only two character, then it is an empty string.
             if (token.Length == 2)
                 return string.Empty;
 
             // The first and the last character in the token are the JSON string delimiters (").
-            // Thus the following loop runs from 1 to Length - 2
+            // Thus the following loop runs from 1 to Length - 1
             for (var i = 1; i < token.Length - 1; i++)
             {
                 // Check if the token contains characters that need to be escaped
@@ -61,10 +60,10 @@ namespace Light.Serialization.Json.TokenParsers
 
         private static string ConvertEscapeSequencesInToken(JsonToken token, int currentTokenIndex)
         {
-            // Calculate how many characters we need for the new char array
+            // Calculate how many characters are needed for the new char array.
             // This means that we have to run through the whole token
             // and check how many single escape sequences and hexadecimal
-            // escape sequences can be found
+            // escape sequences can be found.
             var numberOfSingleEscapeSequences = 0;
             var numberOfHexadecimalEscapeSequences = 0;
             var isPreviousCharacterTheStringEscapeCharacter = true;
@@ -90,7 +89,7 @@ namespace Light.Serialization.Json.TokenParsers
                     isPreviousCharacterTheStringEscapeCharacter = false;
                     continue;
                 }
-                // Check if this character is the beginning of an escape sequence
+                // Else check if this character is the beginning of an escape sequence
                 if (currentCharacter == JsonSymbols.StringEscapeCharacter)
                     isPreviousCharacterTheStringEscapeCharacter = true;
             }
@@ -104,11 +103,13 @@ namespace Light.Serialization.Json.TokenParsers
             for (var i = 0; i < numberOfCharacters; i++)
             {
                 currentCharacter = token[currentTokenIndex++];
+                // Check if the current character marks an escape sequence; if yes, transform it into a single character
                 if (currentCharacter == JsonSymbols.StringEscapeCharacter)
                 {
                     characterArray[i] = ReadEscapeSequence(token, ref currentTokenIndex);
                     continue;
                 }
+                // If it is not a escape sequence, just copy the character
                 characterArray[i] = currentCharacter;
             }
 
@@ -135,7 +136,7 @@ namespace Light.Serialization.Json.TokenParsers
         private static char ReadHexadecimalEscapeSequence(JsonToken buffer, ref int currentBufferIndex)
         {
             var hexadecimalDigitsAsString = buffer.ToString(currentBufferIndex, 4);
-            currentBufferIndex += 4; // Increase token index to point to the first character after the hexadecimal escape sequence
+            currentBufferIndex += 4; // Set the current index to the first character after the hexadecimal escape sequence
             return Convert.ToChar(int.Parse(hexadecimalDigitsAsString, NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo));
         }
     }

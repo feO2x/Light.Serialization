@@ -1,10 +1,12 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
+using Light.GuardClauses;
 using Light.Serialization.Json.LowLevelReading;
 
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents a JSON token parser that can parse the JSON null token.
+    ///     Represents an <see cref="IJsonTokenParser" /> that can parse the JSON null token.
     /// </summary>
     public sealed class NullParser : IJsonTokenParser
     {
@@ -19,7 +21,7 @@ namespace Light.Serialization.Json.TokenParsers
         public bool IsSuitableFor(JsonDeserializationContext context)
         {
             var typeInfo = context.RequestedType.GetTypeInfo();
-            return context.Token.JsonType == JsonTokenType.Null && (typeInfo.IsClass || typeInfo.IsInterface);
+            return context.Token.JsonType == JsonTokenType.Null && (typeInfo.IsClass || typeInfo.IsInterface || IsNullableType(typeInfo));
         }
 
         /// <summary>
@@ -28,7 +30,17 @@ namespace Light.Serialization.Json.TokenParsers
         /// </summary>
         public ParseResult ParseValue(JsonDeserializationContext context)
         {
+            context.Token.JsonType.MustBe(JsonTokenType.Null);
+
             return ParseResult.FromNull();
+        }
+
+        private static bool IsNullableType(TypeInfo typeInfo)
+        {
+            if (typeInfo.IsValueType == false && typeInfo.IsGenericType == false && typeInfo.IsGenericTypeDefinition)
+                return false;
+
+            return typeInfo.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
     }
 }

@@ -9,7 +9,7 @@ using Light.Serialization.Json.ObjectMetadata;
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents a JSON Token Parser that can deserialize complex JSON objects.
+    ///     Represents an <see cref="IJsonTokenParser" /> that can deserialize complex JSON objects.
     /// </summary>
     public sealed class ComplexObjectParser : IJsonTokenParser, ISetTypeDescriptionService, ISetObjectMetadataParser, ISetMetaFactory
     {
@@ -18,10 +18,10 @@ namespace Light.Serialization.Json.TokenParsers
         private ITypeDescriptionService _typeDescriptionService;
 
         /// <summary>
-        ///     Creates a new instance of ComplexObjectParser.
+        ///     Creates a new instance of <see cref="ComplexObjectParser"/>.
         /// </summary>
-        /// <param name="metaFactory">The object that can create other objects from type information.</param>
-        /// <param name="typeDescriptionService">The object that holds creation descriptions for specific types.</param>
+        /// <param name="metaFactory">The factory that can create other objects from <see cref="Type"/> information.</param>
+        /// <param name="typeDescriptionService">The object that provides creation descriptions for <see cref="Type"/> instances.</param>
         /// <param name="metadataParser">The parser that is used for the metadata section of an complex JSON object.</param>
         public ComplexObjectParser(IMetaFactory metaFactory,
                                    ITypeDescriptionService typeDescriptionService,
@@ -55,6 +55,8 @@ namespace Light.Serialization.Json.TokenParsers
         /// </summary>
         public ParseResult ParseValue(JsonDeserializationContext context)
         {
+            context.Token.JsonType.MustBe(JsonTokenType.BeginOfObject);
+
             var jsonReader = context.JsonReader;
             var currentToken = jsonReader.ReadNextToken();
 
@@ -64,10 +66,10 @@ namespace Light.Serialization.Json.TokenParsers
 
             // Else parse the metadata section
             var metadataParseResult = _metadataParser.ParseMetadataSection(ref currentToken, context);
-            // Check if this JSON object is a $ref and the object could be retrieved
+            // Check if this JSON object is a reference to another object that was deserialized before
             if (metadataParseResult.ReferencePreservationInfo.WasObjectRetrieved)
                 return ParseResult.FromParsedValue(metadataParseResult.ReferencePreservationInfo.RetrievedObject);
-            // Else check if this object is a deferred reference
+            // Else check if this object is a deferred reference to another object
             if (metadataParseResult.ReferencePreservationInfo.IsDeferredReference)
                 return ParseResult.FromDeferredReference(metadataParseResult.ReferencePreservationInfo.Id);
 
@@ -85,8 +87,8 @@ namespace Light.Serialization.Json.TokenParsers
             // Check if there is any data left to deserialized
             if (currentToken.JsonType == JsonTokenType.EndOfObject)
                 return ParseResult.FromParsedValue(_metaFactory.CreateObject(typeCreationDescription, null));
-            currentToken.MustBeComplexObjectKey();
 
+            currentToken.MustBeComplexObjectKey();
             var deserializedChildValues = new Dictionary<InjectableValueDescription, InjectableValue>();
             List<DeferredReferenceCandidate> deferredReferences = null;
             // Run through the remaining key-value pairs of the complex JSON object and deserialize them

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Globalization;
-using Light.Serialization.Abstractions;
 using Light.Serialization.Json.LowLevelReading;
 
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents a JSON token parser that can parse JSON numbers to .NET double values.
+    ///     Represents <see cref="IJsonTokenParser" /> that can parse JSON numbers to .NET <see cref="double" /> values.
     /// </summary>
     public sealed class DoubleParser : BaseJsonStringToPrimitiveParser<double>, IJsonStringToPrimitiveParser
     {
@@ -16,7 +15,7 @@ namespace Light.Serialization.Json.TokenParsers
         public bool CanBeCached => true;
 
         /// <summary>
-        ///     Checks if the specified token can be parsed to a .NET double.
+        ///     Checks if the specified token can be parsed to a .NET <see cref="double" /> value.
         /// </summary>
         public bool IsSuitableFor(JsonDeserializationContext context)
         {
@@ -27,7 +26,7 @@ namespace Light.Serialization.Json.TokenParsers
         }
 
         /// <summary>
-        ///     Parses the given JSON token to a .NET double.
+        ///     Parses the given JSON token to a .NET <see cref="double" /> value.
         ///     Please note that you may only call this method if <see cref="IsSuitableFor" /> would return true.
         /// </summary>
         /// <param name="context">The deserialization context of the specified JSON number.</param>
@@ -43,11 +42,11 @@ namespace Light.Serialization.Json.TokenParsers
             if (double.TryParse(doubleString, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out result))
                 return ParseResult.FromParsedValue(result);
 
-            throw new DeserializationException($"Cannot deserialize value {doubleString} to a double value.");
+            throw new JsonDocumentException($"Cannot deserialize value {doubleString} to a double value.", context.Token);
         }
 
         /// <summary>
-        ///     Tries to parse the specified string as a double value.
+        ///     Tries to parse the specified string as a <see cref="double" /> value.
         /// </summary>
         public JsonStringParseResult TryParse(JsonDeserializationContext context, string deserializedString)
         {

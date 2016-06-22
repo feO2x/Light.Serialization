@@ -1,9 +1,12 @@
-﻿using Light.Serialization.Json.LowLevelReading;
+﻿using System;
+using System.Diagnostics;
+using Light.GuardClauses;
+using Light.Serialization.Json.LowLevelReading;
 
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents a JSON token parser that can parse boolean value.
+    ///     Represents an <see cref="IJsonTokenParser" /> that can parse JSON boolean values to .NET <see cref="bool" /> instances.
     /// </summary>
     public sealed class BooleanParser : BaseJsonStringToPrimitiveParser<bool>, IJsonStringToPrimitiveParser
     {
@@ -17,8 +20,7 @@ namespace Light.Serialization.Json.TokenParsers
         /// </summary>
         public bool IsSuitableFor(JsonDeserializationContext context)
         {
-            var token = context.Token;
-            return token.JsonType == JsonTokenType.True || token.JsonType == JsonTokenType.False;
+            return context.Token.JsonType == JsonTokenType.True || context.Token.JsonType == JsonTokenType.False;
         }
 
         /// <summary>
@@ -28,6 +30,7 @@ namespace Light.Serialization.Json.TokenParsers
         /// <returns>True if the JSON token is a true, else false.</returns>
         public ParseResult ParseValue(JsonDeserializationContext context)
         {
+            CheckTokenTyp(context.Token);
             return ParseResult.FromParsedValue(context.Token.JsonType == JsonTokenType.True);
         }
 
@@ -45,6 +48,15 @@ namespace Light.Serialization.Json.TokenParsers
                 default:
                     return new JsonStringParseResult(false);
             }
+        }
+
+        [Conditional(Check.CompileAssertionsSymbol)]
+        private static void CheckTokenTyp(JsonToken token)
+        {
+            if (token.JsonType == JsonTokenType.True || token.JsonType == JsonTokenType.False)
+                return;
+
+            throw new ArgumentException($"You must not call the BooleanParser with a JSON token other than \"true\" or \"false\", but you specified \"{token}\".");
         }
     }
 }

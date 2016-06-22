@@ -12,7 +12,7 @@ using Light.Serialization.Json.ObjectMetadata;
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents a JSON Token Parser that deserializes JSON arrays to .NET generic collections.
+    ///     Represents an <see cref="IJsonTokenParser" /> that deserializes JSON arrays to .NET collections.
     /// </summary>
     public sealed class CollectionParser : IJsonTokenParser, ISetArrayMetadataParser, ISetMetaFactory
     {
@@ -21,7 +21,7 @@ namespace Light.Serialization.Json.TokenParsers
         private IMetaFactory _metaFactory;
 
         /// <summary>
-        ///     Initializes a new instance of ArrayToGenericCollectionParser.
+        ///     Initializes a new instance of <see cref="CollectionParser" />.
         /// </summary>
         /// <param name="metaFactory">The factory that is able to create collection instances from type information.</param>
         /// <param name="metadataParser">The object that can parse the metadata section of a JSON array.</param>
@@ -54,12 +54,13 @@ namespace Light.Serialization.Json.TokenParsers
         /// </summary>
         public ParseResult ParseValue(JsonDeserializationContext context)
         {
+            context.Token.JsonType.MustBe(JsonTokenType.BeginOfArray);
             var currentToken = context.JsonReader.ReadNextToken();
 
-            // Check if the JSON array is empty - in this case, there is no metadata section, and therefore the array must not be added to the ObjectReferencePreserver
+            // Check if the JSON array is empty - in this case, there is no metadata section, and therefore the collection must not be added to the ObjectReferencePreserver
             if (currentToken.JsonType == JsonTokenType.EndOfArray)
-                return ParseResult.FromParsedValue(context.RequestedType.IsArray ?  // TODO: this will go wrong if the array type is multidimensional
-                                                       Array.CreateInstance(context.RequestedType.GetElementType(), 0) :
+                return ParseResult.FromParsedValue(context.RequestedType.IsArray ?
+                                                       Array.CreateInstance(context.RequestedType.GetElementType(), new int[context.RequestedType.GetArrayRank()]) :
                                                        _metaFactory.CreateCollection(context.RequestedType));
 
             // Parse the metadata section and check if the collection refers to another one
@@ -79,7 +80,7 @@ namespace Light.Serialization.Json.TokenParsers
                 if (metadataParseResult.ArrayLenghts == null)
                 {
                     if (typeToConstruct.GetArrayRank() > 1)
-                        throw new DeserializationException("Light.GuardClauses does not support the deserialization of multidimensional arrays without the use of a metadata sections in JSON arrays because we cannot know how large the different dimensions are.");
+                        throw new DeserializationException("Light.GuardClauses does not support the deserialization of multidimensional arrays without the use of a metadata sections in JSON arrays because we cannot know how large the different dimensions of the .NET array are.");
                     array = PopulateArrayWithUnknownLenght(typeToConstruct.GetElementType(), currentToken, context);
                     if (metadataParseResult.ReferencePreservationInfo.IsEmpty == false)
                         context.ObjectReferencePreserver.AddDeserializedObject(metadataParseResult.ReferencePreservationInfo.Id, array);
@@ -90,10 +91,8 @@ namespace Light.Serialization.Json.TokenParsers
                 array = Array.CreateInstance(typeToConstruct.GetElementType(), metadataParseResult.ArrayLenghts);
                 if (metadataParseResult.ReferencePreservationInfo.IsEmpty == false)
                     context.ObjectReferencePreserver.AddDeserializedObject(metadataParseResult.ReferencePreservationInfo.Id, array);
-                if (array.Rank == 1)
-                    PopulateOneDimensionalArray(array, typeToConstruct.GetElementType(), currentToken, context);
-                else
-                    PopulateMultiDimensionalArray(array, typeToConstruct.GetElementType(), currentToken, context, metadataParseResult.ArrayLenghts);
+
+                PopulateArray(array, typeToConstruct.GetElementType(), currentToken, context, metadataParseResult.ArrayLenghts);
                 return ParseResult.FromParsedValue(array);
             }
 
@@ -165,35 +164,7 @@ namespace Light.Serialization.Json.TokenParsers
             }
         }
 
-        private static void PopulateOneDimensionalArray(Array array, Type itemType, JsonToken currentToken, JsonDeserializationContext context)
-        {
-            var currentIndex = 0;
-            while (true)
-            {
-                currentToken.MustBeBeginOfValue();
-                var parseResult = context.DeserializeToken(currentToken, itemType);
-
-                if (parseResult.IsDeferredReference)
-                    context.ObjectReferencePreserver.AddDeferredReference(new DeferredReferenceForArray(parseResult.ReferenceId, currentIndex, array));
-                else
-                    array.SetValue(parseResult.ParsedValue, currentIndex);
-
-                currentToken = context.JsonReader.ReadNextToken();
-                switch (currentToken.JsonType)
-                {
-                    case JsonTokenType.ValueDelimiter:
-                        currentToken = context.JsonReader.ReadNextToken();
-                        currentIndex++;
-                        continue;
-                    case JsonTokenType.EndOfArray:
-                        return;
-                    default:
-                        throw new JsonDocumentException($"Expected value delimiter or end of array in JSON document, but found {currentToken}.", currentToken);
-                }
-            }
-        }
-
-        private static void PopulateMultiDimensionalArray(Array array, Type itemType, JsonToken currentToken, JsonDeserializationContext context, int[] arrayLenghts)
+        private static void PopulateArray(Array array, Type itemType, JsonToken currentToken, JsonDeserializationContext context, int[] arrayLenghts)
         {
             var currentIndices = new int[arrayLenghts.Length];
 

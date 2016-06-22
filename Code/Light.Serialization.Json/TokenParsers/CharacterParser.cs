@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Globalization;
+using Light.GuardClauses;
 using Light.Serialization.Abstractions;
 using Light.Serialization.Json.LowLevelReading;
 
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents a JSON token parser that parses to .NET characters.
+    ///     Represents an <see cref="IJsonTokenParser" /> that parses JSON strings to .NET <see cref="char" /> instances.
     /// </summary>
     public sealed class CharacterParser : BaseJsonStringToPrimitiveParser<char>, IJsonStringToPrimitiveParser
     {
@@ -16,7 +17,7 @@ namespace Light.Serialization.Json.TokenParsers
         public bool CanBeCached => true;
 
         /// <summary>
-        ///     Checks if the specified JSON token is a string and the requested type is the .NET character type.
+        ///     Checks if the specified JSON token is a string and the requested type is the .NET <see cref="char"/> type.
         /// </summary>
         public bool IsSuitableFor(JsonDeserializationContext context)
         {
@@ -24,7 +25,7 @@ namespace Light.Serialization.Json.TokenParsers
         }
 
         /// <summary>
-        ///     Parser the given JSON token as a .NET character.
+        ///     Parser the given JSON token as a .NET <see cref="char"/> instance.
         ///     Please note that you may only call this method if <see cref="IsSuitableFor" /> would return true.
         /// </summary>
         /// <param name="context">The deserialization context of the specified JSON token.</param>
@@ -32,11 +33,14 @@ namespace Light.Serialization.Json.TokenParsers
         public ParseResult ParseValue(JsonDeserializationContext context)
         {
             var token = context.Token;
+            token.JsonType.MustBe(JsonTokenType.String);
+
+            // Check if the JSON string is an empty string
+            if (token.Length == 2)
+                throw CreateException(token);
+
             // The token has at least two elements because it is a JSON string, thus accessing the second one is safe
             var currentCharacter = token[1];
-            // Check if the JSON string is an empty string
-            if (currentCharacter == JsonSymbols.StringDelimiter)
-                throw CreateException(token);
             // If not then check if it is an escape sequence
             if (currentCharacter == JsonSymbols.StringEscapeCharacter)
                 return ParseResult.FromParsedValue(ReadEscapeSequence(token));
@@ -86,7 +90,7 @@ namespace Light.Serialization.Json.TokenParsers
 
         private static DeserializationException CreateException(JsonToken token)
         {
-            return new DeserializationException($"Cannot deserialize value {token} to a character.");
+            return new JsonDocumentException($"Cannot deserialize value {token} to a character.", token);
         }
     }
 }

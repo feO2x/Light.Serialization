@@ -1,10 +1,11 @@
 ﻿using System;
+using Light.GuardClauses;
 using Light.Serialization.Json.LowLevelReading;
 
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents a JSON token parser that deserializes JSON strings to .NET GUIDs.
+    ///     Represents an <see cref="IJsonTokenParser" /> that deserializes JSON strings to .NET <see cref="Guid" /> instances.
     /// </summary>
     public sealed class GuidParser : BaseJsonStringToPrimitiveParser<Guid>, IJsonStringToPrimitiveParser
     {
@@ -15,7 +16,7 @@ namespace Light.Serialization.Json.TokenParsers
 
         /// <summary>
         ///     Checks if the specified token is a JSON string and if the requested type
-        ///     is the .NET Guid type.
+        ///     is the .NET <see cref="Guid" /> type.
         /// </summary>
         public bool IsSuitableFor(JsonDeserializationContext context)
         {
@@ -23,11 +24,13 @@ namespace Light.Serialization.Json.TokenParsers
         }
 
         /// <summary>
-        ///     Parses the specified JSON string as a GUID.
+        ///     Parses the specified JSON string as a <see cref="Guid" /> value.
         ///     This method must only be called when <see cref="IsSuitableFor" /> would return true.
         /// </summary>
         public ParseResult ParseValue(JsonDeserializationContext context)
         {
+            context.Token.JsonType.MustBe(JsonTokenType.String);
+
             var token = context.Token;
             var guidString = token.ToStringWithoutQuotationMarks();
 
@@ -39,7 +42,7 @@ namespace Light.Serialization.Json.TokenParsers
         }
 
         /// <summary>
-        ///     Tries to parse the specified JSON token as a GUID.
+        ///     Tries to parse the specified JSON token as a <see cref="Guid" />.
         /// </summary>
         public JsonStringParseResult TryParse(JsonDeserializationContext context, string deserializedString)
         {

@@ -8,14 +8,14 @@ using Light.Serialization.Json.LowLevelReading;
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents a JSON token parser that can deserialize JSON numbers to .NET unsigned integer types.
+    ///     Represents an <see cref="IJsonTokenParser" /> that can deserialize JSON numbers to .NET unsigned integer types.
     /// </summary>
     public sealed class UnsignedIntegerParser : IJsonTokenParser
     {
         private Dictionary<Type, UnsignedIntegerTypeInfo> _unsignedIntegerTypes = UnsignedIntegerTypeInfo.CreateDefaultUnsignedIntegerTypes();
 
         /// <summary>
-        ///     Gets or sets the mapping from .NET unsigned integer types to UnsignedIntegerTypeInfo objects.
+        ///     Gets or sets the mapping from .NET unsigned integer types to <see cref="UnsignedIntegerTypeInfo" /> objects.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
         public Dictionary<Type, UnsignedIntegerTypeInfo> UnsignedIntegerTypes
@@ -34,7 +34,7 @@ namespace Light.Serialization.Json.TokenParsers
         public bool CanBeCached => true;
 
         /// <summary>
-        ///     Checks if the requested type is a .NET unsigned numeric type and if the given token is a JSON number or string.
+        ///     Checks if the requested type is a .NET unsigned integer type and if the given token is a JSON number or string.
         /// </summary>
         public bool IsSuitableFor(JsonDeserializationContext context)
         {

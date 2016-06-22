@@ -5,23 +5,23 @@ using Light.Serialization.Json.LowLevelReading;
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents a JSON token parser that can deserialize JSON strings in the ISO 8601 format to .NET date times.
+    ///     Represents an <see cref="IJsonTokenParser" /> that can deserialize JSON strings in the ISO 8601 format to .NET <see cref="DateTime" /> instances.
     /// </summary>
     public sealed class DateTimeParser : BaseIso8601DateTimeParser<DateTime>, IJsonStringToPrimitiveParser
     {
         /// <summary>
-        ///     Gets or sets the date time kind that is used for short date values (without time component).
-        ///     This value defaults to DateTimeKind.Utc.
+        ///     Gets or sets the <see cref="DateTimeKind" /> that is used for short date values (without the time component).
+        ///     This value defaults to <see cref="DateTimeKind.Utc" />.
         /// </summary>
         public DateTimeKind DefaultDateTimeKind = DateTimeKind.Utc;
 
         /// <summary>
-        ///     Gets the value indicating whether this parser can be cached.
+        ///     Gets the value indicating that this parser can be cached.
         /// </summary>
         public bool CanBeCached => true;
 
         /// <summary>
-        ///     Parses the given JSON string in ISO 8601 format to a .NET DateTime value.
+        ///     Parses the given JSON string in ISO 8601 format to a .NET <see cref="DateTime" /> value.
         /// </summary>
         public ParseResult ParseValue(JsonDeserializationContext context)
         {
@@ -29,7 +29,7 @@ namespace Light.Serialization.Json.TokenParsers
         }
 
         /// <summary>
-        ///     Tries to parse the given JSON string to a .NET DateTime.
+        ///     Tries to parse the given JSON string to a .NET <see cref="DateTime" /> value.
         /// </summary>
         public JsonStringParseResult TryParse(JsonDeserializationContext context, string deserializedString)
         {

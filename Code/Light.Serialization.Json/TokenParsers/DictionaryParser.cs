@@ -13,7 +13,7 @@ using Light.Serialization.Json.ObjectMetadata;
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents a JSON token parser that deserializes complex JSON objects to .NET dictionaries.
+    ///     Represents an <see cref="IJsonTokenParser" /> that deserializes complex JSON objects to .NET dictionaries.
     /// </summary>
     public sealed class DictionaryParser : IJsonTokenParser, ISwitchParserForComplexObject, ISetObjectMetadataParser, ISetMetaFactory
     {
@@ -23,7 +23,7 @@ namespace Light.Serialization.Json.TokenParsers
         /// <summary>
         ///     Creates a new instance of <see cref="DictionaryParser" />.
         /// </summary>
-        /// <param name="metaFactory">The factory that is able to create dictionaries from type information.</param>
+        /// <param name="metaFactory">The factory that is able to create dictionaries from <see cref="Type" /> information.</param>
         /// <param name="metadataParser">The object that can parse the metadata section of a complex JSON object.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="metaFactory" /> or <paramref name="metadataParser" /> is null.</exception>
         public DictionaryParser(IMetaFactory metaFactory, IObjectMetadataParser metadataParser)
@@ -41,7 +41,7 @@ namespace Light.Serialization.Json.TokenParsers
         public bool CanBeCached => true;
 
         /// <summary>
-        ///     Checks if the specified token is a Begin of Object, and if the requested type implements IDictionary of T.
+        ///     Checks if the specified token is a Begin of Object, and if the requested type implements <see cref="IDictionary{TKey,TValue}" /> or <see cref="IDictionary" />.
         /// </summary>
         public bool IsSuitableFor(JsonDeserializationContext context)
         {
@@ -55,6 +55,7 @@ namespace Light.Serialization.Json.TokenParsers
         /// </summary>
         public ParseResult ParseValue(JsonDeserializationContext context)
         {
+            context.Token.JsonType.MustBe(JsonTokenType.BeginOfObject);
             var jsonReader = context.JsonReader;
             var currentToken = jsonReader.ReadNextToken();
 
@@ -101,6 +102,16 @@ namespace Light.Serialization.Json.TokenParsers
             }
         }
 
+        bool ISwitchParserForComplexObject.ShouldDeserialize(Type typeToBeConstructed)
+        {
+            return typeToBeConstructed.IsDictionaryType();
+        }
+
+        ParseResult ISwitchParserForComplexObject.PerformSwitch(ObjectMetadataParseResult metadataParseResult, JsonDeserializationContext context, JsonToken currentToken)
+        {
+            return ParseDictionary(metadataParseResult, context, currentToken, _metaFactory);
+        }
+
         private static ParseResult ParseDictionary(ObjectMetadataParseResult metadataParseResult, JsonDeserializationContext context, JsonToken currentToken, IMetaFactory metaFactory)
         {
             metaFactory.MustNotBeNull(nameof(metaFactory));
@@ -144,16 +155,6 @@ namespace Light.Serialization.Json.TokenParsers
 
                 currentToken = context.JsonReader.ReadNextToken();
             }
-        }
-
-        bool ISwitchParserForComplexObject.ShouldDeserialize(Type typeToBeConstructed)
-        {
-            return typeToBeConstructed.IsDictionaryType();
-        }
-
-        ParseResult ISwitchParserForComplexObject.PerformSwitch(ObjectMetadataParseResult metadataParseResult, JsonDeserializationContext context, JsonToken currentToken)
-        {
-            return ParseDictionary(metadataParseResult, context, currentToken, _metaFactory);
         }
     }
 }

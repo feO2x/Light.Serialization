@@ -4,13 +4,13 @@ using Light.Serialization.Json.LowLevelReading;
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents a JSON Token Parser that deserializes JSON strings in ISO 8601 format to .NET date time offsets.
+    ///     Represents an <see cref="IJsonTokenParser" /> that deserializes JSON strings in ISO 8601 format to .NET <see cref="DateTimeOffset" /> instances.
     /// </summary>
     public sealed class DateTimeOffsetParser : BaseIso8601DateTimeParser<DateTimeOffset>, IJsonStringToPrimitiveParser
     {
         /// <summary>
-        ///     Gets or sets the default offset that is used when a ISO 8601 date time has no time part.
-        ///     This value defaults to TimeSpan.Zero.
+        ///     Gets or sets the default offset that is used when an ISO 8601 date time has no time part.
+        ///     This value defaults to <see cref="TimeSpan.Zero" />.
         /// </summary>
         public TimeSpan DefaultOffset = TimeSpan.Zero;
 
@@ -20,7 +20,7 @@ namespace Light.Serialization.Json.TokenParsers
         public bool CanBeCached => true;
 
         /// <summary>
-        ///     Parses the given JSON string in ISO 8601 format to a .NET DateTimeOffset value.
+        ///     Parses the given JSON string in ISO 8601 format to a .NET <see cref="DateTimeOffset" /> value.
         /// </summary>
         public ParseResult ParseValue(JsonDeserializationContext context)
         {
@@ -28,7 +28,7 @@ namespace Light.Serialization.Json.TokenParsers
         }
 
         /// <summary>
-        ///     Tries to parse the given JSON token as a .NET DateTimeOffset value.
+        ///     Tries to parse the given JSON token as a .NET <see cref="DateTimeOffset" /> value.
         /// </summary>
         public JsonStringParseResult TryParse(JsonDeserializationContext context, string deserializedString)
         {

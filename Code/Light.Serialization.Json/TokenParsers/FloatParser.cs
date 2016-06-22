@@ -5,7 +5,7 @@ using Light.Serialization.Json.LowLevelReading;
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents a JSON token parser that can deserialize JSON numbers to .NET float values.
+    ///     Represents an <see cref="IJsonTokenParser"/> that can deserialize JSON numbers to .NET <see cref="float"/> values.
     /// </summary>
     public sealed class FloatParser : IJsonTokenParser
     {
@@ -16,7 +16,7 @@ namespace Light.Serialization.Json.TokenParsers
 
         /// <summary>
         ///     Checks that the specified JSON token is either a floating point number, an integer number, or a string
-        ///     and that the specified requested type is float.
+        ///     and that the specified requested type is <see cref="float"/>.
         /// </summary>
         public bool IsSuitableFor(JsonDeserializationContext context)
         {
@@ -25,7 +25,7 @@ namespace Light.Serialization.Json.TokenParsers
         }
 
         /// <summary>
-        ///     Parses the specified JSON token to a .NET float value.
+        ///     Parses the specified JSON token to a .NET <see cref="float"/> value.
         ///     This method must only be called if <see cref="IsSuitableFor" /> would return true.
         /// </summary>
         public ParseResult ParseValue(JsonDeserializationContext context)
@@ -39,7 +39,7 @@ namespace Light.Serialization.Json.TokenParsers
             if (float.TryParse(floatString, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out result))
                 return ParseResult.FromParsedValue(result);
 
-            throw new DeserializationException($"Cannot deserialize value {floatString} to a float value.");
+            throw new JsonDocumentException($"Cannot deserialize value {floatString} to a float value.", context.Token);
         }
     }
 }

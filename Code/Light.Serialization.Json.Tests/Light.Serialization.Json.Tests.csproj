@@ -83,6 +83,7 @@
     <Compile Include="DeserializationTests\IntegerTypesTests.cs" />
     <Compile Include="DeserializationTests\CollectionTests.cs" />
     <Compile Include="DeserializationTests\DictionaryTests.cs" />
+    <Compile Include="DeserializationTests\NullableTests.cs" />
     <Compile Include="DeserializationTests\OptionalPropertyAndFieldInjectionTests.cs" />
     <Compile Include="DeserializationTests\StreamingTests.cs" />
     <Compile Include="DeserializationTests\TypeAndTypeInfoTests.cs" />

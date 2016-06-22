@@ -7,14 +7,14 @@ using Light.Serialization.Json.LowLevelReading;
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents a JSON Token Parser that can parse JSON numeric tokens to .NET integer values.
+    ///     Represents an <see cref="IJsonTokenParser" /> that can parse JSON numeric tokens to .NET signed integer values.
     /// </summary>
     public sealed class SignedIntegerParser : BaseJsonStringToPrimitiveParser<int>, IJsonStringToPrimitiveParser
     {
         private SignedIntegerTypes _signedIntegerTypes = SignedIntegerTypes.CreateDefaultSignedIntegerTypes();
 
         /// <summary>
-        ///     Gets or sets the signed integer types info object.
+        ///     Gets or sets the <see cref="SignedIntegerTypes" /> info object.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
         public SignedIntegerTypes SignedIntegerTypes
@@ -40,7 +40,7 @@ namespace Light.Serialization.Json.TokenParsers
             var token = context.Token;
             var requestedType = context.RequestedType;
 
-            return (_signedIntegerTypes.IntegerTypeInfos.ContainsKey(requestedType) && (token.JsonType == JsonTokenType.IntegerNumber || token.JsonType == JsonTokenType.FloatingPointNumber || token.JsonType == JsonTokenType.String)) ||
+            return ((token.JsonType == JsonTokenType.IntegerNumber || token.JsonType == JsonTokenType.FloatingPointNumber || token.JsonType == JsonTokenType.String) && _signedIntegerTypes.IntegerTypeInfos.ContainsKey(requestedType)) ||
                    ((requestedType == typeof(object) || requestedType == typeof(ValueType)) && token.JsonType == JsonTokenType.IntegerNumber);
         }
 

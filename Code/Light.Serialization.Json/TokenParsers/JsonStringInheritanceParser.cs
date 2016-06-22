@@ -8,8 +8,8 @@ using Light.Serialization.Json.LowLevelReading;
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents a JSON token parser that is activated when a JSON string representing a primitive value
-    ///     was not parsed by another token parser because the value is referenced via a base class (e.g. object or ValueType).
+    ///     Represents an <see cref="IJsonTokenParser" /> that is activated when a JSON string representing a primitive value
+    ///     was not parsed by another token parser because the value is referenced via a base class (e.g. <see cref="object" /> or <see cref="ValueType" />).
     ///     This parser should be placed after all other parsers that interpret JSON strings.
     /// </summary>
     public sealed class JsonStringInheritanceParser : IJsonTokenParser
@@ -18,7 +18,7 @@ namespace Light.Serialization.Json.TokenParsers
         private object _lastParsedValue;
 
         /// <summary>
-        ///     Creates a new instance of JsonStringInheritenceParser.
+        ///     Creates a new instance of <see cref="JsonStringInheritanceParser" />.
         /// </summary>
         /// <param name="stringToPrimitiveParsers">All JSON token parsers that are able to "try to parse" a JSON string to a primitive type.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="stringToPrimitiveParsers" /> is null.</exception>
@@ -36,7 +36,7 @@ namespace Light.Serialization.Json.TokenParsers
         public bool CanBeCached => false;
 
         /// <summary>
-        ///     Checks if there is any JSON string to primitive parser that can interpret the given JSON string.
+        ///     Checks if there is any <see cref="IJsonStringToPrimitiveParser" /> that can interpret the given JSON string.
         /// </summary>
         public bool IsSuitableFor(JsonDeserializationContext context)
         {

@@ -5,7 +5,7 @@ using Light.Serialization.Json.LowLevelReading;
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents a JSON token parsers that can deserialize JSON numbers to .NET decimal values.
+    ///     Represents an <see cref="IJsonTokenParser" /> that can deserialize JSON numbers to .NET <see cref="decimal" /> values.
     /// </summary>
     public sealed class DecimalParser : IJsonTokenParser
     {
@@ -16,7 +16,7 @@ namespace Light.Serialization.Json.TokenParsers
 
         /// <summary>
         ///     Checks if the specified token is either a floating point number, an integer number, or a string and
-        ///     that the requested type is the .NET decimal type.
+        ///     that the requested type is the .NET <see cref="decimal" /> type.
         /// </summary>
         public bool IsSuitableFor(JsonDeserializationContext context)
         {
@@ -25,7 +25,7 @@ namespace Light.Serialization.Json.TokenParsers
         }
 
         /// <summary>
-        ///     Deserializes the given token to a .NET decimal value.
+        ///     Deserializes the given token to a .NET <see cref="decimal"/> value.
         ///     This method must only be called if <see cref="IsSuitableFor" /> would return true.
         /// </summary>
         public ParseResult ParseValue(JsonDeserializationContext context)
@@ -39,7 +39,7 @@ namespace Light.Serialization.Json.TokenParsers
             if (decimal.TryParse(decimalString, NumberStyles.Number, CultureInfo.InvariantCulture, out result))
                 return ParseResult.FromParsedValue(result);
 
-            throw new DeserializationException($"Cannot deserialize value {decimalString} to a decimal value.");
+            throw new JsonDocumentException($"Cannot deserialize value {decimalString} to a decimal value.", context.Token);
         }
     }
 }

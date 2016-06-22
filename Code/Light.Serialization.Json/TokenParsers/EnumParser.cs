@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Reflection;
+using Light.GuardClauses;
 using Light.Serialization.Json.LowLevelReading;
 
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents a JSON token parser that can parse .NET enum values.
+    ///     Represents an <see cref="IJsonTokenParser"/> that can parse .NET enum values.
     /// </summary>
     public sealed class EnumParser : IJsonTokenParser
     {
@@ -30,6 +31,8 @@ namespace Light.Serialization.Json.TokenParsers
         /// <returns>The deserialized enum value.</returns>
         public ParseResult ParseValue(JsonDeserializationContext context)
         {
+            context.Token.JsonType.MustBe(JsonTokenType.String);
+
             var @string = context.DeserializeToken<string>(context.Token);
 
             return ParseResult.FromParsedValue(Enum.Parse(context.RequestedType, @string, true));

@@ -26,13 +26,10 @@ namespace Light.Serialization.Json.TokenParsers
         /// </summary>
         public readonly IJsonReader JsonReader;
 
-        /// <summary>
-        ///     Gets the delegate that can be used to deserialize a JSON token.
-        /// </summary>
         private readonly IRecursiveDeserializer _deserializer;
 
         /// <summary>
-        ///     Gets the list containing all deserialized objects if Object Reference Preservation is turned on.
+        ///     Gets the object reference preserver that handles already deserialized objects and deferred references.
         /// </summary>
         public ObjectReferencePreserver ObjectReferencePreserver;
 
@@ -41,9 +38,9 @@ namespace Light.Serialization.Json.TokenParsers
         /// </summary>
         /// <param name="token">The token to be deserialized.</param>
         /// <param name="requestedType">The requested type of the token.</param>
-        /// <param name="jsonReader">The object that is able to read single tokens from a JSON document.</param>
-        /// <param name="deserializer">The delegate that can be used to deserialize a JSON token.</param>
-        /// <param name="objectReferencePreserver">The object used to hold all deserialized objects and to set deferred references.</param>
+        /// <param name="jsonReader">The forward-only reader accessing the JSON document.</param>
+        /// <param name="deserializer">The deserializer that can be used to deserialize a child JSON token.</param>
+        /// <param name="objectReferencePreserver">The object handling Object Reference Preservation.</param>
         /// <exception cref="ArgumentNullException">Thrown when any parameter is null.</exception>
         public JsonDeserializationContext(JsonToken token,
                                           Type requestedType,
@@ -64,7 +61,7 @@ namespace Light.Serialization.Json.TokenParsers
         }
 
         /// <summary>
-        ///     Deserializes the specified token with as type of T.
+        ///     Deserializes the specified token as type of <see cref="T" />.
         /// </summary>
         /// <typeparam name="T">The requested .NET type of the JSON token.</typeparam>
         /// <param name="token">The token to be deserialized.</param>
@@ -78,6 +75,7 @@ namespace Light.Serialization.Json.TokenParsers
         }
 
         [Conditional(Check.CompileAssertionsSymbol)]
+        // ReSharper disable once UnusedParameter.Local
         private static void CheckForDeferredReference(JsonToken token, ParseResult parseResult)
         {
             if (parseResult.ParsedValue == null)
@@ -94,6 +92,13 @@ namespace Light.Serialization.Json.TokenParsers
             return _deserializer.DeserializeToken(token, requestedType);
         }
 
+        /// <summary>
+        ///     Checks if the <paramref name="typeToBeConstructed" /> should not be handled by the <see cref="ComplexObjectParser" />, but by another one.
+        ///     This method should only be called by the <see cref="ComplexObjectParser" /> when it deserialized the actual type of the object to be deserialized
+        ///     from the metadata section of a complex JSON object.
+        /// </summary>
+        /// <param name="typeToBeConstructed">The actual type of the object to be deserialized.</param>
+        /// <returns>An instance of <see cref="ISwitchParserForComplexObject" /> that can be used to perform the parser switch if it is necessary, else null.</returns>
         public ISwitchParserForComplexObject GetParserCorrespondingToType(Type typeToBeConstructed)
         {
             return _deserializer.FindParserForType(typeToBeConstructed);
