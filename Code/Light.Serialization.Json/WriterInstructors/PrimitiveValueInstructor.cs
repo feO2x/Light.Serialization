@@ -8,7 +8,7 @@ namespace Light.Serialization.Json.WriterInstructors
 {
     /// <summary>
     ///     Represents an <see cref="IJsonWriterInstructor" /> that serializes primitive types (such as int, double, bool, string) to
-    ///     corresponding JSON values by using primitive type formatters.
+    ///     corresponding JSON values by using <see cref="IPrimitiveTypeFormatter" /> instances.
     /// </summary>
     public sealed class PrimitiveValueInstructor : IJsonWriterInstructor, ISetPrimitiveTypeFormatters
     {
@@ -36,6 +36,7 @@ namespace Light.Serialization.Json.WriterInstructors
 
         /// <summary>
         ///     Serializes the specified .NET primitive value using a primitive type formatter.
+        ///     This method must only be called when <see cref="IsSuitableFor" /> would return true.
         /// </summary>
         /// <param name="serializationContext">The serialization context of the primitive value.</param>
         /// <exception cref="KeyNotFoundException">Thrown when no primitive type formatter could be found in the internal dictionary using the actual type as key.</exception>

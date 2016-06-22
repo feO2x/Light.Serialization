@@ -7,14 +7,14 @@ using Light.Serialization.Json.ObjectMetadata;
 namespace Light.Serialization.Json.WriterInstructors
 {
     /// <summary>
-    ///     Represents a JSON Writer Instructor that serializes .NET collections to JSON arrays.
+    ///     Represents an <see cref="IJsonWriterInstructor" /> that serializes .NET collections to JSON arrays.
     /// </summary>
     public sealed class CollectionInstructor : IJsonWriterInstructor, ISetCollectionMetadataInstructor
     {
         private IMetadataInstructor _metadataInstructor;
 
         /// <summary>
-        ///     Creates a new instance of CollectionInstructor.
+        ///     Creates a new instance of <see cref="CollectionInstructor" />.
         /// </summary>
         /// <param name="metadataInstructor">The object that serializes the metadata section of the collection.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="metadataInstructor" /> is null.</exception>
@@ -26,7 +26,7 @@ namespace Light.Serialization.Json.WriterInstructors
         }
 
         /// <summary>
-        ///     Checks if the specified object implements the IEnumerable interface.
+        ///     Checks if the specified object implements the <see cref="IEnumerable" /> interface.
         /// </summary>
         /// <returns>True if the specified object is an <see cref="IEnumerable" />, else false.</returns>
         public bool IsSuitableFor(object @object, Type actualType)
@@ -40,7 +40,7 @@ namespace Light.Serialization.Json.WriterInstructors
         /// <exception cref="InvalidCastException">Thrown when the object to be serialized is not of type <see cref="IEnumerable" />.</exception>
         public void Serialize(JsonSerializationContext serializationContext)
         {
-            var enumerable = (IEnumerable) serializationContext.@ObjectToBeSerialized;
+            var enumerable = (IEnumerable) serializationContext.ObjectToBeSerialized;
 
             var writer = serializationContext.Writer;
             writer.BeginArray();

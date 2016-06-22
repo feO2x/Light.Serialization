@@ -14,9 +14,9 @@ namespace Light.Serialization.Json.WriterInstructors
         /// <summary>
         ///     Serializes the specified complex .NET object using the context and the list of value readers.
         /// </summary>
-        /// <param name="context">The serialization context for the current value to be serialized.</param>
+        /// <param name="context">The serialization context for the current object to be serialized.</param>
         /// <param name="valueReaders">The value readers that can be used to read all values from the object to be serialized.</param>
-        /// <param name="metadataInstructor">The object that serializes the metadata section of the complex object.</param>
+        /// <param name="metadataInstructor">The instructor that serializes the metadata section of the complex object.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="valueReaders" /> or <paramref name="metadataInstructor" /> is null.</exception>
         public static void SerializeComplexObject(JsonSerializationContext context, List<IValueReader> valueReaders, IMetadataInstructor metadataInstructor)
         {
@@ -46,6 +46,8 @@ namespace Light.Serialization.Json.WriterInstructors
 
                 if (i < valueReaders.Count - 1)
                     writer.WriteDelimiter();
+                else
+                    break;
             }
             writer.EndObject();
         }

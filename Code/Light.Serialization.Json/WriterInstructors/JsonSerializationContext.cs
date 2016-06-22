@@ -16,7 +16,7 @@ namespace Light.Serialization.Json.WriterInstructors
         public readonly object ObjectToBeSerialized;
 
         /// <summary>
-        ///     Gets the actual type of the object (similar to <c>ObjectToBeSerialized.GetType()</c>).
+        ///     Gets the actual type of the object (similar to ObjectToBeSerialized.GetType()).
         /// </summary>
         public readonly Type ActualType;
 
@@ -32,6 +32,7 @@ namespace Light.Serialization.Json.WriterInstructors
 
         /// <summary>
         ///     Gets the collection containing all objects that already have been serialized.
+        ///     This collection should be used with regards to Object Reference Preservation.
         /// </summary>
         public readonly List<object> SerializedObjects;
 

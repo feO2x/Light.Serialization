@@ -1,18 +1,19 @@
 ﻿using System;
+using Light.Serialization.Json.LowLevelWriting;
 
 namespace Light.Serialization.Json.WriterInstructors
 {
     /// <summary>
-    ///     Represents the abstraction of an object that is able to instruct the JSON Writer how a certain .NET type should be serialized.
+    ///     Represents the abstraction of an object that is able to instruct an <see cref="IJsonWriter" /> instance how a certain .NET type should be serialized.
     /// </summary>
     public interface IJsonWriterInstructor
     {
         /// <summary>
-        ///     Checks if this writer instructor is able to serialize the specified object.
+        ///     Checks if the writer instructor is able to serialize the specified object.
         /// </summary>
         /// <param name="object">The object to be serialized.</param>
-        /// <param name="actualType">The actual type of the object (similar to <c>object.GetType()</c>).</param>
-        /// <returns>True if this writer instructor can serialize the specified object, else false.</returns>
+        /// <param name="actualType">The actual type of the object (similar to object.GetType()).</param>
+        /// <returns>True if the writer instructor can serialize the specified object, else false.</returns>
         bool IsSuitableFor(object @object, Type actualType);
 
         /// <summary>

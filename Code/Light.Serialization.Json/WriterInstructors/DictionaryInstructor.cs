@@ -10,7 +10,7 @@ using Light.Serialization.Json.PrimitiveTypeFormatters;
 namespace Light.Serialization.Json.WriterInstructors
 {
     /// <summary>
-    ///     Represents a JSON Writer Instructor that serializes .NET dictionaries to complex JSON objects.
+    ///     Represents an <see cref="IJsonWriterInstructor" /> that serializes .NET dictionaries to complex JSON objects.
     /// </summary>
     public sealed class DictionaryInstructor : IJsonWriterInstructor, ISetObjectMetadataInstructor, ISetPrimitiveTypeFormatters
     {
@@ -105,7 +105,7 @@ namespace Light.Serialization.Json.WriterInstructors
         }
 
         /// <summary>
-        ///     Gets or sets the dictionary containing the mappings from types to primitive formattters.
+        ///     Gets or sets the dictionary containing the mappings from types to primitive formatters.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
         public IDictionary<Type, IPrimitiveTypeFormatter> PrimitiveTypeFormattersMapping

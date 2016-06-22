@@ -33,7 +33,7 @@ namespace Light.Serialization.Json.WriterInstructors
         }
 
         /// <summary>
-        ///     Gets the string that is used as the JSON key for the serialized type.
+        ///     Gets or sets the string that is used as the JSON key for the serialized type.
         ///     This value defaults to "type".
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
@@ -50,7 +50,7 @@ namespace Light.Serialization.Json.WriterInstructors
         }
 
         /// <summary>
-        ///     Checks if the <paramref name="actualType" /> is of type <see cref="Type" />.
+        ///     Checks if the <paramref name="actualType" /> is <see cref="Type" /> or <see cref="TypeInfo"/>.
         /// </summary>
         public bool IsSuitableFor(object @object, Type actualType)
         {
