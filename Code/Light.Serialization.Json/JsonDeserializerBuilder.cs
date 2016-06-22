@@ -14,7 +14,7 @@ using Light.Serialization.Json.TokenParsers;
 namespace Light.Serialization.Json
 {
     /// <summary>
-    ///     Represents a builder for the JSON Deserializer.
+    ///     Represents a builder for the <see cref="JsonDeserializer" /> class.
     /// </summary>
     public sealed class JsonDeserializerBuilder : BaseBuilderWithPropertyInjectionPool<JsonDeserializerBuilder>
     {
@@ -43,7 +43,7 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Configures the builder to use the specified name to type mapping.
+        ///     Configures the builder to inject the specified name to type mapping.
         /// </summary>
         /// <param name="mapping">The object that can map JSON strings to .NET types.</param>
         /// <returns>The builder for method chaining.</returns>
@@ -78,12 +78,14 @@ namespace Light.Serialization.Json
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="metadataParser" /> is null.</exception>
         public JsonDeserializerBuilder WithArrayMetadataParser(IArrayMetadataParser metadataParser)
         {
+            metadataParser.MustNotBeNull(nameof(metadataParser));
+
             Pool.SetFieldAndReplaceInPool(ref _arrayMetadataParser, metadataParser);
             return ConfigureAll<ISetArrayMetadataParser>(o => o.MetadataParser = metadataParser);
         }
 
         /// <summary>
-        ///     Configures the builder to use the specified type description service.
+        ///     Configures the builder to inject the specified <see cref="ITypeDescriptionService" />.
         /// </summary>
         /// <param name="typeDescriptionService">The type description service to be used.</param>
         /// <returns>The builder for method chaining.</returns>
@@ -118,7 +120,7 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Configures the builder to use the specified JSON reader factory.
+        ///     Configures the builder to inject the specified <see cref="IJsonReaderFactory" />.
         /// </summary>
         /// <param name="readerFactory">The factory that can create IJsonReader instances for the deserializer.</param>
         /// <returns>The builder for method chaining.</returns>
@@ -132,9 +134,9 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Configures the JSON reader factory using the specified delegate.
+        ///     Configures the <see cref="IJsonReaderFactory" /> using the specified delegate.
         /// </summary>
-        /// <typeparam name="T">The actual type of the JSON reader factory.</typeparam>
+        /// <typeparam name="T">The actual type of the <see cref="IJsonReaderFactory" />.</typeparam>
         /// <param name="configureFactory">The delegate that is used to configure the instance.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureFactory" /> is null.</exception>
@@ -161,7 +163,7 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Configures the builder to use the specified token parser cache.
+        ///     Configures the builder to inject the specified token parser cache.
         /// </summary>
         /// <param name="cache">The dictionary that acts as the cache for token parsers.</param>
         /// <returns>The builder for method chaining.</returns>
@@ -262,7 +264,7 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Configures the builder to inject the specified <see cref="IMetaFactory" /> instance in the resulting deserialization object graph.
+        ///     Configures the builder to inject the specified <see cref="IMetaFactory" /> instance.
         /// </summary>
         /// <param name="metaFactory">The new meta factory.</param>
         /// <returns>The builder for method chaining.</returns>
@@ -276,7 +278,7 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Configures all instances that derive from the <see cref="BaseMetadata" /> class in the deserialization object graph with the specified delegate (usually metadata parsers).
+        ///     Configures all instances that derive from the <see cref="BaseMetadata" /> class with the specified delegate (these are usually metadata parsers).
         /// </summary>
         /// <param name="configureMetadataParser">The delegate that configures the <see cref="BaseMetadata" /> instance.</param>
         /// <returns>The builder for method chaining.</returns>

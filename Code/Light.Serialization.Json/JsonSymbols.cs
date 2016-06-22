@@ -113,12 +113,12 @@ namespace Light.Serialization.Json
         public const char HexadecimalEscapeIndicator = 'u';
 
         /// <summary>
-        ///     Gets the "$type" symbol that marks the type section of a complex JSON object (specific to Light.Serialization.Json).
+        ///     Gets the "$type" symbol that marks the type section of a complex JSON object.
         /// </summary>
         public const string DefaultConcreteTypeSymbol = "$type";
 
         /// <summary>
-        ///     Gets the "typeArguments" symbol that is used to mark the type arguments section of a generic type (specific to Light.Serialization.Json).
+        ///     Gets the "typeArguments" symbol that is used to mark the type arguments section of a generic type.
         /// </summary>
         public const string DefaultTypeArgumentSymbol = "typeArguments";
 
@@ -133,27 +133,27 @@ namespace Light.Serialization.Json
         public const string DefaultReferenceSymbol = "$ref";
 
         /// <summary>
-        ///     Gets the "name" symbol that marks the type name of a generic type or array type serialized in the metadata section of a complex JSON object.
+        ///     Gets the "name" symbol that marks the type name of a generic type or array type serialized in the metadata section of a complex JSON object or JSON array.
         /// </summary>
         public const string DefaultTypeNameSymbol = "name";
 
         /// <summary>
-        ///     Gets the "typeArguments" symbol that marks the JSON array of arguments for generic types.
+        ///     Gets the "typeArguments" symbol that marks the arguments for generic types in metadata sections.
         /// </summary>
         public const string DefaultGenericTypeArgumentsSymbol = "typeArguments";
 
         /// <summary>
-        ///     Gets the "arrayType" symbol that marks the JSON string containing the type to resolve for a .NET array.
+        ///     Gets the "arrayType" symbol that marks the JSON string containing the element type for a .NET array.
         /// </summary>
         public const string DefaultArrayTypeSymbol = "arrayType";
 
         /// <summary>
-        ///     Gets the "arrayRank" symbol that marks the JSON number describing the dimensions of a .NET array.
+        ///     Gets the "arrayRank" symbol that marks the number of dimensions of a .NET array.
         /// </summary>
         public const string DefaultArrayRankSymbol = "arrayRank";
 
         /// <summary>
-        /// Gets the "arrayLength" symbol that marks the JSON number describing the length of a .NET array.
+        /// Gets the "arrayLength" symbol that marks the length of a .NET array.
         /// </summary>
         public const string DefaultArrayLengthSymbol = "arrayLength";
 

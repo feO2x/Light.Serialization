@@ -15,7 +15,7 @@ using Light.Serialization.Json.WriterInstructors;
 namespace Light.Serialization.Json
 {
     /// <summary>
-    ///     Represents a builder for <see cref="JsonSerializer" /> instances.
+    ///     Represents a builder for the <see cref="JsonSerializer" /> class.
     /// </summary>
     public sealed class JsonSerializerBuilder : BaseBuilderWithPropertyInjectionPool<JsonSerializerBuilder>
     {
@@ -54,12 +54,12 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Gets the collection containing all writer instructors that will be injected into the serializer.
+        ///     Gets a read-only collection containing all writer instructors that will be injected into the serializer.
         /// </summary>
         public IReadOnlyList<IJsonWriterInstructor> WriterInstructors => _writerInstructors;
 
         /// <summary>
-        ///     Configures to builder to use the specified JSON writer factory for the serializer.
+        ///     Configures the builder to inject the specified <see cref="IJsonWriterFactory" />.
         /// </summary>
         /// <param name="writerFactory">the writer factory that is injected into the serializer.</param>
         /// <returns>The builder for method chaining.</returns>
@@ -73,7 +73,7 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Configures the builder to use the specified character escaper for primitive type formatters.
+        ///     Configures the builder to inject the specified <see cref="ICharacterEscaper" /> (which is usually used in primitive type formatters).
         /// </summary>
         /// <param name="characterEscaper">The character escaper used for characters and strings.</param>
         /// <returns>The builder for method chaining.</returns>
@@ -87,7 +87,7 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Configures the builder to use the specified type analyzer CustomRuleInstructors and the ComplexObjectInstructor.
+        ///     Configures the builder to inject the specified <see cref="IReadableValuesTypeAnalyzer" />.
         /// </summary>
         /// <param name="typeAnalyzer">The object that creates value readers for the given type.</param>
         /// <returns>The builder for method chaining.</returns>
@@ -101,7 +101,7 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Configures the builder to use the specified formatters instead of the default ones.
+        ///     Configures the builder to inject the specified <see cref="IPrimitiveTypeFormatter" /> instances.
         /// </summary>
         /// <param name="formatters">The list containing all formatters to be used.</param>
         /// <returns>The builder for method chaining.</returns>
@@ -117,7 +117,7 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Configures the builder to use the specified formatters instead of the default ones.
+        ///     Configures the builder to use the specified <see cref="IPrimitiveTypeFormatter" /> instances.
         /// </summary>
         /// <param name="formattersMapping">The dictionary containing all formatters to be used.</param>
         /// <returns>The builder for method chaining.</returns>
@@ -135,7 +135,7 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Adds the specified formatter to the mapping of all primitive type formatters.
+        ///     Adds the specified formatter to the mapping of all <see cref="IPrimitiveTypeFormatter" /> instances.
         /// </summary>
         /// <param name="formatter">The primitive type formatter to be added.</param>
         /// <returns>The builder for method chaining.</returns>
@@ -151,14 +151,14 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Adds the specified JSON writer instructor after the instance with the given type.
+        ///     Inserts the specified <see cref="IJsonWriterInstructor" /> after the instance with the given type.
         /// </summary>
         /// <typeparam name="T">The type whose instance should be before the given writer instructor.</typeparam>
         /// <param name="additionalWriterInstructor">The writer instructor to be inserted.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="additionalWriterInstructor" /> is null.</exception>
         /// <exception cref="ArgumentException">Thrown when the writer instructor with type T cannot be found.</exception>
-        public JsonSerializerBuilder AddWriterInstructorAfter<T>(IJsonWriterInstructor additionalWriterInstructor)
+        public JsonSerializerBuilder InsertWriterInstructorAfter<T>(IJsonWriterInstructor additionalWriterInstructor)
             where T : IJsonWriterInstructor
         {
             additionalWriterInstructor.MustNotBeNull(nameof(additionalWriterInstructor));
@@ -177,14 +177,14 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Adds the specified JSON writer instructor before the instance with the given type.
+        ///     Inserts the specified <see cref="IJsonWriterInstructor" /> before the instance with the given type.
         /// </summary>
         /// <typeparam name="T">The type whose instance should be after the given writer instructor.</typeparam>
         /// <param name="additionalWriterInstructor">The writer instructor to be inserted.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="additionalWriterInstructor" /> is null.</exception>
         /// <exception cref="ArgumentException">Thrown when the writer instructor with type T cannot be found.</exception>
-        public JsonSerializerBuilder AddWriterInstructorBefore<T>(IJsonWriterInstructor additionalWriterInstructor)
+        public JsonSerializerBuilder InsertWriterInstructorBefore<T>(IJsonWriterInstructor additionalWriterInstructor)
             where T : IJsonWriterInstructor
         {
             additionalWriterInstructor.MustNotBeNull(nameof(additionalWriterInstructor));
@@ -199,9 +199,9 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Configures the builder to inject the specified cache for JSON writer instructors into the serializer.
+        ///     Configures the builder to inject the specified cache for <see cref="IJsonWriterInstructor" /> instances into the serializer.
         /// </summary>
-        /// <param name="instructorCache">The dictionary used as the instructorCache.</param>
+        /// <param name="instructorCache">The dictionary used as the instructor cache for fast access.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="instructorCache" /> is null.</exception>
         public JsonSerializerBuilder WithInstructorCache(IDictionary<Type, IJsonWriterInstructor> instructorCache)
@@ -213,7 +213,7 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Configures the JSON writer instructor with the given type using the specified delegate.
+        ///     Configures the <see cref="IJsonWriterInstructor" /> with the given type using the specified delegate.
         /// </summary>
         /// <typeparam name="T">The type of the writer instructor that should be configured.</typeparam>
         /// <param name="configureInstructor">The delegate that configures the actual instructor.</param>
@@ -229,7 +229,7 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Configures the primitive type formatter with the given type using the specified delegate.
+        ///     Configures the <see cref="IPrimitiveTypeFormatter" /> with the given type using the specified delegate.
         /// </summary>
         /// <typeparam name="T">The type of the formatter that should be configured.</typeparam>
         /// <param name="configureFormatter">The delegate that configures the actual formatter instance.</param>
@@ -247,8 +247,8 @@ namespace Light.Serialization.Json
         /// <summary>
         ///     Creates a new serialization rule for the given type that is configured with the specified delegate.
         ///     An existing rule for the specified type will be replaced.
-        ///     Please note that every rule uses the IReadableValuesTypeAnalyzer instance that is registered with the builder.
-        ///     If you do not want to use the default instance, you should exchange it first.
+        ///     Please note that every rule uses the <see cref="IReadableValuesTypeAnalyzer" /> instance that is currently registered with the builder.
+        ///     If you do not want to use the default <see cref="IReadableValuesTypeAnalyzer" /> instance, you should exchange it first.
         /// </summary>
         /// <typeparam name="T">The type that should be configured for serialization.</typeparam>
         /// <param name="configureRule">The delegate that configures the serialization rule.</param>
@@ -276,7 +276,7 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Exchanges the existing object metadata instructor with the specified one.
+        ///     Exchanges the existing <see cref="ITypeMetadataInstructor" /> with the specified one.
         /// </summary>
         /// <param name="metadataInstructor">The new metadata instructor for complex JSON objects.</param>
         /// <returns>The builder for method chaining.</returns>
@@ -305,9 +305,9 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Configures the metadata instructor for complex JSON objects with the specified delegate. The default metadata instructor is of type TypeAndReferenceMetadataInstructor.
+        ///     Configures the metadata instructor for complex JSON objects with the specified delegate. The default metadata instructor is of type <see cref="ObjectMetadataInstructor" />.
         /// </summary>
-        /// <typeparam name="T">The actual type of the metadata instructor. This type must derive from IMetadataInstructor.</typeparam>
+        /// <typeparam name="T">The actual type of the metadata instructor. This type must derive from <see cref="IMetadataInstructor" />.</typeparam>
         /// <param name="configureInstructor">The delegate that configures the instructor.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureInstructor" /> is null.</exception>
@@ -321,9 +321,9 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Configures the metadata instructor for JSON arrays with the specified delegate. The default metadata instructor is of type CollectionReferenceMetadataInstructor.
+        ///     Configures the metadata instructor for JSON arrays with the specified delegate. The default metadata instructor is of type <see cref="ArrayMetadataInstructor" />.
         /// </summary>
-        /// <typeparam name="T">The actual type of the metadata instructor. This type must derive from IMetadataInstructor.</typeparam>
+        /// <typeparam name="T">The actual type of the metadata instructor. This type must derive from <see cref="IMetadataInstructor" />.</typeparam>
         /// <param name="configureInstructor">The delegate that configures the instructor.</param>
         /// <returns>The builder for method chaining.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="configureInstructor" /> is null.</exception>
@@ -355,7 +355,7 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Configures the object metadata instructor to not include type information of complex .NET types.
+        ///     Configures the metadata instructors to not include type information of .NET types in the JSON document.
         /// </summary>
         /// <returns>The builder for method chaining.</returns>
         public JsonSerializerBuilder DisableTypeMetadata()
@@ -364,7 +364,7 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Configures the metadata instructor to include type information for complex .NET types. This is turned on by default for the object metadata instructor (the default collection metadata instructor does not support this feature).
+        ///     Configures the metadata instructors to include type information for .NET types. This is turned on by default.
         /// </summary>
         /// <returns>The builder for method chaining.</returns>
         public JsonSerializerBuilder EnableTypeMetadata()
@@ -387,7 +387,7 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Exchanges the currently used keyNormalizer with the specified one. The default key normalizer is an instance of FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer.
+        ///     Exchanges the currently used <see cref="IJsonKeyNormalizer" /> with the specified one. The default key normalizer is an instance of <see cref="FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer" />.
         /// </summary>
         /// <param name="keyNormalizer">The new key normalizer.</param>
         /// <returns>The builder for method chaining.</returns>
@@ -411,7 +411,7 @@ namespace Light.Serialization.Json
         }
 
         /// <summary>
-        ///     Exchanges the creation delegate for the whitespace formatter with the specified one.
+        ///     Exchanges the creation delegate for the <see cref="IJsonWhitespaceFormatter" /> with the specified one.
         /// </summary>
         /// <param name="createWhitespaceFormatter">The delegate that creates a new <see cref="IJsonWhitespaceFormatter" /> instance.</param>
         /// <returns>The builder for method chaining.</returns>
