@@ -32,7 +32,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         [MemberData(nameof(InvalidDateTimesData))]
         public void InvalidDateTimes(string json)
         {
-            CheckDeserializerThrowsExceptionWithMessage<DateTime>(json, $"The specified token {json} does not represent a valid date time.");
+            CheckDeserializerThrowsExceptionWithMessageContaining<DateTime>(json, $"The specified token {json} does not represent a valid date time.");
         }
 
         public static readonly TestData InvalidDateTimesData =

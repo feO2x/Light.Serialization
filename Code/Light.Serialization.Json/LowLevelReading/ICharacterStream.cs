@@ -16,7 +16,7 @@ namespace Light.Serialization.Json.LowLevelReading
         /// <summary>
         ///     Gets the current position that the stream is pointing to.
         /// </summary>
-        int Position { get; }
+        int BufferPosition { get; }
 
         /// <summary>
         ///     Gets the value indicating whether the end of the stream is reached.

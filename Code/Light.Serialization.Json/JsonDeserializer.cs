@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Light.GuardClauses;
 using Light.Serialization.Abstractions;
 using Light.Serialization.Json.Caching;
@@ -170,11 +171,32 @@ namespace Light.Serialization.Json
 
         private object DeserializeDocument(Type requestedType)
         {
-            var token = _jsonReader.ReadNextToken();
-            var parseResult = DeserializeJsonToken(token, requestedType);
-            parseResult.IsDeferredReference.MustBeFalse(exception: () => new DeserializationException("The specified JSON document contains only a deferred reference."));
+            try
+            {
+                var token = _jsonReader.ReadNextToken();
+                var parseResult = DeserializeJsonToken(token, requestedType);
+                parseResult.IsDeferredReference.MustBeFalse(exception: () => new DeserializationException("The specified JSON document contains only a deferred reference."));
 
-            return parseResult.ParsedValue;
+                return parseResult.ParsedValue;
+            }
+            catch (JsonDocumentException ex)
+            {
+                var additionalInfoReader = _jsonReader as IProvideAdditionalErrorInfo;
+                if (additionalInfoReader == null)
+                    throw;
+
+                var additionalErrorInfo = additionalInfoReader.GetErrorInfoForToken(ex.ErroneousToken);
+                var newErrorMessageBuilder = new StringBuilder().AppendLine(ex.Message)
+                                                                .Append($"The error occured in line {additionalErrorInfo.LineNumber} at position {additionalErrorInfo.Position}");
+                if (additionalErrorInfo.CharactersAfterErrouneousToken == null)
+                    newErrorMessageBuilder.Append('.');
+                else
+                    newErrorMessageBuilder.AppendLine(" near:")
+                                          .Append($"\"{additionalErrorInfo.CharactersAfterErrouneousToken}\"");
+                var newErrorMessage = newErrorMessageBuilder.ToString();
+
+                throw new JsonDocumentException(newErrorMessage, ex.ErroneousToken);
+            }
         }
 
         private ParseResult DeserializeJsonToken(JsonToken token, Type requestedType)

@@ -42,7 +42,7 @@ namespace Light.Serialization.Json.LowLevelReading
         /// <summary>
         ///     Forwards the calls to the internal <see cref="StringStream" />.
         /// </summary>
-        public int Position => _stringStream.Position;
+        public int BufferPosition => _stringStream.BufferPosition;
 
         /// <summary>
         ///     Forwards the calls to the internal <see cref="StringStream" />.

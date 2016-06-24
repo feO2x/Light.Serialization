@@ -78,6 +78,7 @@
     <Compile Include="DeserializationTests\DoubleTests.cs" />
     <Compile Include="DeserializationTests\DecimalTests.cs" />
     <Compile Include="DeserializationTests\EnumTests.cs" />
+    <Compile Include="DeserializationTests\ErrorLocationTests.cs" />
     <Compile Include="DeserializationTests\FloatTests.cs" />
     <Compile Include="DeserializationTests\GuidTests.cs" />
     <Compile Include="DeserializationTests\IntegerTypesTests.cs" />

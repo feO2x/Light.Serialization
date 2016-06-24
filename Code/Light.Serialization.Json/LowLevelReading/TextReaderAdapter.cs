@@ -27,7 +27,7 @@ namespace Light.Serialization.Json.LowLevelReading
         private bool _isAtEndOfStream;
         private int _loadNextContentIndex;
         private int _pinnedIndex = -1;
-        private int _position;
+        private int _bufferPosition;
 
         /// <summary>
         ///     Creates a new instance of <see cref="TextReaderAdapter" />.
@@ -54,7 +54,7 @@ namespace Light.Serialization.Json.LowLevelReading
         /// <summary>
         ///     Gets the current position in the buffer.
         /// </summary>
-        public int Position => _position;
+        public int BufferPosition => _bufferPosition;
 
         /// <summary>
         ///     Gets the value indicating whether the end of the stream is reached.
@@ -64,7 +64,7 @@ namespace Light.Serialization.Json.LowLevelReading
         /// <summary>
         ///     Gets the current character of the stream.
         /// </summary>
-        public char CurrentCharacter => _buffer[_position];
+        public char CurrentCharacter => _buffer[_bufferPosition];
 
         /// <summary>
         ///     Pins the current index in the buffer. This way the characters from this position onward are not altered when new content is loaded from the text reader.
@@ -72,7 +72,7 @@ namespace Light.Serialization.Json.LowLevelReading
         /// <returns>The current index.</returns>
         public int PinPosition()
         {
-            _pinnedIndex = _position;
+            _pinnedIndex = _bufferPosition;
             return _pinnedIndex;
         }
 
@@ -87,16 +87,16 @@ namespace Light.Serialization.Json.LowLevelReading
 
             AdvanceCurrentIndex();
 
-            if (_position == _endIndex)
+            if (_bufferPosition == _endIndex)
             {
                 _isAtEndOfStream = true;
                 return false;
             }
 
-            if (_position == _pinnedIndex)
+            if (_bufferPosition == _pinnedIndex)
                 throw new DeserializationException("The buffer size for deseserializing the JSON document is too small (the pinned index was reached).");
 
-            if (_position == _loadNextContentIndex)
+            if (_bufferPosition == _loadNextContentIndex)
             {
                 ReadFromTextReaderIntoBuffer();
                 return !_isAtEndOfStream;
@@ -156,8 +156,8 @@ namespace Light.Serialization.Json.LowLevelReading
 
         private void AdvanceCurrentIndex()
         {
-            if (++_position == _buffer.Length)
-                _position = 0;
+            if (++_bufferPosition == _buffer.Length)
+                _bufferPosition = 0;
         }
 
         private void AdvanceLoadNextContentIndex(int count)

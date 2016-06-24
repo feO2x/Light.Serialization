@@ -113,6 +113,9 @@
     <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\EnumTests.cs">
       <Link>DeserializationTests\EnumTests.cs</Link>
     </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\ErrorLocationTests.cs">
+      <Link>DeserializationTests\ErrorLocationTests.cs</Link>
+    </Compile>
     <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\FloatTests.cs">
       <Link>DeserializationTests\FloatTests.cs</Link>
     </Compile>

@@ -26,7 +26,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         [InlineData("nul")]
         public void ExceptionIsThrownWhenNullIsMisspelled(string json)
         {
-            CheckDeserializerThrowsExceptionWithMessage<object>(json, $"Cannot deserialize value {json} to {JsonSymbols.Null}.");
+            CheckDeserializerThrowsExceptionWithMessageContaining<object>(json, $"Cannot deserialize value {json} to {JsonSymbols.Null}.");
         }
     }
 }

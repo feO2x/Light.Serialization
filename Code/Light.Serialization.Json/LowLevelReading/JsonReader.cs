@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Light.GuardClauses;
 using Light.Serialization.Json.FrameworkExtensions;
 
@@ -7,9 +8,10 @@ namespace Light.Serialization.Json.LowLevelReading
     /// <summary>
     ///     Represents an <see cref="IJsonReader" /> that creates JSON tokens from an <see cref="ICharacterStream" />.
     /// </summary>
-    public sealed class JsonReader : IJsonReader
+    public sealed class JsonReader : IJsonReader, IProvideAdditionalErrorInfo
     {
-        private readonly ICharacterStream _stream;
+        private int _startPositionOfLastToken = 1;
+        private DecoratorForPositionIndication _stream;
 
         /// <summary>
         ///     Creates a new instance of <see cref="JsonReader" />.
@@ -20,8 +22,13 @@ namespace Light.Serialization.Json.LowLevelReading
         {
             stream.MustNotBeNull(nameof(stream));
 
-            _stream = stream;
+            _stream = new DecoratorForPositionIndication(stream);
         }
+
+        /// <summary>
+        ///     Gets the underlying character stream that the reader accesses.
+        /// </summary>
+        public ICharacterStream Stream => _stream;
 
         /// <summary>
         ///     Reads the next token of the underlying character stream.
@@ -32,7 +39,7 @@ namespace Light.Serialization.Json.LowLevelReading
             IgnoreWhiteSpace();
 
             if (_stream.IsAtEndOfStream)
-                return CreateToken(_stream.Position, JsonTokenType.EndOfDocument);
+                return CreateToken(_stream.BufferPosition, JsonTokenType.EndOfDocument);
 
             var firstCharacter = _stream.CurrentCharacter;
 
@@ -64,7 +71,7 @@ namespace Light.Serialization.Json.LowLevelReading
             var startIndex = _stream.PinPosition();
             ReadToEndOfToken();
             var token = CreateToken(startIndex, JsonTokenType.Error);
-            throw new JsonDocumentException($"The Json Reader cannot recognize the sequence {token} and therefore cannot tranlate it to a valid JsonToken", token);
+            throw new JsonDocumentException($"The Json Reader cannot recognize the sequence \"{token}\" and therefore cannot tranlate it to a valid JsonToken", token);
         }
 
         /// <summary>
@@ -75,17 +82,37 @@ namespace Light.Serialization.Json.LowLevelReading
             _stream.Dispose();
         }
 
+        /// <summary>
+        ///     Provides additional error info for the specified erroneous token.
+        /// </summary>
+        AdditionalErrorInfo IProvideAdditionalErrorInfo.GetErrorInfoForToken(JsonToken token)
+        {
+            var errorLineNumber = _stream.LineNumber;
+            var errorPosition = _startPositionOfLastToken;
+
+            if (_stream.IsAtEndOfStream)
+                return new AdditionalErrorInfo(errorLineNumber, errorPosition, null);
+
+            var stringBuilder = new StringBuilder(token.ToString());
+            for (var i = 0; i < 40; i++)
+            {
+                stringBuilder.Append(_stream.CurrentCharacter);
+
+                if (_stream.Advance() == false)
+                    break;
+            }
+
+            var surroundingCharacters = stringBuilder.ToString().TrimEnd();
+            surroundingCharacters = surroundingCharacters == token.ToString() ? null : surroundingCharacters;
+            return new AdditionalErrorInfo(errorLineNumber, errorPosition, surroundingCharacters);
+        }
+
         private void IgnoreWhiteSpace()
         {
-            while (true)
+            while (_stream.IsAtEndOfStream == false && char.IsWhiteSpace(_stream.CurrentCharacter))
             {
-                if (_stream.IsAtEndOfStream)
-                    return;
-
-                if (char.IsWhiteSpace(_stream.CurrentCharacter) == false)
-                    return;
-
                 _stream.Advance();
+                _startPositionOfLastToken = _stream.LinePosition;
             }
         }
 
@@ -345,8 +372,8 @@ namespace Light.Serialization.Json.LowLevelReading
 
         private JsonToken CreateToken(int startIndex, JsonTokenType tokenType)
         {
-            var length = _stream.Position > startIndex ? _stream.Position - startIndex :
-                             _stream.Buffer.Length - startIndex + _stream.Position;
+            var length = _stream.BufferPosition > startIndex ? _stream.BufferPosition - startIndex :
+                             _stream.Buffer.Length - startIndex + _stream.BufferPosition;
 
             return new JsonToken(_stream.Buffer, startIndex, length, tokenType);
         }
@@ -378,6 +405,52 @@ namespace Light.Serialization.Json.LowLevelReading
             }
 
             return CreateJsonDocumentException(tokenStartIndex, JsonSymbols.String);
+        }
+
+        private struct DecoratorForPositionIndication : ICharacterStream
+        {
+            private readonly ICharacterStream _decoratedCharacterStream;
+            public int LineNumber;
+            public int LinePosition;
+
+            public DecoratorForPositionIndication(ICharacterStream decoratedCharacterStream)
+            {
+                _decoratedCharacterStream = decoratedCharacterStream;
+                LineNumber = 1;
+                LinePosition = 1;
+            }
+
+            public void Dispose()
+            {
+                _decoratedCharacterStream.Dispose();
+            }
+
+            public char[] Buffer => _decoratedCharacterStream.Buffer;
+            public int BufferPosition => _decoratedCharacterStream.BufferPosition;
+            public bool IsAtEndOfStream => _decoratedCharacterStream.IsAtEndOfStream;
+            public char CurrentCharacter => _decoratedCharacterStream.CurrentCharacter;
+
+            public int PinPosition()
+            {
+                return _decoratedCharacterStream.PinPosition();
+            }
+
+            public bool Advance()
+            {
+                var advanceResult = _decoratedCharacterStream.Advance();
+                if (advanceResult == false)
+                    return false;
+
+                if (_decoratedCharacterStream.CurrentCharacter != '\n')
+                    ++LinePosition;
+                else
+                {
+                    LinePosition = 0;
+                    ++LineNumber;
+                }
+
+                return true;
+            }
         }
     }
 }

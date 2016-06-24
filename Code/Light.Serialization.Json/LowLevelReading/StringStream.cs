@@ -9,7 +9,7 @@ namespace Light.Serialization.Json.LowLevelReading
     public sealed class StringStream : ICharacterStream
     {
         private readonly char[] _buffer;
-        private int _position;
+        private int _bufferPosition;
 
         /// <summary>
         ///     Creates a new instance of <see cref="StringStream" />.
@@ -48,7 +48,7 @@ namespace Light.Serialization.Json.LowLevelReading
             get
             {
                 IsAtEndOfStream.MustBeFalse(exception: () => new InvalidOperationException("The end of the stream is reached."));
-                return _buffer[_position];
+                return _buffer[_bufferPosition];
             }
         }
 
@@ -58,18 +58,18 @@ namespace Light.Serialization.Json.LowLevelReading
         /// <returns>True if the position could be advanced, else false, if the end of the stream was reached.</returns>
         public bool Advance()
         {
-            if (_position == _buffer.Length)
+            if (_bufferPosition == _buffer.Length)
                 return false;
 
-            ++_position;
+            ++_bufferPosition;
 
-            return _buffer.Length != _position;
+            return _buffer.Length != _bufferPosition;
         }
 
         /// <summary>
         ///     Gets the current position that the stream is pointing to.
         /// </summary>
-        public int Position => _position;
+        public int BufferPosition => _bufferPosition;
 
         /// <summary>
         ///     Does nothing because the whole content of the JSON document is in memory already.
@@ -77,13 +77,13 @@ namespace Light.Serialization.Json.LowLevelReading
         /// <returns>The current position of the stream.</returns>
         public int PinPosition()
         {
-            return _position;
+            return _bufferPosition;
         }
 
         /// <summary>
         ///     Gets the value indicating whether the current position has reached the end of the underlying buffer.
         /// </summary>
-        public bool IsAtEndOfStream => _position == _buffer.Length;
+        public bool IsAtEndOfStream => _bufferPosition == _buffer.Length;
 
         /// <summary>
         ///     Does nothing because no actual stream is referenced.
