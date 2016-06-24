@@ -14,7 +14,7 @@ namespace Light.Serialization.Json.ObjectMetadata
     public abstract class BaseMetadataParser : BaseMetadata, ISetNameToTypeMapping, ISetIgnoreMetadataTypeInformation
     {
         /// <summary>
-        ///     Initializes a new instance of <see cref="BaseMetadataParser"/>.
+        ///     Initializes a new instance of <see cref="BaseMetadataParser" />.
         /// </summary>
         /// <param name="nameToTypeMapping">The object that can map JSON type names to .NET types.</param>
         /// <exception cref="ArgumentNullException">Thrown when <see cref="nameToTypeMapping" /> is null.</exception>

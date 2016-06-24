@@ -4,7 +4,7 @@ using Light.Serialization.Json.WriterInstructors;
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents an <see cref="IMetadataInstructor"/> that writes Object IDs and collection type information as the first items of a JSON array.
+    ///     Represents an <see cref="IMetadataInstructor" /> that writes Object IDs and collection type information as the first items of a JSON array.
     /// </summary>
     public sealed class ArrayMetadataInstructor : BaseMetadataInstructor
     {

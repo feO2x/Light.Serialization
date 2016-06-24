@@ -153,7 +153,7 @@ namespace Light.Serialization.Json
         public const string DefaultArrayRankSymbol = "arrayRank";
 
         /// <summary>
-        /// Gets the "arrayLength" symbol that marks the length of a .NET array.
+        ///     Gets the "arrayLength" symbol that marks the length of a .NET array.
         /// </summary>
         public const string DefaultArrayLengthSymbol = "arrayLength";
 

@@ -6,7 +6,7 @@ using Light.Serialization.Json.LowLevelReading;
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents an <see cref="IJsonTokenParser"/> that can parse .NET enum values.
+    ///     Represents an <see cref="IJsonTokenParser" /> that can parse .NET enum values.
     /// </summary>
     public sealed class EnumParser : IJsonTokenParser
     {

@@ -11,12 +11,12 @@ namespace Light.Serialization.Json.PrimitiveTypeFormatters
     public sealed class DateTimeOffsetFormatter : BasePrimitiveTypeFormatter<DateTimeOffset>, IPrimitiveTypeFormatter
     {
         /// <summary>
-        ///     Creates a new intance of <see cref="DateTimeOffsetFormatter"/>.
+        ///     Creates a new intance of <see cref="DateTimeOffsetFormatter" />.
         /// </summary>
         public DateTimeOffsetFormatter() : base(false) { }
 
         /// <summary>
-        ///     Serializes the specified <see cref="DateTimeOffset"/> value to a JSON string that conforms to ISO 8601.
+        ///     Serializes the specified <see cref="DateTimeOffset" /> value to a JSON string that conforms to ISO 8601.
         /// </summary>
         /// <param name="primitiveValue">The date time offset that will be serialized.</param>
         /// <returns>The JSON string conforming to ISO 8601.</returns>

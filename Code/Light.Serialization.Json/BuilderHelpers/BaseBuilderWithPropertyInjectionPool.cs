@@ -5,7 +5,7 @@ using Light.GuardClauses;
 namespace Light.Serialization.Json.BuilderHelpers
 {
     /// <summary>
-    ///     Represents the base class for builders that want to incorporate a <see cref="PropertyInjectionPool"/>.
+    ///     Represents the base class for builders that want to incorporate a <see cref="PropertyInjectionPool" />.
     /// </summary>
     public abstract class BaseBuilderWithPropertyInjectionPool<TBuilder> where TBuilder : BaseBuilderWithPropertyInjectionPool<TBuilder>
     {

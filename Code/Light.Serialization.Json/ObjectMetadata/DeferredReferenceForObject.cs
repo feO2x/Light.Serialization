@@ -7,7 +7,7 @@ using Light.Serialization.Json.ComplexTypeConstruction;
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents an <see cref="IDeferredReference"/> that sets a value on a .NET object via property or field injection.
+    ///     Represents an <see cref="IDeferredReference" /> that sets a value on a .NET object via property or field injection.
     /// </summary>
     public sealed class DeferredReferenceForObject : IDeferredReference
     {

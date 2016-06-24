@@ -4,7 +4,7 @@ using Light.Serialization.Json.TokenParsers;
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    /// Represents the abstraction of an object that can parse the metadata section of a JSON array.
+    ///     Represents the abstraction of an object that can parse the metadata section of a JSON array.
     /// </summary>
     public interface IArrayMetadataParser
     {

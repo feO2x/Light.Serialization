@@ -27,7 +27,7 @@ namespace Light.Serialization.Json.WriterInstructors
         }
 
         /// <summary>
-        ///     Checks if the specified object is no delegate. Important: the <see cref="ComplexObjectInstructor"/> should be the last one in the collection of writer instructors
+        ///     Checks if the specified object is no delegate. Important: the <see cref="ComplexObjectInstructor" /> should be the last one in the collection of writer instructors
         ///     so that it is ruled out that this instructor serializes e.g. a dictionary (or other complex .NET types that should not be handled by it).
         /// </summary>
         /// <returns>True if the specified object is no delegate, else false.</returns>

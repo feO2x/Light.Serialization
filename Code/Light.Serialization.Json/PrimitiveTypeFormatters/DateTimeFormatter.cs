@@ -5,7 +5,7 @@ using Light.Serialization.Json.FrameworkExtensions;
 namespace Light.Serialization.Json.PrimitiveTypeFormatters
 {
     /// <summary>
-    ///     Represents an <see cref="IPrimitiveTypeFormatter"/> that serializes .NET <see cref="DateTime"/> instances to JSON strings.
+    ///     Represents an <see cref="IPrimitiveTypeFormatter" /> that serializes .NET <see cref="DateTime" /> instances to JSON strings.
     ///     The format of the date time values corresponds to ISO 8601 (https://en.wikipedia.org/wiki/ISO_8601).
     /// </summary>
     public sealed class DateTimeFormatter : BasePrimitiveTypeFormatter<DateTime>, IPrimitiveTypeFormatter
@@ -18,7 +18,7 @@ namespace Light.Serialization.Json.PrimitiveTypeFormatters
         public DateTimeFormatter() : base(false) { }
 
         /// <summary>
-        ///     Gets or sets the <see cref="System.TimeZoneInfo"/> that is used to calculate offset values for local date times.
+        ///     Gets or sets the <see cref="System.TimeZoneInfo" /> that is used to calculate offset values for local date times.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
         public TimeZoneInfo TimeZoneInfo
@@ -32,7 +32,7 @@ namespace Light.Serialization.Json.PrimitiveTypeFormatters
         }
 
         /// <summary>
-        ///     Serializes the specified <see cref="DateTime"/> value to a JSON string that conforms to ISO 8601.
+        ///     Serializes the specified <see cref="DateTime" /> value to a JSON string that conforms to ISO 8601.
         /// </summary>
         /// <param name="primitiveValue">The date time to be serialized.</param>
         /// <returns>The JSON string conforming to ISO 8601.</returns>

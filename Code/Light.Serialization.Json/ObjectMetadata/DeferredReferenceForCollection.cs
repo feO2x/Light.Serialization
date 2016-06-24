@@ -5,7 +5,7 @@ using Light.GuardClauses;
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents an <see cref="IDeferredReference"/> that inserts a value in a .NET collection at a specific index.
+    ///     Represents an <see cref="IDeferredReference" /> that inserts a value in a .NET collection at a specific index.
     /// </summary>
     public sealed class DeferredReferenceForCollection : IDeferredReference
     {

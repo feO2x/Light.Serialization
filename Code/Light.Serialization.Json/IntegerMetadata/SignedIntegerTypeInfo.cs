@@ -12,7 +12,7 @@ namespace Light.Serialization.Json.IntegerMetadata
     public sealed class SignedIntegerTypeInfo
     {
         /// <summary>
-        ///     Gets the delagate that is used to downcast a <see cref="long"/> value to the .NET numeric type that this info object describes.
+        ///     Gets the delagate that is used to downcast a <see cref="long" /> value to the .NET numeric type that this info object describes.
         /// </summary>
         public readonly Func<long, object> DowncastValue;
 

@@ -12,197 +12,197 @@ namespace Light.Serialization.Json.ObjectMetadata
     public static class BasicNetTypeNames
     {
         /// <summary>
-        ///     Gets the "int32" name for type <see cref="int"/>.
+        ///     Gets the "int32" name for type <see cref="int" />.
         /// </summary>
         public const string Int32 = "int32";
 
         /// <summary>
-        ///     Gets the "int64" name for type <see cref="long"/>.
+        ///     Gets the "int64" name for type <see cref="long" />.
         /// </summary>
         public const string Int64 = "int64";
 
         /// <summary>
-        ///     Gets the "int16" name for type <see cref="short"/>.
+        ///     Gets the "int16" name for type <see cref="short" />.
         /// </summary>
         public const string Int16 = "int16";
 
         /// <summary>
-        ///     Gets the "int8" name for type <see cref="sbyte"/>.
+        ///     Gets the "int8" name for type <see cref="sbyte" />.
         /// </summary>
         public const string Sbyte = "int8";
 
         /// <summary>
-        ///     Gets the "uint32" name for type <see cref="uint"/>.
+        ///     Gets the "uint32" name for type <see cref="uint" />.
         /// </summary>
         public const string UInt32 = "uint32";
 
         /// <summary>
-        ///     Gets the "uint64" name for type <see cref="ulong"/>.
+        ///     Gets the "uint64" name for type <see cref="ulong" />.
         /// </summary>
         public const string UInt64 = "uint64";
 
         /// <summary>
-        ///     Gets the "uint16" name for type <see cref="ushort"/>.
+        ///     Gets the "uint16" name for type <see cref="ushort" />.
         /// </summary>
         public const string UInt16 = "uint16";
 
         /// <summary>
-        ///     Gets the "byte" name for type <see cref="byte"/>.
+        ///     Gets the "byte" name for type <see cref="byte" />.
         /// </summary>
         public const string Byte = "byte";
 
         /// <summary>
-        ///     Gets the "float32" name for type <see cref="float"/>.
+        ///     Gets the "float32" name for type <see cref="float" />.
         /// </summary>
         public const string Single = "float32";
 
         /// <summary>
-        ///     Gets the "float64" name for type <see cref="double"/>.
+        ///     Gets the "float64" name for type <see cref="double" />.
         /// </summary>
         public const string Double = "float64";
 
         /// <summary>
-        ///     Gets the "decimal" name for type <see cref="decimal"/>.
+        ///     Gets the "decimal" name for type <see cref="decimal" />.
         /// </summary>
         public const string Decimal = "decimal";
 
         /// <summary>
-        ///     Gets the "bool" name for type <see cref="bool"/>.
+        ///     Gets the "bool" name for type <see cref="bool" />.
         /// </summary>
         public const string Bool = "bool";
 
         /// <summary>
-        ///     Gets the "character" name for type <see cref="char"/>.
+        ///     Gets the "character" name for type <see cref="char" />.
         /// </summary>
         public const string Character = "character";
 
         /// <summary>
-        ///     Gets the "string" name for type <see cref="string"/>.
+        ///     Gets the "string" name for type <see cref="string" />.
         /// </summary>
         public const string String = "string";
 
         /// <summary>
-        ///     Gets the "object" name for type <see cref="object"/>.
+        ///     Gets the "object" name for type <see cref="object" />.
         /// </summary>
         public const string Object = "object";
 
         /// <summary>
-        ///     Gets the "dateTime" name for type <see cref="System.DateTime"/>.
+        ///     Gets the "dateTime" name for type <see cref="System.DateTime" />.
         /// </summary>
         public const string DateTime = "dateTime";
 
         /// <summary>
-        ///     Gets the "duration" name for type <see cref="System.TimeSpan"/>.
+        ///     Gets the "duration" name for type <see cref="System.TimeSpan" />.
         /// </summary>
         public const string TimeSpan = "duration";
 
         /// <summary>
-        ///     Gets the "localDateTime" name for type <see cref="System.DateTimeOffset"/>.
+        ///     Gets the "localDateTime" name for type <see cref="System.DateTimeOffset" />.
         /// </summary>
         public const string DateTimeOffset = "localDateTime";
 
         /// <summary>
-        /// Gets the "type" name for type <see cref="System.Type"/>.
+        ///     Gets the "type" name for type <see cref="System.Type" />.
         /// </summary>
         public const string Type = "type";
 
         /// <summary>
-        ///     Gets the "genericMap" name for type <see cref="Dictionary{TKey,TValue}"/>.
+        ///     Gets the "genericMap" name for type <see cref="Dictionary{TKey,TValue}" />.
         /// </summary>
         public const string GenericDictionary = "genericMap";
 
         /// <summary>
-        ///     Gets the "sortedGenericMap" name for type <see cref="SortedDictionary{TKey,TValue}"/>.
+        ///     Gets the "sortedGenericMap" name for type <see cref="SortedDictionary{TKey,TValue}" />.
         /// </summary>
         public const string SortedGenericDictionary = "sortedGenericMap";
 
         /// <summary>
-        ///     Gets the "abstractGenericMap" name for type <see cref="IDictionary{TKey,TValue}"/>.
+        ///     Gets the "abstractGenericMap" name for type <see cref="IDictionary{TKey,TValue}" />.
         /// </summary>
         public const string AbstractGenericDictionary = "abstractGenericMap";
 
         /// <summary>
-        ///     Gets the "abstractMap" name for the non-generic <see cref="IDictionary"/> type.
+        ///     Gets the "abstractMap" name for the non-generic <see cref="IDictionary" /> type.
         /// </summary>
         public const string AbstractDictionary = "abstractMap";
 
         /// <summary>
-        ///     Gets the "abstractReadOnlyGenericMap" name for type <see cref="IReadOnlyDictionary{TKey,TValue}"/>.
+        ///     Gets the "abstractReadOnlyGenericMap" name for type <see cref="IReadOnlyDictionary{TKey,TValue}" />.
         /// </summary>
         public const string AbstractReadOnlyGenericDictionary = "abstractReadOnlyGenericMap";
 
         /// <summary>
-        ///     Gets the "genericCollection" name for type <see cref="List{T}"/>.
+        ///     Gets the "genericCollection" name for type <see cref="List{T}" />.
         /// </summary>
         public const string GenericList = "genericList";
 
         /// <summary>
-        ///     Gets the "observableGenericList" name for type <see cref="ObservableCollection{T}"/>.
+        ///     Gets the "observableGenericList" name for type <see cref="ObservableCollection{T}" />.
         /// </summary>
         public const string ObservableGenericCollection = "observableGenericList";
 
         /// <summary>
-        ///     Gets the "genericCollection" name for type <see cref="Collection{T}"/>.
+        ///     Gets the "genericCollection" name for type <see cref="Collection{T}" />.
         /// </summary>
         public const string GenericCollection = "genericCollection";
 
         /// <summary>
-        ///     Gets the "abstractGenericList" name for type <see cref="IList{T}"/>.
+        ///     Gets the "abstractGenericList" name for type <see cref="IList{T}" />.
         /// </summary>
         public const string AbstractGenericList = "abstractGenericList";
 
         /// <summary>
-        ///     Gets the "abstractGenericCollection" name for type <see cref="ICollection{T}"/>.
+        ///     Gets the "abstractGenericCollection" name for type <see cref="ICollection{T}" />.
         /// </summary>
         public const string AbstractGenericCollection = "abstractGenericCollection";
 
         /// <summary>
-        ///     Gets the "abstractGenericEnumerable" name for type <see cref="IEnumerable{T}"/>.
+        ///     Gets the "abstractGenericEnumerable" name for type <see cref="IEnumerable{T}" />.
         /// </summary>
         public const string AbstractGenericEnumerable = "abstractGenericEnumerable";
 
         /// <summary>
-        ///     Gets the "abstractReadOnlyGenericList" name for type <see cref="IReadOnlyList{T}"/>.
+        ///     Gets the "abstractReadOnlyGenericList" name for type <see cref="IReadOnlyList{T}" />.
         /// </summary>
         public const string AbstractReadOnlyGenericList = "abstractReadOnlyGenericList";
 
         /// <summary>
-        ///     Gets the "abstractReadOnlyGenericCollection" name for type <see cref="IReadOnlyCollection{T}"/>.
+        ///     Gets the "abstractReadOnlyGenericCollection" name for type <see cref="IReadOnlyCollection{T}" />.
         /// </summary>
         public const string AbstractReadOnlyGenericCollection = "abstractReadOnlyGenericCollection";
 
         /// <summary>
-        ///     Gets the "abstractList" name for the non-generic <see cref="IList"/> type.
+        ///     Gets the "abstractList" name for the non-generic <see cref="IList" /> type.
         /// </summary>
         public const string AbstractList = "abstractList";
 
         /// <summary>
-        ///     Gets the "abstractCollection" name for the non-generic <see cref="ICollection"/> type.
+        ///     Gets the "abstractCollection" name for the non-generic <see cref="ICollection" /> type.
         /// </summary>
         public const string AbstractCollection = "abstractCollection";
 
         /// <summary>
-        ///     Gets the "abstractEnumerable" name for the non-generic <see cref="IEnumerable"/> type.
+        ///     Gets the "abstractEnumerable" name for the non-generic <see cref="IEnumerable" /> type.
         /// </summary>
         public const string AbstractEnumerable = "abstractEnumerable";
 
         /// <summary>
-        ///     Gets the "genericSet" name for type <see cref="HashSet{T}"/>.
+        ///     Gets the "genericSet" name for type <see cref="HashSet{T}" />.
         /// </summary>
         public const string GenericHashSet = "genericHashSet";
 
         /// <summary>
-        ///     Gets the "sortedGenericSet" name for type <see cref="SortedSet{T}"/>.
+        ///     Gets the "sortedGenericSet" name for type <see cref="SortedSet{T}" />.
         /// </summary>
         public const string SortedGenericSet = "sortedGenericSet";
 
         /// <summary>
-        ///     Gets the "abstractGenericSet" name for type <see cref="ISet{T}"/>.
+        ///     Gets the "abstractGenericSet" name for type <see cref="ISet{T}" />.
         /// </summary>
         public const string AbstractGenericSet = "abstractGenericSet";
 
         /// <summary>
-        ///     Gets the "array" name for type <see cref="System.Array"/>.
+        ///     Gets the "array" name for type <see cref="System.Array" />.
         /// </summary>
         public const string Array = "array";
 

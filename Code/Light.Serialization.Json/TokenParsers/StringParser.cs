@@ -7,7 +7,7 @@ using Light.Serialization.Json.LowLevelReading;
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents an <see cref="IJsonTokenParser"/> that deserializes JSON strings to .NET <see cref="string"/> instances.
+    ///     Represents an <see cref="IJsonTokenParser" /> that deserializes JSON strings to .NET <see cref="string" /> instances.
     /// </summary>
     public sealed class StringParser : IJsonTokenParser
     {
@@ -17,7 +17,7 @@ namespace Light.Serialization.Json.TokenParsers
         public bool CanBeCached => true;
 
         /// <summary>
-        ///     Checks if the specified token is a JSON string and the requested type is <see cref="string"/>.
+        ///     Checks if the specified token is a JSON string and the requested type is <see cref="string" />.
         /// </summary>
         public bool IsSuitableFor(JsonDeserializationContext context)
         {

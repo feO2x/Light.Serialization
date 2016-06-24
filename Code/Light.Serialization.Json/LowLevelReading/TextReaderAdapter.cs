@@ -23,11 +23,11 @@ namespace Light.Serialization.Json.LowLevelReading
 
         private readonly char[] _buffer;
         private readonly TextReader _textReader;
+        private int _bufferPosition;
         private int _endIndex = -1;
         private bool _isAtEndOfStream;
         private int _loadNextContentIndex;
         private int _pinnedIndex = -1;
-        private int _bufferPosition;
 
         /// <summary>
         ///     Creates a new instance of <see cref="TextReaderAdapter" />.

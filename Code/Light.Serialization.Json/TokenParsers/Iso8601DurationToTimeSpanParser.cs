@@ -4,7 +4,7 @@ using Light.Serialization.Json.LowLevelReading;
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents a struct that can parse JSON strings in ISO 8601 duration format to .NET <see cref="TimeSpan"/> values.
+    ///     Represents a struct that can parse JSON strings in ISO 8601 duration format to .NET <see cref="TimeSpan" /> values.
     /// </summary>
     public struct Iso8601DurationToTimeSpanParser
     {
@@ -18,7 +18,7 @@ namespace Light.Serialization.Json.TokenParsers
         private int _indexOfDot;
 
         /// <summary>
-        /// Parses the specified JSON token as a .NET <see cref="TimeSpan"/> value.
+        ///     Parses the specified JSON token as a .NET <see cref="TimeSpan" /> value.
         /// </summary>
         public TimeSpan ParseToken(JsonToken token)
         {

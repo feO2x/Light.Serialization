@@ -51,7 +51,7 @@ namespace Light.Serialization.Json.ComplexTypeDecomposition
         }
 
         /// <summary>
-        ///     Returns the string representation of this <see cref="ValueReaderUsingLambda"/> instance.
+        ///     Returns the string representation of this <see cref="ValueReaderUsingLambda" /> instance.
         /// </summary>
         public override string ToString()
         {

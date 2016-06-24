@@ -83,7 +83,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
                 new object[] { "{\"type\": \"uint32\"}", typeof(uint).GetTypeInfo() },
                 new object[] { "{\"type\": \"string\"}", typeof(string).GetTypeInfo() },
                 new object[] { "{\"type\": \"abstractGenericSet\"}", typeof(ISet<>).GetTypeInfo() },
-                new object[] { "{\"type\": { \"name\": \"genericList\", \"typeArguments\": [\"int32\"] }}", typeof(List<int>).GetTypeInfo() },
+                new object[] { "{\"type\": { \"name\": \"genericList\", \"typeArguments\": [\"int32\"] }}", typeof(List<int>).GetTypeInfo() }
             };
 
         [Fact(DisplayName = "The deserializer must be able deserialize type instances when the requested type is object.")]

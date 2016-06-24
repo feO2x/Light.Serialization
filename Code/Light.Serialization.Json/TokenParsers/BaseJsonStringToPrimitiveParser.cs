@@ -6,7 +6,7 @@ using Light.GuardClauses;
 namespace Light.Serialization.Json.TokenParsers
 {
     /// <summary>
-    ///     Represents the base class of an <see cref="IJsonTokenParser"/> that can deserialize
+    ///     Represents the base class of an <see cref="IJsonTokenParser" /> that can deserialize
     ///     JSON strings to .NET primitve types other than <see cref="string" />.
     /// </summary>
     /// <typeparam name="T">The primitive type that the parser handles.</typeparam>

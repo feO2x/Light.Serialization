@@ -9,7 +9,7 @@ namespace Light.Serialization.Json.BuilderHelpers
     public interface ISetNameToTypeMapping
     {
         /// <summary>
-        ///     Sets the specified <see cref="INameToTypeMapping"/> instance.
+        ///     Sets the specified <see cref="INameToTypeMapping" /> instance.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
         INameToTypeMapping NameToTypeMapping { set; }

@@ -17,7 +17,7 @@ namespace Light.Serialization.Json.Tests.SerializationTests
         [MemberData(nameof(DictionariesTestData))]
         public void Dictionaries(IDictionary dictionary, string expectedJson)
         {
-            UseDomainFriendlyNames(options => options.UseTypes(typeof (Person)));
+            UseDomainFriendlyNames(options => options.UseTypes(typeof(Person)));
 
             CompareJsonToExpected(dictionary, expectedJson);
         }
@@ -49,7 +49,7 @@ namespace Light.Serialization.Json.Tests.SerializationTests
                                  ["Walter"] = new Person("Walter", "White", 52),
                                  ["Jesse"] = new Person("Jesse", "Pinkman", 27)
                              };
-            UseDomainFriendlyNames(options => options.UseTypes(typeof (Person)));
+            UseDomainFriendlyNames(options => options.UseTypes(typeof(Person)));
             DisableObjectReferencePreservation();
             const string expectedJson = "{\"$type\":{\"name\":\"genericMap\",\"typeArguments\":[\"string\",\"Person\"]},\"Walter\":{\"$type\":\"Person\",\"firstName\":\"Walter\",\"lastName\":\"White\",\"age\":52},\"Jesse\":{\"$type\":\"Person\",\"firstName\":\"Jesse\",\"lastName\":\"Pinkman\",\"age\":27}}";
 

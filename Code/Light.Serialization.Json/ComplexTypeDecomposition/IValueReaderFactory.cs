@@ -18,7 +18,7 @@ namespace Light.Serialization.Json.ComplexTypeDecomposition
         IValueReader Create(Type targetType, PropertyInfo propertyInfo);
 
         /// <summary>
-        ///     Creates a <see cref="IValueReader"/> instance for the specified <see cref="FieldInfo" />.
+        ///     Creates a <see cref="IValueReader" /> instance for the specified <see cref="FieldInfo" />.
         /// </summary>
         /// <param name="targetType">The type that the field belongs to.</param>
         /// <param name="fieldInfo">The info describing the field.</param>

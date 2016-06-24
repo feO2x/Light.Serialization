@@ -18,10 +18,10 @@ namespace Light.Serialization.Json.TokenParsers
         private ITypeDescriptionService _typeDescriptionService;
 
         /// <summary>
-        ///     Creates a new instance of <see cref="ComplexObjectParser"/>.
+        ///     Creates a new instance of <see cref="ComplexObjectParser" />.
         /// </summary>
-        /// <param name="metaFactory">The factory that can create other objects from <see cref="Type"/> information.</param>
-        /// <param name="typeDescriptionService">The object that provides creation descriptions for <see cref="Type"/> instances.</param>
+        /// <param name="metaFactory">The factory that can create other objects from <see cref="Type" /> information.</param>
+        /// <param name="typeDescriptionService">The object that provides creation descriptions for <see cref="Type" /> instances.</param>
         /// <param name="metadataParser">The parser that is used for the metadata section of an complex JSON object.</param>
         public ComplexObjectParser(IMetaFactory metaFactory,
                                    ITypeDescriptionService typeDescriptionService,

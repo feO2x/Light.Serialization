@@ -17,7 +17,7 @@ namespace Light.Serialization.Json.TokenParsers
         public bool CanBeCached => true;
 
         /// <summary>
-        ///     Checks if the specified JSON token is a string and the requested type is the .NET <see cref="char"/> type.
+        ///     Checks if the specified JSON token is a string and the requested type is the .NET <see cref="char" /> type.
         /// </summary>
         public bool IsSuitableFor(JsonDeserializationContext context)
         {
@@ -25,7 +25,7 @@ namespace Light.Serialization.Json.TokenParsers
         }
 
         /// <summary>
-        ///     Parser the given JSON token as a .NET <see cref="char"/> instance.
+        ///     Parser the given JSON token as a .NET <see cref="char" /> instance.
         ///     Please note that you may only call this method if <see cref="IsSuitableFor" /> would return true.
         /// </summary>
         /// <param name="context">The deserialization context of the specified JSON token.</param>

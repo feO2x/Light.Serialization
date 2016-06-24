@@ -15,7 +15,7 @@ namespace Light.Serialization.Json.Caching
         private readonly IReadableValuesTypeAnalyzer _decoratedAnalyzer;
 
         /// <summary>
-        ///     Creates a new instance of <see cref="ValueReadersCacheDecorator"/>.
+        ///     Creates a new instance of <see cref="ValueReadersCacheDecorator" />.
         /// </summary>
         /// <param name="decoratedAnalyzer">The type analyzer that is decorated by this cache.</param>
         /// <param name="cache">The dictionary that is used for caching. It may be empty or prefilled.</param>

@@ -114,7 +114,7 @@ namespace Light.Serialization.Json.ComplexTypeConstruction
         /// <param name="typeCreationDescription">The object describing how a type can be created with constructor, property and field injection.</param>
         /// <param name="deserializedChildValues">The deserialized child values from the JSON document.</param>
         /// <param name="newObject">The object which will be populated via property and field injection.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeCreationDescription"/> or <paramref name="newObject"/> is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="typeCreationDescription" /> or <paramref name="newObject" /> is null.</exception>
         public static void PerformPropertyAndFieldInjection(TypeCreationDescription typeCreationDescription, Dictionary<InjectableValueDescription, InjectableValue> deserializedChildValues, object newObject)
         {
             if (deserializedChildValues == null)

@@ -12,7 +12,7 @@ namespace Light.Serialization.Json.ComplexTypeDecomposition
         ///     Analyzes the specified type and returns a list of value readers that can be used to read values from an object.
         /// </summary>
         /// <param name="type">The type to be analyzed.</param>
-        /// <returns>The list of <see cref="IValueReader"/> instances.</returns>
+        /// <returns>The list of <see cref="IValueReader" /> instances.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="type" /> is null.</exception>
         List<IValueReader> AnalyzeType(Type type);
     }

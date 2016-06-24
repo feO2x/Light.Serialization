@@ -1,7 +1,7 @@
 ﻿namespace Light.Serialization.Json.Unity
 {
     /// <summary>
-    /// Provides the names of several default objects that are registered with the DI container.
+    ///     Provides the names of several default objects that are registered with the DI container.
     /// </summary>
     public class KnownNames
     {

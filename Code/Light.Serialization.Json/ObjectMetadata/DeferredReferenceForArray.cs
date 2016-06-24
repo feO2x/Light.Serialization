@@ -4,7 +4,7 @@ using Light.GuardClauses;
 namespace Light.Serialization.Json.ObjectMetadata
 {
     /// <summary>
-    ///     Represents an <see cref="IDeferredReference"/> that inserts a value in a .NET one-dimensional array at a specific index.
+    ///     Represents an <see cref="IDeferredReference" /> that inserts a value in a .NET one-dimensional array at a specific index.
     /// </summary>
     public sealed class DeferredReferenceForArray : IDeferredReference
     {

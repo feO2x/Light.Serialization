@@ -50,7 +50,7 @@ namespace Light.Serialization.Json.WriterInstructors
         }
 
         /// <summary>
-        ///     Checks if the <paramref name="actualType" /> is <see cref="Type" /> or <see cref="TypeInfo"/>.
+        ///     Checks if the <paramref name="actualType" /> is <see cref="Type" /> or <see cref="TypeInfo" />.
         /// </summary>
         public bool IsSuitableFor(object @object, Type actualType)
         {

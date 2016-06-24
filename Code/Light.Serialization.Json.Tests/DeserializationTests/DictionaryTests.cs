@@ -158,7 +158,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
             const string json = "{ \"$type\": { \"name\": \"genericMap\", \"typeArguments\": [ \"string\", \"string\" ] }, \"Foo\": \"Bar\", \"Baz\": \"Qux\" }";
 
             var actual = (Dictionary<string, string>) GetDeserializedJson<object>(json);
-            
+
             actual.ShouldAllBeEquivalentTo(expected);
         }
 

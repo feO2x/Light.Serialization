@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using Light.Serialization.Abstractions;
 using Light.Serialization.Json.LowLevelReading;
 
 namespace Light.Serialization.Json.TokenParsers
@@ -25,7 +24,7 @@ namespace Light.Serialization.Json.TokenParsers
         }
 
         /// <summary>
-        ///     Deserializes the given token to a .NET <see cref="decimal"/> value.
+        ///     Deserializes the given token to a .NET <see cref="decimal" /> value.
         ///     This method must only be called if <see cref="IsSuitableFor" /> would return true.
         /// </summary>
         public ParseResult ParseValue(JsonDeserializationContext context)
