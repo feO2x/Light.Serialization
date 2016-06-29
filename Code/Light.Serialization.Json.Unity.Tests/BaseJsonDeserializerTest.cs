@@ -77,14 +77,5 @@ namespace Light.Serialization.Json.Tests
             Container.Resolve<ArrayMetadataParser>().IsIgnoringMetadataTypeInformation = true;
             Container.Resolve<ObjectMetadataParser>().IsIgnoringMetadataTypeInformation = true;
         }
-
-        public void CheckDeserializerThrowsExceptionWithMessage<T>(string json, string exceptionMessage)
-        {
-            var testTarget = Container.Resolve<IDeserializer>();
-
-            Action act = () => testTarget.Deserialize<T>(json);
-
-            act.ShouldThrow<DeserializationException>().And.Message.Should().Be(exceptionMessage);
-        }
     }
 }

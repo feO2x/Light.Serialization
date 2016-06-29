@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Light.GuardClauses;
 using Light.Serialization.Abstractions;
@@ -179,8 +180,10 @@ namespace Light.Serialization.Json
 
                 return parseResult.ParsedValue;
             }
-            catch (JsonDocumentException ex)
+            catch (ErroneousTokenException ex)
             {
+                var enhancedException = (IExchangeExceptionMessage) ex;
+
                 var additionalInfoReader = _jsonReader as IProvideAdditionalErrorInfo;
                 if (additionalInfoReader == null)
                     throw;
@@ -195,7 +198,8 @@ namespace Light.Serialization.Json
                                           .Append($"\"{additionalErrorInfo.CharactersAfterErrouneousToken}\"");
                 var newErrorMessage = newErrorMessageBuilder.ToString();
 
-                throw new JsonDocumentException(newErrorMessage, ex.ErroneousToken);
+                enhancedException.ExchangeMessage(newErrorMessage);
+                throw;
             }
         }
 

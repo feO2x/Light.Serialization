@@ -49,15 +49,6 @@ namespace Light.Serialization.Json.Tests
             act.ShouldThrow<DeserializationException>().And.Message.Should().Contain(partOfExceptionMessage);
         }
 
-        public void CheckDeserializerThrowsExceptionWithMessage<T>(string json, string exceptionMessage)
-        {
-            var testTarget = _builder.Build();
-
-            Action act = () => testTarget.Deserialize<T>(json);
-
-            act.ShouldThrow<DeserializationException>().And.Message.Should().Be(exceptionMessage);
-        }
-
         public void ConfigureReaderFactory(Action<JsonReaderFactory> configureFactory)
         {
             _builder.ConfigureReaderFactory(configureFactory);

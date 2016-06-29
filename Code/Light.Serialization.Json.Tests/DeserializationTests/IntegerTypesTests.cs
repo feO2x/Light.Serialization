@@ -28,7 +28,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         [InlineData("214748364700000000")]
         public void ExceptionIsThrownWhenOverflowingIntIsDeserialized(string json)
         {
-            CheckDeserializerThrowsExceptionWithMessage<int>(json, $"Could not deserialize value {json} because it produces an overflow for type System.Int32.");
+            CheckDeserializerThrowsExceptionWithMessageContaining<int>(json, $"Could not deserialize value {json} because it produces an overflow for type System.Int32.");
         }
 
         [Theory(DisplayName = "The deserializer must be able to deserialize JSON numbers with trailing zeros to .NET int instances.")]
@@ -51,7 +51,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         [InlineData("-2147483648.000000001")]
         public void ExceptionIsThrownWhenIntWithNonZeroDigitsAfterDecimalPointIsDeserialized(string json)
         {
-            CheckDeserializerThrowsExceptionWithMessage<int>(json, $"Could not deserialize value {json} because it is no integer, but a real number.");
+            CheckDeserializerThrowsExceptionWithMessageContaining<int>(json, $"Could not deserialize value {json} because it is no integer, but a real number.");
         }
     }
 
@@ -77,7 +77,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         [InlineData("429496729500000000")]
         public void ExceptionIsThrownWhenOverflowingUIntIsDeserialized(string json)
         {
-            CheckDeserializerThrowsExceptionWithMessage<uint>(json, $"Could not deserialize value {json} because it produces an overflow for type System.UInt32.");
+            CheckDeserializerThrowsExceptionWithMessageContaining<uint>(json, $"Could not deserialize value {json} because it produces an overflow for type System.UInt32.");
         }
 
         [Theory(DisplayName = "The deserializer must be able to deserialize JSON numbers with trailing zeros to .NET uint instances.")]
@@ -116,7 +116,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         [InlineData("3276700000000")]
         public void ExceptionIsThrownWhenOverflowingShortIsDeserialized(string json)
         {
-            CheckDeserializerThrowsExceptionWithMessage<short>(json, $"Could not deserialize value {json} because it produces an overflow for type System.Int16.");
+            CheckDeserializerThrowsExceptionWithMessageContaining<short>(json, $"Could not deserialize value {json} because it produces an overflow for type System.Int16.");
         }
 
         [Theory(DisplayName = "The deserializer must be able to deserialize JSON numbers with trailing zeros to .NET short instances.")]
@@ -156,7 +156,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         [InlineData("6553500000000")]
         public void ExceptionIsThrownWhenOverflowingUShortIsDeserialized(string json)
         {
-            CheckDeserializerThrowsExceptionWithMessage<ushort>(json, $"Could not deserialize value {json} because it produces an overflow for type System.UInt16.");
+            CheckDeserializerThrowsExceptionWithMessageContaining<ushort>(json, $"Could not deserialize value {json} because it produces an overflow for type System.UInt16.");
         }
 
         [Theory(DisplayName = "The deserializer must be able to deserialize JSON numbers with trailing zeros to .NET ushort instances.")]
@@ -196,7 +196,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         [InlineData("25500000000")]
         public void ExceptionIsThrownWhenOverflowingByteIsDeserialized(string json)
         {
-            CheckDeserializerThrowsExceptionWithMessage<byte>(json, $"Could not deserialize value {json} because it produces an overflow for type System.Byte.");
+            CheckDeserializerThrowsExceptionWithMessageContaining<byte>(json, $"Could not deserialize value {json} because it produces an overflow for type System.Byte.");
         }
 
         [Theory(DisplayName = "The deserializer must be able to deserialize JSON numbers with trailing zeros to .NET byte instances.")]
@@ -236,7 +236,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         [InlineData("12700000000")]
         public void ExceptionIsThrownWhenOverflowingSByteIsDeserialized(string json)
         {
-            CheckDeserializerThrowsExceptionWithMessage<sbyte>(json, $"Could not deserialize value {json} because it produces an overflow for type System.SByte.");
+            CheckDeserializerThrowsExceptionWithMessageContaining<sbyte>(json, $"Could not deserialize value {json} because it produces an overflow for type System.SByte.");
         }
 
         [Theory(DisplayName = "The deserializer must be able to deserialize JSON numbers with trailing zeros to .NET sbyte instances.")]
@@ -276,7 +276,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         [InlineData("922337203685477580700000000")]
         public void ExceptionIsThrownWhenOverflowingLongIsDeserialized(string json)
         {
-            CheckDeserializerThrowsExceptionWithMessage<long>(json, $"Could not deserialize value {json} because it produces an overflow for type System.Int64.");
+            CheckDeserializerThrowsExceptionWithMessageContaining<long>(json, $"Could not deserialize value {json} because it produces an overflow for type System.Int64.");
         }
 
         [Theory(DisplayName = "The deserializer must be able to deserialize JSON numbers with trailing zeros to .NET long instances.")]
@@ -307,14 +307,12 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
         }
 
         [Theory(DisplayName = "The deserializer must throw an exception when the JSON number exceeds the limits of the .NET ulong type.")]
-        [InlineData("9223372036854775808")] //long max value ( 9223372036854775807 ) +1
+        [InlineData("18446744073709551616")] // ulong max value ( 18446744073709551615 ) +1
         [InlineData("-9223372036854775818")]
-        [InlineData("9323372036854775807")]
-        [InlineData("10223372036854775807")]
         [InlineData("922337203685477580700000000")]
         public void ExceptionIsThrownWhenOverflowingULongIsDeserialized(string json)
         {
-            CheckDeserializerThrowsExceptionWithMessage<long>(json, $"Could not deserialize value {json} because it produces an overflow for type System.Int64.");
+            CheckDeserializerThrowsExceptionWithMessageContaining<ulong>(json, $"Could not deserialize value {json} because it produces an overflow for type System.UInt64.");
         }
 
         [Theory(DisplayName = "The deserializer must be able to deserialize JSON numbers with trailing zeros to .NET ulong instances.")]

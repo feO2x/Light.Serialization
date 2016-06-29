@@ -1,6 +1,5 @@
 ﻿using System;
 using Light.GuardClauses;
-using Light.Serialization.Abstractions;
 using Light.Serialization.Json.IntegerMetadata;
 using Light.Serialization.Json.LowLevelReading;
 
@@ -60,7 +59,7 @@ namespace Light.Serialization.Json.TokenParsers
             {
                 var decimalPartInfo = DecimalPartInfo.FromNumericJsonToken(token);
                 if (decimalPartInfo.AreTrailingDigitsOnlyZeros == false)
-                    throw new DeserializationException($"Could not deserialize value {token} because it is no integer, but a real number.");
+                    throw new ErroneousTokenException($"Could not deserialize value {token} because it is no integer, but a real number.", token);
 
                 digitsLeftToRead = decimalPartInfo.IndexOfDecimalPoint;
             }
@@ -75,7 +74,7 @@ namespace Light.Serialization.Json.TokenParsers
             if (token[0] == JsonSymbols.Minus)
             {
                 if (digitsLeftToRead > integerInfo.MinimumAsString.Length)
-                    throw new DeserializationException($"Could not deserialize value {token} because it produces an overflow for type {integerInfo.Type}.");
+                    throw new ErroneousTokenException($"Could not deserialize value {token} because it produces an overflow for type {integerInfo.Type}.", token);
                 if (digitsLeftToRead == integerInfo.MinimumAsString.Length)
                     overflowCompareString = integerInfo.MinimumAsString;
                 isResultNegative = true;
@@ -84,7 +83,7 @@ namespace Light.Serialization.Json.TokenParsers
                 currentIndex++;
             }
             else if (digitsLeftToRead > integerInfo.MaximumAsString.Length)
-                throw new DeserializationException($"Could not deserialize value {token} because it produces an overflow for type {integerInfo.Type}.");
+                throw new ErroneousTokenException($"Could not deserialize value {token} because it produces an overflow for type {integerInfo.Type}.", token);
             else if (digitsLeftToRead == integerInfo.MaximumAsString.Length)
                 overflowCompareString = integerInfo.MaximumAsString;
 
@@ -100,7 +99,7 @@ namespace Light.Serialization.Json.TokenParsers
                     if (digit < overflowCompareDigit)
                         isDefinitelyInRange = true;
                     else if (digit > overflowCompareDigit)
-                        throw new DeserializationException($"Could not deserialize value {token} because it produces an overflow for type {integerInfo.Type}.");
+                        throw new ErroneousTokenException($"Could not deserialize value {token} because it produces an overflow for type {integerInfo.Type}.", token);
                 }
                 currentIndex++;
                 digitsLeftToRead--;

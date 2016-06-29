@@ -22,7 +22,7 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
 
             Action act = () => deserializer.Deserialize(json, requestedType);
 
-            act.ShouldThrow<JsonDocumentException>()
+            act.ShouldThrow<ErroneousTokenException>()
                .And.Message.Should().Contain($"The error occured in line {lineNumber} at position {position}");
         }
 
@@ -47,6 +47,26 @@ namespace Light.Serialization.Json.Tests.DeserializationTests
                                        .AppendLine("]")
                                        .ToString(),
                     typeof(List<int>), 4, 5
+                },
+                new object[]
+                {
+                    new StringBuilder().AppendLine("[")
+                                       .AppendLine("  -14,")
+                                       .AppendLine("  2.22345,")
+                                       .AppendLine("  3.14")
+                                       .AppendLine("]")
+                                       .ToString(),
+                    typeof(IEnumerable<int>), 3, 3
+                },
+                new object[]
+                {
+                    new StringBuilder().AppendLine("[")
+                                       .AppendLine("  2,")
+                                       .AppendLine("  1,")
+                                       .AppendLine("  3.14")
+                                       .AppendLine("]")
+                                       .ToString(),
+                    typeof(IEnumerable<uint>), 4, 3
                 },
                 new object[]
                 {
