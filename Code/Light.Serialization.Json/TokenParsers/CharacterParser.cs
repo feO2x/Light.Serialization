@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using Light.GuardClauses;
-using Light.Serialization.Abstractions;
 using Light.Serialization.Json.LowLevelReading;
 
 namespace Light.Serialization.Json.TokenParsers
@@ -88,9 +87,9 @@ namespace Light.Serialization.Json.TokenParsers
             return Convert.ToChar(int.Parse(hexadecimalDigitsAsString, NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo));
         }
 
-        private static DeserializationException CreateException(JsonToken token)
+        private static ErroneousTokenException CreateException(JsonToken token)
         {
-            return new JsonDocumentException($"Cannot deserialize value {token} to a character.", token);
+            return new ErroneousTokenException($"Cannot deserialize value {token} to a character.", token);
         }
     }
 }

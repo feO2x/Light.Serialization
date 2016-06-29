@@ -116,12 +116,12 @@ namespace Light.Serialization.Json.TokenParsers
             return new string(characterArray);
         }
 
-        private static char ReadEscapeSequence(JsonToken buffer, ref int currentBufferIndex)
+        private static char ReadEscapeSequence(JsonToken token, ref int currentBufferIndex)
         {
-            var currentCharacter = buffer[currentBufferIndex++];
+            var currentCharacter = token[currentBufferIndex++];
             // Check if the second character in the escape sequence indicates a hexadecimal escape sequence
             if (currentCharacter == JsonSymbols.HexadecimalEscapeIndicator)
-                return ReadHexadecimalEscapeSequence(buffer, ref currentBufferIndex);
+                return ReadHexadecimalEscapeSequence(token, ref currentBufferIndex);
 
             // If not, then the escape sequence must be one with a single character
             foreach (var singleEscapedCharacter in JsonSymbols.SingleEscapedCharacters)
@@ -133,9 +133,9 @@ namespace Light.Serialization.Json.TokenParsers
             throw new DeserializationException("This exception should never be thrown because the foreach loop above will find exactly one single escape character that fits. However, if you see this exception message nontheless, then please report a bug on Github: https://github.com/feO2x/Light.Serialization.");
         }
 
-        private static char ReadHexadecimalEscapeSequence(JsonToken buffer, ref int currentBufferIndex)
+        private static char ReadHexadecimalEscapeSequence(JsonToken token, ref int currentBufferIndex)
         {
-            var hexadecimalDigitsAsString = buffer.ToString(currentBufferIndex, 4);
+            var hexadecimalDigitsAsString = token.ToString(currentBufferIndex, 4);
             currentBufferIndex += 4; // Set the current index to the first character after the hexadecimal escape sequence
             return Convert.ToChar(int.Parse(hexadecimalDigitsAsString, NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo));
         }

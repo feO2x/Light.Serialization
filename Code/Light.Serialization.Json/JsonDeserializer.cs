@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using Light.GuardClauses;
 using Light.Serialization.Abstractions;
@@ -182,11 +181,11 @@ namespace Light.Serialization.Json
             }
             catch (ErroneousTokenException ex)
             {
-                var enhancedException = (IExchangeExceptionMessage) ex;
-
                 var additionalInfoReader = _jsonReader as IProvideAdditionalErrorInfo;
                 if (additionalInfoReader == null)
                     throw;
+
+                var enhancedException = (IExchangeExceptionMessage)ex;
 
                 var additionalErrorInfo = additionalInfoReader.GetErrorInfoForToken(ex.ErroneousToken);
                 var newErrorMessageBuilder = new StringBuilder().AppendLine(ex.Message)
@@ -222,7 +221,7 @@ namespace Light.Serialization.Json
                         goto CacheParserIfNecessary;
                     }
 
-                    throw new DeserializationException($"Cannot deserialize value {token} with requested type {requestedType.FullName} because there is no parser that is suitable for this context.");
+                    throw new ErroneousTokenException($"Cannot deserialize value {token} with requested type \"{requestedType.FullName}\" because there is no parser that is suitable for this context.", token);
 
                     CacheParserIfNecessary:
                     if (parser.CanBeCached)
