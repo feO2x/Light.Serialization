@@ -224,6 +224,7 @@
     <Compile Include="WriterInstructors\TypeAndTypeInfoInstructor.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Light.Serialization.Json.Public.snk" />
     <None Include="packages.config" />
     <None Include="SerializationObjectGraph.vsdx" />
   </ItemGroup>
