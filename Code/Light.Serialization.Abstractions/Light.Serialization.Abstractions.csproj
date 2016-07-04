@@ -35,6 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <None Include="Light.Serialization.Abstractions.Public.snk" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DeserializationException.cs" />
