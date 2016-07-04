@@ -32,6 +32,7 @@
     <DefineConstants>TRACE;COMPILE_ASSERTIONS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\Light.Serialization.Json.Unity.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="KnownNames.cs" />
