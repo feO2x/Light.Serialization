@@ -27,9 +27,10 @@ namespace Light.Serialization.Json.Tests.SerializationTests
         public void BlacklistingMembers()
         {
             var person = new Person("Walter", "White", 52);
+            UseDomainFriendlyNames(options => options.UseTypes(typeof(Person)));
             AddRule<Person>(r => r.IgnoreField(p => p.Age));
 
-            const string expectedJson = "{\"$id\":0,\"$type\":\"Light.Serialization.Json.Tests.SampleTypes.Person, Light.Serialization.Json.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null\",\"firstName\":\"Walter\",\"lastName\":\"White\"}";
+            const string expectedJson = "{\"$id\":0,\"$type\":\"Person\",\"firstName\":\"Walter\",\"lastName\":\"White\"}";
 
             CompareJsonToExpected(person, expectedJson);
         }
@@ -37,11 +38,11 @@ namespace Light.Serialization.Json.Tests.SerializationTests
         [Fact(DisplayName = "The client can create serialization rules that describe the only members that the serializer must include in the resulting JSON document.")]
         public void WhitelistingMembers()
         {
+            UseDomainFriendlyNames(options => options.UseTypes(typeof(Person)));
             var person = new Person("Jesse", "Pinkman", 27);
             AddRule<Person>(r => r.IgnoreAll()
                                   .ButProperty(p => p.FirstName)
                                   .AndField(p => p.Age));
-            UseDomainFriendlyNames(options => options.UseTypes(typeof(Person)));
 
             const string expectedJson = "{\"$id\":0,\"$type\":\"Person\",\"firstName\":\"Jesse\",\"age\":27}";
 
