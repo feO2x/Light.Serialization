@@ -37,7 +37,7 @@ namespace Light.Serialization.Json.WithDependencyInjection
             container.MustNotBeNull(nameof(container));
 
             // JSON serializer
-            container.RegisterTransient<ISerializer, JsonSerializer>(options => options.ResolveAllForInstantiationParameter<IReadOnlyList<IJsonWriterInstructor>>());
+            container.RegisterTransient<ISerializer, JsonSerializer>();
 
             // Writer instructor cache for JSON serializer
             container.RegisterSingleton<IDictionary<Type, IJsonWriterInstructor>, Dictionary<Type, IJsonWriterInstructor>>(options => options.UseDefaultConstructor());
@@ -48,16 +48,21 @@ namespace Light.Serialization.Json.WithDependencyInjection
                      .RegisterSingleton<IJsonKeyNormalizer, FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer>();
 
             // JSON writer instructors
-            container.RegisterSingleton<IJsonWriterInstructor, PrimitiveValueInstructor>(options => options.UseTypeNameAsRegistrationName())
-                     .RegisterSingleton<IJsonWriterInstructor, EnumInstructor>(options => options.UseTypeNameAsRegistrationName())
-                     .RegisterSingleton<IJsonWriterInstructor, TypeAndTypeInfoInstructor>(options => options.UseTypeNameAsRegistrationName()
-                                                                                                            .ResolveInstantiationParameter<ITypeMetadataInstructor>().WithName(typeof(ObjectMetadataInstructor).Name))
-                     .RegisterSingleton<IJsonWriterInstructor, DictionaryInstructor>(options => options.UseTypeNameAsRegistrationName()
-                                                                                                       .ResolveInstantiationParameter<IMetadataInstructor>().WithName(typeof(ObjectMetadataInstructor).Name))
-                     .RegisterSingleton<IJsonWriterInstructor, CollectionInstructor>(options => options.UseTypeNameAsRegistrationName()
-                                                                                                       .ResolveInstantiationParameter<IMetadataInstructor>().WithName(typeof(ArrayMetadataInstructor).Name))
-                     .RegisterSingleton<IJsonWriterInstructor, ComplexObjectInstructor>(options => options.UseTypeNameAsRegistrationName()
-                                                                                                          .ResolveInstantiationParameter<IMetadataInstructor>().WithName(typeof(ObjectMetadataInstructor).Name));
+            container.RegisterTransient<IReadOnlyList<IJsonWriterInstructor>, IJsonWriterInstructor[]>(options => options.InstantiateWith(() => new IJsonWriterInstructor[]
+                                                                                                                                                {
+                                                                                                                                                    container.Resolve<PrimitiveValueInstructor>(),
+                                                                                                                                                    container.Resolve<EnumInstructor>(),
+                                                                                                                                                    container.Resolve<TypeAndTypeInfoInstructor>(),
+                                                                                                                                                    container.Resolve<DictionaryInstructor>(),
+                                                                                                                                                    container.Resolve<CollectionInstructor>(),
+                                                                                                                                                    container.Resolve<ComplexObjectInstructor>()
+                                                                                                                                                }));
+            container.RegisterSingleton<PrimitiveValueInstructor>()
+                     .RegisterSingleton<EnumInstructor>()
+                     .RegisterSingleton<TypeAndTypeInfoInstructor>(options => options.ResolveInstantiationParameter<ITypeMetadataInstructor>().WithName(typeof(ObjectMetadataInstructor).Name))
+                     .RegisterSingleton<DictionaryInstructor>(options => options.ResolveInstantiationParameter<IMetadataInstructor>().WithName(typeof(ObjectMetadataInstructor).Name))
+                     .RegisterSingleton<CollectionInstructor>(options => options.ResolveInstantiationParameter<IMetadataInstructor>().WithName(typeof(ArrayMetadataInstructor).Name))
+                     .RegisterSingleton<ComplexObjectInstructor>(options => options.ResolveInstantiationParameter<IMetadataInstructor>().WithName(typeof(ObjectMetadataInstructor).Name));
 
             // Primitive type formatters
             container.RegisterSingleton<IDictionary<Type, IPrimitiveTypeFormatter>, Dictionary<Type, IPrimitiveTypeFormatter>>(options => options.InstantiateWith(() => container.ResolveAll<IPrimitiveTypeFormatter>().ToDictionary(formatter => formatter.TargetType)))
