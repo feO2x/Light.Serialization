@@ -71,6 +71,81 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\BinaryJsonTests.cs">
+      <Link>DeserializationTests\BinaryJsonTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\BooleanTests.cs">
+      <Link>DeserializationTests\BooleanTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\CharacterTests.cs">
+      <Link>DeserializationTests\CharacterTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\CollectionTests.cs">
+      <Link>DeserializationTests\CollectionTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\ComplexObjectTests.cs">
+      <Link>DeserializationTests\ComplexObjectTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\DateTimeOffsetTests.cs">
+      <Link>DeserializationTests\DateTimeOffsetTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\DateTimeTests.cs">
+      <Link>DeserializationTests\DateTimeTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\DecimalTests.cs">
+      <Link>DeserializationTests\DecimalTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\DictionaryTests.cs">
+      <Link>DeserializationTests\DictionaryTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\DoubleTests.cs">
+      <Link>DeserializationTests\DoubleTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\EnumTests.cs">
+      <Link>DeserializationTests\EnumTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\ErrorLocationTests.cs">
+      <Link>DeserializationTests\ErrorLocationTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\FloatTests.cs">
+      <Link>DeserializationTests\FloatTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\GuidTests.cs">
+      <Link>DeserializationTests\GuidTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\IgnoreTypesInMetadataSectionTests.cs">
+      <Link>DeserializationTests\IgnoreTypesInMetadataSectionTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\IntegerTypesTests.cs">
+      <Link>DeserializationTests\IntegerTypesTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\NullableTests.cs">
+      <Link>DeserializationTests\NullableTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\NullTests.cs">
+      <Link>DeserializationTests\NullTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\ObjectReferencePreservationTests.cs">
+      <Link>DeserializationTests\ObjectReferencePreservationTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\OptionalPropertyAndFieldInjectionTests.cs">
+      <Link>DeserializationTests\OptionalPropertyAndFieldInjectionTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\StreamingTests.cs">
+      <Link>DeserializationTests\StreamingTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\StringTests.cs">
+      <Link>DeserializationTests\StringTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\TimeSpanTests.cs">
+      <Link>DeserializationTests\TimeSpanTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\TypeAndTypeInfoTests.cs">
+      <Link>DeserializationTests\TypeAndTypeInfoTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\DeserializationTests\WhitespaceTests.cs">
+      <Link>DeserializationTests\WhitespaceTests.cs</Link>
+    </Compile>
     <Compile Include="..\Light.Serialization.Json.Tests\SampleTypes\DummyPerson.cs">
       <Link>SampleTypes\DummyPerson.cs</Link>
     </Compile>
@@ -125,6 +200,7 @@
     <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\TypeAndTypeInfoTests.cs">
       <Link>SerializationTests\TypeAndTypeInfoTests.cs</Link>
     </Compile>
+    <Compile Include="BaseJsonDeserializerTests.cs" />
     <Compile Include="BaseJsonSerializerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -148,6 +224,7 @@
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
