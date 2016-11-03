@@ -33,8 +33,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Light.DependencyInjection, Version=0.1.1.0, Culture=neutral, PublicKeyToken=6dfab398ab8765a6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Light.DependencyInjection.0.1.1\lib\portable-net45+netcore45+wpa81+wp8\Light.DependencyInjection.dll</HintPath>
+    <Reference Include="FluentAssertions, Version=4.16.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentAssertions.4.16.0\lib\net45\FluentAssertions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FluentAssertions.Core, Version=4.16.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentAssertions.4.16.0\lib\net45\FluentAssertions.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Light.DependencyInjection, Version=0.1.3.0, Culture=neutral, PublicKeyToken=6dfab398ab8765a6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Light.DependencyInjection.0.1.3\lib\portable-net45+netcore45+wpa81+wp8\Light.DependencyInjection.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Light.GuardClauses, Version=1.2.0.0, Culture=neutral, PublicKeyToken=573727035c45e5b3, processorArchitecture=MSIL">
@@ -63,6 +71,61 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Light.Serialization.Json.Tests\SampleTypes\DummyPerson.cs">
+      <Link>SampleTypes\DummyPerson.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\SampleTypes\MoreComplexDummyClass.cs">
+      <Link>SampleTypes\MoreComplexDummyClass.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\SampleTypes\Nodes.cs">
+      <Link>SampleTypes\Nodes.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\SampleTypes\Person.cs">
+      <Link>SampleTypes\Person.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\BinaryJsonTests.cs">
+      <Link>SerializationTests\BinaryJsonTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\CollectionTests.cs">
+      <Link>SerializationTests\CollectionTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\ComplexObjectTests.cs">
+      <Link>SerializationTests\ComplexObjectTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\CustomRuleTests.cs">
+      <Link>SerializationTests\CustomRuleTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\DateTimeOffsetTests.cs">
+      <Link>SerializationTests\DateTimeOffsetTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\DateTimeTests.cs">
+      <Link>SerializationTests\DateTimeTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\DelegateTests.cs">
+      <Link>SerializationTests\DelegateTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\DictionaryTests.cs">
+      <Link>SerializationTests\DictionaryTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\EndlessRecursionTests.cs">
+      <Link>SerializationTests\EndlessRecursionTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\HumanReadableJsonTests.cs">
+      <Link>SerializationTests\HumanReadableJsonTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\NullableTests.cs">
+      <Link>SerializationTests\NullableTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\PrimitiveValuesTests.cs">
+      <Link>SerializationTests\PrimitiveValuesTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\TimeSpanTests.cs">
+      <Link>SerializationTests\TimeSpanTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Light.Serialization.Json.Tests\SerializationTests\TypeAndTypeInfoTests.cs">
+      <Link>SerializationTests\TypeAndTypeInfoTests.cs</Link>
+    </Compile>
+    <Compile Include="BaseJsonSerializerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -81,6 +144,9 @@
       <Project>{9953c89b-ef35-455e-a07b-b440f787dea2}</Project>
       <Name>Light.Serialization.Json</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

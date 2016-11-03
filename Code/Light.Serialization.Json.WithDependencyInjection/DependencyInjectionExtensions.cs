@@ -12,6 +12,7 @@ using Light.Serialization.Json.LowLevelReading;
 using Light.Serialization.Json.LowLevelWriting;
 using Light.Serialization.Json.ObjectMetadata;
 using Light.Serialization.Json.PrimitiveTypeFormatters;
+using Light.Serialization.Json.SerializationRules;
 using Light.Serialization.Json.TokenParsers;
 using Light.Serialization.Json.WriterInstructors;
 
@@ -42,14 +43,15 @@ namespace Light.Serialization.Json.WithDependencyInjection
             container.RegisterSingleton<IDictionary<Type, IJsonWriterInstructor>, Dictionary<Type, IJsonWriterInstructor>>(options => options.UseDefaultConstructor());
 
             // JSON writer factory
-            container.RegisterTransient<IJsonWriterFactory, JsonWriterFactory>()
+            container.RegisterSingleton<IJsonWriterFactory, JsonWriterFactoryUsingDi>()
                      .RegisterTransient<IJsonWhitespaceFormatter, WhitespaceFormatterNullObject>()
                      .RegisterSingleton<IJsonKeyNormalizer, FirstCharacterToLowerAndRemoveAllSpecialCharactersNormalizer>();
 
             // JSON writer instructors
             container.RegisterSingleton<IJsonWriterInstructor, PrimitiveValueInstructor>(options => options.UseTypeNameAsRegistrationName())
                      .RegisterSingleton<IJsonWriterInstructor, EnumInstructor>(options => options.UseTypeNameAsRegistrationName())
-                     .RegisterSingleton<IJsonWriterInstructor, TypeAndTypeInfoInstructor>(options => options.UseTypeNameAsRegistrationName())
+                     .RegisterSingleton<IJsonWriterInstructor, TypeAndTypeInfoInstructor>(options => options.UseTypeNameAsRegistrationName()
+                                                                                                            .ResolveInstantiationParameter<ITypeMetadataInstructor>().WithName(typeof(ObjectMetadataInstructor).Name))
                      .RegisterSingleton<IJsonWriterInstructor, DictionaryInstructor>(options => options.UseTypeNameAsRegistrationName()
                                                                                                        .ResolveInstantiationParameter<IMetadataInstructor>().WithName(typeof(ObjectMetadataInstructor).Name))
                      .RegisterSingleton<IJsonWriterInstructor, CollectionInstructor>(options => options.UseTypeNameAsRegistrationName()
@@ -58,7 +60,7 @@ namespace Light.Serialization.Json.WithDependencyInjection
                                                                                                           .ResolveInstantiationParameter<IMetadataInstructor>().WithName(typeof(ObjectMetadataInstructor).Name));
 
             // Primitive type formatters
-            container.RegisterSingleton<IDictionary<Type, IPrimitiveTypeFormatter>>(options => options.InstantiateWith(() => container.ResolveAll<IPrimitiveTypeFormatter>().ToDictionary(formatter => formatter.TargetType)))
+            container.RegisterSingleton<IDictionary<Type, IPrimitiveTypeFormatter>, Dictionary<Type, IPrimitiveTypeFormatter>>(options => options.InstantiateWith(() => container.ResolveAll<IPrimitiveTypeFormatter>().ToDictionary(formatter => formatter.TargetType)))
                      .RegisterSingleton<IPrimitiveTypeFormatter, ToStringFormatter<int>>(options => options.UseRegistrationName("IntFormatter")
                                                                                                            .InstantiateWith(() => new ToStringFormatter<int>(false)))
                      .RegisterSingleton<IPrimitiveTypeFormatter, StringFormatter>(options => options.UseTypeNameAsRegistrationName())
@@ -166,7 +168,7 @@ namespace Light.Serialization.Json.WithDependencyInjection
             container.RegisterSingleton<IMetaFactory, DependencyInjectionMetaFactory>();
 
             // Metadata parsers
-            
+
 
             container.RegisterSingleton<ObjectMetadataParser>(options => options.MapToAllImplementedInterfaces())
                      .RegisterSingleton<IArrayMetadataParser, ArrayMetadataParser>()
@@ -220,7 +222,7 @@ namespace Light.Serialization.Json.WithDependencyInjection
             container.MustNotBeNull(nameof(container));
 
             container.RegisterInstance(value, options => options.UseRegistrationName(IsSerializingObjectIds));
-            
+
             return container;
         }
 
@@ -237,7 +239,6 @@ namespace Light.Serialization.Json.WithDependencyInjection
         public static DependencyInjectionContainer SetTypeMetadataStatus(this DependencyInjectionContainer container, bool value)
         {
             container.MustNotBeNull(nameof(container));
-
 
 
             return container;
@@ -269,6 +270,46 @@ namespace Light.Serialization.Json.WithDependencyInjection
             return container.RegisterTransient(typeof(HashSet<>), options => options.UseDefaultConstructor()
                                                                                     .MapToAbstractions(typeof(ISet<>)))
                             .RegisterTransient(typeof(SortedSet<>), options => options.UseDefaultConstructor());
+        }
+
+        /// <summary>
+        ///     Creates a serialization rule for the given type that is configured with the specified delegate.
+        /// </summary>
+        /// <typeparam name="T">The type that should be configured for serialization.</typeparam>
+        /// <param name="container">The dependency injection container.</param>
+        /// <param name="configureRule">The delegate that configures the actual formatter instance.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when any parameter is null.</exception>
+        public static DependencyInjectionContainer WithSerializationRuleFor<T>(this DependencyInjectionContainer container, Action<Rule<T>> configureRule)
+        {
+            container.MustNotBeNull(nameof(container));
+            configureRule.MustNotBeNull(nameof(configureRule));
+
+            var newRule = container.Resolve<Rule<T>>();
+            configureRule(newRule);
+            var customInstructor = new CustomRuleInstructor(newRule.TargetType,
+                                                            newRule.CreateValueReaders(),
+                                                            container.Resolve<IMetadataInstructor>(typeof(ObjectMetadataInstructor).Name));
+            container.RegisterInstance(customInstructor, options => options.UseRegistrationName(typeof(T).FullName));
+            return container;
+        }
+
+        /// <summary>
+        ///     Configures the container to use the specified rule for serialization.
+        /// </summary>
+        /// <typeparam name="T">The type that should be configured for serialization.</typeparam>
+        /// <param name="container">The dependency injection container.</param>
+        /// <param name="rule">The rule that describes how the type is serialized.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when any of the parameters is null.</exception>
+        public static DependencyInjectionContainer WithSerializationRuleFor<T>(this DependencyInjectionContainer container, Rule<T> rule)
+        {
+            container.MustNotBeNull(nameof(container));
+            rule.MustNotBeNull(nameof(rule));
+
+            var customInstructor = new CustomRuleInstructor(rule.TargetType, rule.CreateValueReaders(), container.Resolve<IMetadataInstructor>(typeof(ObjectMetadataInstructor).Name));
+            container.RegisterInstance(customInstructor, options => options.UseRegistrationName(typeof(T).FullName));
+            return container;
         }
     }
 }

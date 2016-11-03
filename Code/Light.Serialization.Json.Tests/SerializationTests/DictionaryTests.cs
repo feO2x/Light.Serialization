@@ -41,7 +41,7 @@ namespace Light.Serialization.Json.Tests.SerializationTests
                 }
             };
 
-        [Fact(DisplayName = "The serializer must omit Object IDs when the client disable Object Reference Preservation.")]
+        [Fact(DisplayName = "The serializer must omit Object IDs when the client disables Object Reference Preservation.")]
         public void WithoutObjectReferencePreservation()
         {
             var dictionary = new Dictionary<string, Person>

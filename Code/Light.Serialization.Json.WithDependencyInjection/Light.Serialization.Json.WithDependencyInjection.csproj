@@ -37,11 +37,12 @@
     <Compile Include="ComplexObjectParserUsingDi.cs" />
     <Compile Include="DependencyInjectionExtensions.cs" />
     <Compile Include="DependencyInjectionMetaFactory.cs" />
+    <Compile Include="JsonWriterFactoryUsingDi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Light.DependencyInjection, Version=0.1.1.0, Culture=neutral, PublicKeyToken=6dfab398ab8765a6, processorArchitecture=MSIL">
-      <HintPath>..\packages\Light.DependencyInjection.0.1.1\lib\portable-net45+netcore45+wpa81+wp8\Light.DependencyInjection.dll</HintPath>
+    <Reference Include="Light.DependencyInjection, Version=0.1.3.0, Culture=neutral, PublicKeyToken=6dfab398ab8765a6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Light.DependencyInjection.0.1.3\lib\portable-net45+netcore45+wpa81+wp8\Light.DependencyInjection.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Light.GuardClauses">
