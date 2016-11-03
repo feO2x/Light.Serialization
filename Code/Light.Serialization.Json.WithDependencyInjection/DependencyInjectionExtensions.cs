@@ -202,7 +202,7 @@ namespace Light.Serialization.Json.WithDependencyInjection
         public static DependencyInjectionContainer UseDomainFriendlyNames(this DependencyInjectionContainer container, DomainFriendlyNameMapping mapping)
         {
             container.MustNotBeNull(nameof(container));
-            container.MustNotBeNull(nameof(mapping));
+            mapping.MustNotBeNull(nameof(mapping));
 
             return container.RegisterInstance(mapping, options => options.MapToAllImplementedInterfaces());
         }
@@ -221,9 +221,7 @@ namespace Light.Serialization.Json.WithDependencyInjection
         {
             container.MustNotBeNull(nameof(container));
 
-            container.RegisterInstance(value, options => options.UseRegistrationName(IsSerializingObjectIds));
-
-            return container;
+            return container.RegisterInstance(value, options => options.UseRegistrationName(IsSerializingObjectIds));
         }
 
         public static DependencyInjectionContainer DisableTypeMetadata(this DependencyInjectionContainer container)
@@ -240,8 +238,7 @@ namespace Light.Serialization.Json.WithDependencyInjection
         {
             container.MustNotBeNull(nameof(container));
 
-
-            return container;
+            return container.RegisterInstance(value, options => options.UseRegistrationName(IsSerializingTypeInfo));
         }
 
         public static DependencyInjectionContainer RegisterDefaultCollectionTypes(this DependencyInjectionContainer container)
