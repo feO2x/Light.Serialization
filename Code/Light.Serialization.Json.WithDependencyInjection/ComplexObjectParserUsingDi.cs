@@ -11,12 +11,22 @@ using Light.Serialization.Json.TokenParsers;
 
 namespace Light.Serialization.Json.WithDependencyInjection
 {
+    /// <summary>
+    ///     Represents a <see cref="IJsonTokenParser" /> that parses complex JSON objects with the help of a <see cref="DependencyInjectionContainer" />.
+    /// </summary>
     public sealed class ComplexObjectParserUsingDi : IJsonTokenParser
     {
         private readonly DependencyInjectionContainer _container;
         private readonly IObjectMetadataParser _metadataParser;
         private readonly ITypeDescriptionService _typeDescriptionService;
 
+        /// <summary>
+        ///     Initializes a new instance of <see cref="ComplexObjectParserUsingDi" />.
+        /// </summary>
+        /// <param name="container">The container used to resolve the .NET object.</param>
+        /// <param name="metadataParser">The object which parses the metadata section of the JSON object.</param>
+        /// <param name="typeDescriptionService">The type description service that is used to find additional injectable properties and fields that were not registered with the DI container.</param>
+        /// <exception cref="ArgumentNullException">Thrown when any parameter is null.</exception>
         public ComplexObjectParserUsingDi(DependencyInjectionContainer container, IObjectMetadataParser metadataParser, ITypeDescriptionService typeDescriptionService)
         {
             container.MustNotBeNull(nameof(container));
@@ -28,13 +38,18 @@ namespace Light.Serialization.Json.WithDependencyInjection
             _typeDescriptionService = typeDescriptionService;
         }
 
+        /// <summary>
+        ///     Gets the value indicating that this parser can be cached.
+        /// </summary>
         public bool CanBeCached => true;
 
+        /// <inheritdoc />
         public bool IsSuitableFor(JsonDeserializationContext context)
         {
             return context.Token.JsonType == JsonTokenType.BeginOfObject;
         }
 
+        /// <inheritdoc />
         public ParseResult ParseValue(JsonDeserializationContext context)
         {
             context.Token.JsonType.MustBe(JsonTokenType.BeginOfObject);
