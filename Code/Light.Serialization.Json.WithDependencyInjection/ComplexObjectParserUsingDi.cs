@@ -32,7 +32,7 @@ namespace Light.Serialization.Json.WithDependencyInjection
 
         public bool IsSuitableFor(JsonDeserializationContext context)
         {
-            return context.Token.JsonType == JsonTokenType.BeginOfArray;
+            return context.Token.JsonType == JsonTokenType.BeginOfObject;
         }
 
         public ParseResult ParseValue(JsonDeserializationContext context)
