@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package>
+  <metadata>
+    <id>Light.Serialization.Json.WithDependencyInjection</id>
+    <version>0.1.0</version>
+    <authors>Kenny Pflug</authors>
+    <owners>Kenny Pflug</owners>
+    <licenseUrl>https://raw.githubusercontent.com/feO2x/Light.Serialization/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/feO2x/Light.Serialization</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/feO2x/Light.GuardClauses/master/Images/light_logo.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Integration library for Light.Serialization.Json and Light.DependencyInjection.</description>
+    <releaseNotes>
+      Initial release
+    </releaseNotes>
+    <copyright>Copyright © 2016 Kenny Pflug</copyright>
+    <tags>C# JSON Serialization DTO DependencyInjection</tags>
+    <dependencies>
+      <dependency id="Light.GuardClauses" version="1.2.0" />
+      <dependency id="Light.DependencyInjection" version="0.1.4" />
+      <dependency id="Light.Serialization.Abstractions" version="0.1.0" />
+      <dependency id="Light.Serialization.Json" version="0.1.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\SignedRelease\Light.Serialization.Json.WithDependencyInjection.dll" target="lib\portable-net45+netcore45+wpa81+wp8" />
+    <file src="bin\SignedRelease\Light.Serialization.Json.WithDependencyInjection.xml" target="lib\portable-net45+netcore45+wpa81+wp8" />
+  </files>
+</package>

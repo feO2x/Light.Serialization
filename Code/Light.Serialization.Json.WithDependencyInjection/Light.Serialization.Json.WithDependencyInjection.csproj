@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE;COMPILE_ASSERTIONS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\Light.Serialization.Json.WithDependencyInjection.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,6 +33,7 @@
     <DefineConstants>TRACE;COMPILE_ASSERTIONS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\Light.Serialization.Json.WithDependencyInjection.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ComplexObjectParserUsingDi.cs" />
@@ -50,6 +52,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Light.Serialization.Json.WithDependencyInjection.nuspec" />
+    <None Include="Light.Serialization.Json.WithDependencyInjection.Public.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
