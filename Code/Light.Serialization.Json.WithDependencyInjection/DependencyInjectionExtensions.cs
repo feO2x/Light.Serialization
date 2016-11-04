@@ -5,7 +5,6 @@ using System.Linq;
 using Light.DependencyInjection;
 using Light.GuardClauses;
 using Light.Serialization.Abstractions;
-using Light.Serialization.Json.BuilderHelpers;
 using Light.Serialization.Json.Caching;
 using Light.Serialization.Json.ComplexTypeConstruction;
 using Light.Serialization.Json.ComplexTypeDecomposition;
@@ -24,7 +23,14 @@ namespace Light.Serialization.Json.WithDependencyInjection
     /// </summary>
     public static class DependencyInjectionExtensions
     {
+        /// <summary>
+        ///     Gets the registration name of the boolean value that identifies if the metadata instructors serialize object ids.
+        /// </summary>
         public const string IsSerializingObjectIds = "IsSerializingObjectIds";
+
+        /// <summary>
+        ///     Gets the registration name of the boolean value that identifies if the metadata instructors serialize type metadata.
+        /// </summary>
         public const string IsSerializingTypeInfo = "IsSerializingTypeInfo";
 
         /// <summary>
@@ -121,6 +127,12 @@ namespace Light.Serialization.Json.WithDependencyInjection
             return container;
         }
 
+        /// <summary>
+        ///     Registers the default deserialization types with the DI container.
+        /// </summary>
+        /// <param name="container">The container that will be populated.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> is null.</exception>
         public static DependencyInjectionContainer RegisterDefaultDeserializationTypes(this DependencyInjectionContainer container)
         {
             container.MustNotBeNull(nameof(container));
@@ -208,6 +220,12 @@ namespace Light.Serialization.Json.WithDependencyInjection
             return container;
         }
 
+        /// <summary>
+        ///     Replaces the currently registered <see cref="IJsonWhitespaceFormatter" /> with the <see cref="IndentingWhitespaceFormatter" />, producing human-readable indented JSON documents.
+        /// </summary>
+        /// <param name="container">The container that will be populated.</param>
+        /// <returns>The container for method-chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> is null.</exception>
         public static DependencyInjectionContainer UseIndentingWhitespaceFormatterForSerialization(this DependencyInjectionContainer container)
         {
             container.MustNotBeNull(nameof(container));
@@ -215,6 +233,13 @@ namespace Light.Serialization.Json.WithDependencyInjection
             return container.RegisterTransient<IJsonWhitespaceFormatter, IndentingWhitespaceFormatter>();
         }
 
+        /// <summary>
+        ///     Configures the JSON serializer and deserializer to use a <see cref="DomainFriendlyNameMapping" /> for the specified types.
+        /// </summary>
+        /// <param name="container">The container to be populated.</param>
+        /// <param name="configureMapping">The delegate that configures which types will be scanned.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> or <paramref name="configureMapping" /> is null.</exception>
         public static DependencyInjectionContainer UseDomainFriendlyNames(this DependencyInjectionContainer container, Action<TypeNameToJsonNameScanner.IScanningOptions> configureMapping)
         {
             container.MustNotBeNull(nameof(container));
@@ -226,6 +251,13 @@ namespace Light.Serialization.Json.WithDependencyInjection
             return container.UseDomainFriendlyNames(domainFriendlyNameMapping);
         }
 
+        /// <summary>
+        ///     Configures the JSON serializer and deserializer to use the specified <see cref="DomainFriendlyNameMapping" />.
+        /// </summary>
+        /// <param name="container">The container to be populated.</param>
+        /// <param name="mapping">The mapping that replaces the current one.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> or <paramref name="mapping" /> is null.</exception>
         public static DependencyInjectionContainer UseDomainFriendlyNames(this DependencyInjectionContainer container, DomainFriendlyNameMapping mapping)
         {
             container.MustNotBeNull(nameof(container));
@@ -234,16 +266,35 @@ namespace Light.Serialization.Json.WithDependencyInjection
             return container.RegisterInstance(mapping, options => options.MapToAllImplementedInterfaces());
         }
 
+        /// <summary>
+        ///     Configures the container to disable object reference preservation on the JSON serializer.
+        /// </summary>
+        /// <param name="container">The container to be populated.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> is null.</exception>
         public static DependencyInjectionContainer DisableObjectReferencePreservation(this DependencyInjectionContainer container)
         {
             return container.SetObjectReferencePreservationStatus(false);
         }
 
+        /// <summary>
+        ///     Configures the container to enable object reference preservation on the JSON serializer. This feature is turned on by default.
+        /// </summary>
+        /// <param name="container">The container to be populated.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> is null.</exception>
         public static DependencyInjectionContainer EnableObjectReferencePreservation(this DependencyInjectionContainer container)
         {
             return container.SetObjectReferencePreservationStatus(true);
         }
 
+        /// <summary>
+        ///     Sets the given boolean as the object reference preservation status for the JSON serializer.
+        /// </summary>
+        /// <param name="container">The container to be populated.</param>
+        /// <param name="value">The value for object reference preservation.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> is null.</exception>
         public static DependencyInjectionContainer SetObjectReferencePreservationStatus(this DependencyInjectionContainer container, bool value)
         {
             container.MustNotBeNull(nameof(container));
@@ -251,16 +302,35 @@ namespace Light.Serialization.Json.WithDependencyInjection
             return container.RegisterInstance(value, options => options.UseRegistrationName(IsSerializingObjectIds));
         }
 
+        /// <summary>
+        ///     The JSON serializer will not emit no type metadata in the resulting JSON document if this option is disabled.
+        /// </summary>
+        /// <param name="container">The container to be populated.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> is null.</exception>
         public static DependencyInjectionContainer DisableTypeMetadata(this DependencyInjectionContainer container)
         {
             return container.SetTypeMetadataStatus(false);
         }
 
+        /// <summary>
+        ///     The JSON serializer will emit type metadata in the resulting JSON document if this option is enabled.
+        /// </summary>
+        /// <param name="container">The container to be populated.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> is null.</exception>
         public static DependencyInjectionContainer EnableTypeMetadata(this DependencyInjectionContainer container)
         {
             return container.SetTypeMetadataStatus(true);
         }
 
+        /// <summary>
+        ///     Sets the boolean value indicating whether the JSON serializer will emit type metadata or not.
+        /// </summary>
+        /// <param name="container">The container to be populated.</param>
+        /// <param name="value">The value for type metadata status.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> is null.</exception>
         public static DependencyInjectionContainer SetTypeMetadataStatus(this DependencyInjectionContainer container, bool value)
         {
             container.MustNotBeNull(nameof(container));
@@ -268,6 +338,13 @@ namespace Light.Serialization.Json.WithDependencyInjection
             return container.RegisterInstance(value, options => options.UseRegistrationName(IsSerializingTypeInfo));
         }
 
+        /// <summary>
+        ///     Registers <see cref="List{T}" />, <see cref="ObservableCollection{T}" />, and <see cref="Collection{T}" /> with the DI container.
+        ///     <see cref="IList{T}" />, <see cref="ICollection{T}" />, and <see cref="IEnumerable{T}" /> are mapped to <see cref="List{T}" />.
+        /// </summary>
+        /// <param name="container">The container to be populated.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> is null.</exception>
         public static DependencyInjectionContainer RegisterDefaultCollectionTypes(this DependencyInjectionContainer container)
         {
             container.MustNotBeNull(nameof(container));
@@ -278,6 +355,13 @@ namespace Light.Serialization.Json.WithDependencyInjection
                             .RegisterTransient(typeof(Collection<>), options => options.UseDefaultConstructor());
         }
 
+        /// <summary>
+        ///     Registers <see cref="Dictionary{TKey,TValue}" /> and <see cref="SortedDictionary{TKey,TValue}" /> with the DI container.
+        ///     <see cref="IDictionary{TKey,TValue}" /> is mapped to <see cref="Dictionary{TKey,TValue}" />.
+        /// </summary>
+        /// <param name="container">The container to be populated.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> is null.</exception>
         public static DependencyInjectionContainer RegisterDefaultDictionaryTypes(this DependencyInjectionContainer container)
         {
             container.MustNotBeNull(nameof(container));
@@ -287,6 +371,13 @@ namespace Light.Serialization.Json.WithDependencyInjection
                             .RegisterTransient(typeof(SortedDictionary<,>), options => options.UseDefaultConstructor());
         }
 
+        /// <summary>
+        ///     Registers <see cref="HashSet{T}" /> and <see cref="SortedSet{T}" /> with the DI container.
+        ///     <see cref="ISet{T}" /> is mapped to <see cref="HashSet{T}" />.
+        /// </summary>
+        /// <param name="container">The container to be populated.</param>
+        /// <returns>The container for method chaining.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="container" /> is null.</exception>
         public static DependencyInjectionContainer RegisterDefaultSetTypes(this DependencyInjectionContainer container)
         {
             container.MustNotBeNull(nameof(container));
