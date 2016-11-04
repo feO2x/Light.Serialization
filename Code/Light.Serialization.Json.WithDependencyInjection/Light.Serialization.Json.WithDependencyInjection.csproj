@@ -52,6 +52,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="CreateSignedNuGetPackage.bat" />
     <None Include="Light.Serialization.Json.WithDependencyInjection.nuspec" />
     <None Include="Light.Serialization.Json.WithDependencyInjection.Public.snk" />
     <None Include="packages.config" />
