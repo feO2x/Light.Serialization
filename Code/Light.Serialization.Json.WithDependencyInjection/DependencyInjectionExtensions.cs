@@ -5,6 +5,7 @@ using System.Linq;
 using Light.DependencyInjection;
 using Light.GuardClauses;
 using Light.Serialization.Abstractions;
+using Light.Serialization.Json.BuilderHelpers;
 using Light.Serialization.Json.Caching;
 using Light.Serialization.Json.ComplexTypeConstruction;
 using Light.Serialization.Json.ComplexTypeDecomposition;
@@ -125,7 +126,7 @@ namespace Light.Serialization.Json.WithDependencyInjection
             container.MustNotBeNull(nameof(container));
 
             // JSON deserializer
-            container.RegisterTransient<IDeserializer, JsonDeserializer>(options => options.ResolveAllForInstantiationParameter<IReadOnlyList<IJsonTokenParser>>());
+            container.RegisterTransient<IDeserializer, JsonDeserializer>();
 
             // JSON reader factory
             container.RegisterSingleton<IJsonReaderFactory, JsonReaderFactory>();
@@ -134,40 +135,61 @@ namespace Light.Serialization.Json.WithDependencyInjection
             container.RegisterSingleton<Dictionary<JsonTokenTypeCombination, IJsonTokenParser>>(options => options.UseDefaultConstructor());
 
             // Token parsers
-            var tokenParserTypes = new[]
-                                   {
-                                       typeof(SignedIntegerParser),
-                                       typeof(DecimalParser),
-                                       typeof(BooleanParser),
-                                       typeof(CharacterParser),
-                                       typeof(DateTimeParser),
-                                       typeof(DateTimeOffsetParser),
-                                       typeof(TimeSpanParser),
-                                       typeof(UnsignedIntegerParser),
-                                       typeof(FloatParser),
-                                       typeof(DecimalParser),
-                                       typeof(NullParser),
-                                       typeof(EnumParser),
-                                       typeof(StringParser),
-                                       typeof(GuidParser),
-                                       typeof(NullableParser),
-                                       typeof(JsonStringInheritanceParser),
-                                       typeof(TypeAndTypeInfoParser),
-                                       typeof(CollectionParser),
-                                       typeof(DictionaryParser),
-                                       typeof(ComplexObjectParserUsingDi)
-                                   };
+            container.RegisterSingleton<SignedIntegerParser>()
+                     .RegisterSingleton<DoubleParser>()
+                     .RegisterSingleton<BooleanParser>()
+                     .RegisterSingleton<CharacterParser>()
+                     .RegisterSingleton<DateTimeParser>()
+                     .RegisterSingleton<DateTimeOffsetParser>()
+                     .RegisterSingleton<TimeSpanParser>()
+                     .RegisterSingleton<UnsignedIntegerParser>()
+                     .RegisterSingleton<FloatParser>()
+                     .RegisterSingleton<DecimalParser>()
+                     .RegisterSingleton<NullParser>()
+                     .RegisterSingleton<EnumParser>()
+                     .RegisterSingleton<StringParser>()
+                     .RegisterSingleton<GuidParser>()
+                     .RegisterSingleton<NullableParser>()
+                     .RegisterTransient<JsonStringInheritanceParser>()
+                     .RegisterSingleton<TypeAndTypeInfoParser>()
+                     .RegisterSingleton<CollectionParser>()
+                     .RegisterSingleton<DictionaryParser>()
+                     .RegisterSingleton<ComplexObjectParserUsingDi>();
 
-            foreach (var tokenParserType in tokenParserTypes)
-            {
-                if (tokenParserType != typeof(JsonStringInheritanceParser))
-                    container.RegisterSingleton(tokenParserType, options => options.UseTypeNameAsRegistrationName()
-                                                                                   .MapToAllImplementedInterfaces());
-                else
-                    container.RegisterTransient<JsonStringInheritanceParser>(options => options.UseTypeNameAsRegistrationName()
-                                                                                               .ResolveAllForInstantiationParameter<IReadOnlyList<IJsonStringToPrimitiveParser>>()
-                                                                                               .MapToAllImplementedInterfaces());
-            }
+            container.RegisterTransient<IReadOnlyList<IJsonTokenParser>, IJsonTokenParser[]>(options => options.InstantiateWith(() => new IJsonTokenParser[]
+                                                                                                                                      {
+                                                                                                                                          container.Resolve<SignedIntegerParser>(),
+                                                                                                                                          container.Resolve<DoubleParser>(),
+                                                                                                                                          container.Resolve<BooleanParser>(),
+                                                                                                                                          container.Resolve<CharacterParser>(),
+                                                                                                                                          container.Resolve<DateTimeParser>(),
+                                                                                                                                          container.Resolve<DateTimeOffsetParser>(),
+                                                                                                                                          container.Resolve<TimeSpanParser>(),
+                                                                                                                                          container.Resolve<UnsignedIntegerParser>(),
+                                                                                                                                          container.Resolve<FloatParser>(),
+                                                                                                                                          container.Resolve<DecimalParser>(),
+                                                                                                                                          container.Resolve<NullParser>(),
+                                                                                                                                          container.Resolve<EnumParser>(),
+                                                                                                                                          container.Resolve<StringParser>(),
+                                                                                                                                          container.Resolve<GuidParser>(),
+                                                                                                                                          container.Resolve<NullableParser>(),
+                                                                                                                                          container.Resolve<JsonStringInheritanceParser>(),
+                                                                                                                                          container.Resolve<TypeAndTypeInfoParser>(),
+                                                                                                                                          container.Resolve<CollectionParser>(),
+                                                                                                                                          container.Resolve<DictionaryParser>(),
+                                                                                                                                          container.Resolve<ComplexObjectParserUsingDi>()
+                                                                                                                                      }));
+            container.RegisterTransient<IReadOnlyList<IJsonStringToPrimitiveParser>, IJsonStringToPrimitiveParser[]>(options => options.InstantiateWith(() => new IJsonStringToPrimitiveParser[]
+                                                                                                                                                              {
+                                                                                                                                                                  container.Resolve<SignedIntegerParser>(),
+                                                                                                                                                                  container.Resolve<DoubleParser>(),
+                                                                                                                                                                  container.Resolve<BooleanParser>(),
+                                                                                                                                                                  container.Resolve<CharacterParser>(),
+                                                                                                                                                                  container.Resolve<DateTimeParser>(),
+                                                                                                                                                                  container.Resolve<DateTimeOffsetParser>(),
+                                                                                                                                                                  container.Resolve<TimeSpanParser>(),
+                                                                                                                                                                  container.Resolve<GuidParser>()
+                                                                                                                                                              }));
 
             // Meta factory
             container.RegisterSingleton<IMetaFactory, DependencyInjectionMetaFactory>();
@@ -251,7 +273,7 @@ namespace Light.Serialization.Json.WithDependencyInjection
             container.MustNotBeNull(nameof(container));
 
             return container.RegisterTransient(typeof(List<>), options => options.UseDefaultConstructor()
-                                                                                 .MapToAbstractions(typeof(IList<>), typeof(ICollection<>)))
+                                                                                 .MapToAbstractions(typeof(IList<>), typeof(ICollection<>), typeof(IEnumerable<>)))
                             .RegisterTransient(typeof(ObservableCollection<>), options => options.UseDefaultConstructor())
                             .RegisterTransient(typeof(Collection<>), options => options.UseDefaultConstructor());
         }

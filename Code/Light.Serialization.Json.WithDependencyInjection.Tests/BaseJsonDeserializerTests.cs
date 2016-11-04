@@ -17,7 +17,7 @@ namespace Light.Serialization.Json.Tests
         {
             Container = new DependencyInjectionContainer().RegisterDefaultDeserializationTypes()
                                                           .RegisterDefaultCollectionTypes()
-                                                          .RegisterDefaultDeserializationTypes()
+                                                          .RegisterDefaultDictionaryTypes()
                                                           .RegisterDefaultSetTypes();
         }
 
